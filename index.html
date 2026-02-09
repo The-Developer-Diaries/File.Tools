@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>file.tools — Free Online File Tools</title>
+  <meta name="description" content="Free online tools to edit, merge, convert PDFs and images. No uploads. Everything happens in your browser.">
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    // Apply theme immediately to prevent flash of wrong theme
+    (function() {
+      var t = localStorage.getItem('edit-it-theme');
+      if (!t) t = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="container header-inner">
+      <a href="#" class="logo">
+        <svg width="34" height="34" viewBox="0 0 512 512" fill="none">
+          <defs><linearGradient id="logo-bg" x1="0" y1="0" x2="512" y2="512" gradientUnits="userSpaceOnUse"><stop stop-color="#6366f1"/><stop offset="1" stop-color="#a855f7"/></linearGradient></defs>
+          <rect width="512" height="512" rx="96" fill="url(#logo-bg)"/>
+          <path d="M148 96h152l80 80v240a32 32 0 01-32 32H148a32 32 0 01-32-32V128a32 32 0 0132-32z" fill="#fff" fill-opacity="0.92"/>
+          <g stroke="#d4d0fa" stroke-width="12" stroke-linecap="round"><line x1="170" y1="230" x2="300" y2="230"/><line x1="170" y1="280" x2="330" y2="280"/><line x1="170" y1="330" x2="270" y2="330"/></g>
+          <g transform="translate(270,190) rotate(-45)"><rect width="36" height="180" rx="6" fill="#6366f1"/><polygon points="0,180 18,215 36,180" fill="#fbbf24"/><rect x="3" y="0" width="30" height="22" rx="4" fill="#f472b6"/></g>
+          <circle cx="420" cy="130" r="16" fill="#fbbf24"/><circle cx="440" cy="100" r="9" fill="#f472b6"/>
+        </svg>
+        <span>file.tools</span>
+      </a>
+      <nav class="nav">
+        <a href="#" data-scroll="pdf-section">PDF</a>
+        <a href="#" data-scroll="convert-section">Convert</a>
+        <a href="#" data-scroll="image-section">Image</a>
+        <a href="#" data-scroll="text-section">Text</a>
+        <a href="#" data-scroll="utility-section">Utils</a>
+      </nav>
+      <button class="theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="icon-sun" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+        <svg class="icon-moon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <main>
+    <!-- ==================== HOME VIEW ==================== -->
+    <section id="home-view" class="view active">
+      <div class="hero">
+        <div class="container">
+          <div class="hero-badge">100% Private — No Data Stored</div>
+          <h1>Free Online File Tools</h1>
+          <p class="hero-sub">Edit, merge, and convert your PDFs and images right in your browser.<br>No uploads. No servers. Completely free.</p>
+          <div class="search-wrap">
+            <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+            <input type="text" id="tool-search" class="search-input" placeholder="Search 100+ tools… (e.g. merge, compress, QR, base64)" autocomplete="off">
+            <span class="search-count" id="search-count"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="container" id="tools-container">
+        <div id="no-results" style="display:none;text-align:center;padding:48px 0;color:var(--text-muted)">
+          <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom:12px"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <p style="font-size:1.1rem;font-weight:600">No tools found</p>
+          <p style="font-size:0.9rem">Try a different search term</p>
+        </div>
+
+        <!-- PDF Essentials -->
+        <h2 class="section-title" id="pdf-section">
+          <span class="section-icon pdf-icon">PDF</span>
+          PDF Essentials
+        </h2>
+        <div class="tools-grid">
+          <a href="#merge-pdf" class="tool-card" data-color="indigo">
+            <div class="tool-card-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="7" width="15" height="14" rx="2"/><path d="M17 3h2a2 2 0 012 2v2"/><path d="M7 3h10"/><path d="M21 7v10"/></svg>
+            </div>
+            <h3>Merge PDF</h3>
+            <p>Combine multiple PDF files into one document</p>
+          </a>
+          <a href="#split-pdf" class="tool-card" data-color="blue">
+            <div class="tool-card-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 3v18M18 3v18M6 12h12"/><path d="M2 6l4-3 4 3M14 6l4-3 4 3"/></svg>
+            </div>
+            <h3>Split PDF</h3>
+            <p>Extract specific pages from a PDF file</p>
+          </a>
+          <a href="#compress-pdf" class="tool-card" data-color="violet">
+            <div class="tool-card-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v12l-4-4M12 15l4-4"/><rect x="4" y="19" width="16" height="2" rx="1"/></svg>
+            </div>
+            <h3>Compress PDF</h3>
+            <p>Reduce the file size of your PDF</p>
+          </a>
+          <a href="#pdf-to-image" class="tool-card" data-color="cyan">
+            <div class="tool-card-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            </div>
+            <h3>PDF to Images</h3>
+            <p>Convert each PDF page to JPG or PNG</p>
+          </a>
+          <a href="#image-to-pdf" class="tool-card" data-color="emerald">
+            <div class="tool-card-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6M9 15l3 3 3-3"/></svg>
+            </div>
+            <h3>Images to PDF</h3>
+            <p>Create a PDF document from your images</p>
+          </a>
+          <a href="#rotate-pdf" class="tool-card" data-color="rose">
+            <div class="tool-card-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+            </div>
+            <h3>Rotate PDF</h3>
+            <p>Rotate PDF pages to any angle</p>
+          </a>
+          <a href="#organize-pdf" class="tool-card" data-color="cyan"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div><h3>Organize PDF</h3><p>Reorder, delete & rotate pages visually</p></a>
+          <a href="#crop-pdf" class="tool-card" data-color="teal"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6.13 1L6 16a2 2 0 002 2h15"/><path d="M1 6.13L16 6a2 2 0 012 2v15"/></svg></div><h3>Crop PDF</h3><p>Crop and trim PDF page margins</p></a>
+        </div>
+
+        <!-- PDF Edit & Security -->
+        <h2 class="section-title">
+          <span class="section-icon" style="background:linear-gradient(135deg,#8b5cf6,#6366f1)">SEC</span>
+          PDF Edit & Security
+        </h2>
+        <div class="tools-grid">
+          <a href="#edit-pdf" class="tool-card" data-color="amber"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/><path d="M18.5 2.5a2.12 2.12 0 013 3L12 15l-4 1 1-4z"/></svg></div><h3>Edit PDF</h3><p>Add text annotations to your PDF</p></a>
+          <a href="#sign-pdf" class="tool-card" data-color="emerald"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg></div><h3>Sign PDF</h3><p>Draw your signature and add it to PDF</p></a>
+          <a href="#watermark-pdf" class="tool-card" data-color="violet"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg></div><h3>Watermark PDF</h3><p>Add text watermarks to all pages</p></a>
+          <a href="#page-numbers" class="tool-card" data-color="blue"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg></div><h3>Page Numbers</h3><p>Add page numbers to your PDF</p></a>
+          <a href="#redact-pdf" class="tool-card" data-color="rose"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><rect x="7" y="9" width="10" height="3" fill="currentColor"/><rect x="7" y="14" width="6" height="3" fill="currentColor"/></svg></div><h3>Redact PDF</h3><p>Black out sensitive information permanently</p></a>
+          <a href="#unlock-pdf" class="tool-card" data-color="teal"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 019.9-1"/></svg></div><h3>Unlock PDF</h3><p>Remove password protection from PDF</p></a>
+          <a href="#lock-pdf" class="tool-card" data-color="slate"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><h3>Lock PDF</h3><p>Password-protect your PDF document</p></a>
+          <a href="#pdf-metadata" class="tool-card" data-color="amber"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M12 11v6M12 11h.01"/></svg></div><h3>PDF Metadata</h3><p>View and edit PDF title, author, etc.</p></a>
+          <a href="#flatten-pdf" class="tool-card" data-color="blue"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg></div><h3>Flatten PDF</h3><p>Flatten form fields and annotations</p></a>
+          <a href="#compare-pdf" class="tool-card" data-color="indigo"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="8" height="18" rx="1"/><rect x="14" y="3" width="8" height="18" rx="1"/><path d="M10 12h4"/></svg></div><h3>Compare PDF</h3><p>Visual side-by-side comparison of two PDFs</p></a>
+          <a href="#ocr-pdf" class="tool-card" data-color="pink"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><h3>OCR PDF</h3><p>Extract text from scanned PDFs</p></a>
+          <a href="#extract-images-pdf" class="tool-card" data-color="emerald"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div><h3>Extract Images</h3><p>Pull all images from a PDF file</p></a>
+          <a href="#grayscale-pdf" class="tool-card" data-color="violet"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 2v20M12 2a10 10 0 0110 10"/></svg></div><h3>Grayscale PDF</h3><p>Convert color PDF to black & white</p></a>
+          <a href="#repair-pdf" class="tool-card" data-color="orange"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg></div><h3>Repair PDF</h3><p>Fix and repair corrupted PDF files</p></a>
+        </div>
+
+        <!-- Conversion Tools -->
+        <h2 class="section-title" id="convert-section">
+          <span class="section-icon" style="background:linear-gradient(135deg,#06b6d4,#3b82f6)">CVT</span>
+          Convert Files
+        </h2>
+        <div class="tools-grid">
+          <a href="#pdf-to-word" class="tool-card" data-color="blue">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M9 15l2-6 2 6M10 13h2"/></svg></div>
+            <h3>PDF to Word</h3>
+            <p>Convert PDF to editable Word document</p>
+          </a>
+          <a href="#pdf-to-excel" class="tool-card" data-color="emerald">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M8 18h8M8 14h8M8 10h8"/></svg></div>
+            <h3>PDF to Excel</h3>
+            <p>Convert PDF tables to Excel spreadsheet</p>
+          </a>
+          <a href="#pdf-to-ppt" class="tool-card" data-color="orange">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 3h20v14H2z"/><path d="M8 21h8M12 17v4"/></svg></div>
+            <h3>PDF to PowerPoint</h3>
+            <p>Convert PDF pages to presentation slides</p>
+          </a>
+          <a href="#word-to-pdf" class="tool-card" data-color="indigo">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6M9 15l3 3 3-3"/></svg></div>
+            <h3>Word to PDF</h3>
+            <p>Convert Word documents to PDF</p>
+          </a>
+          <a href="#excel-to-pdf" class="tool-card" data-color="teal">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6M9 15l3 3 3-3"/></svg></div>
+            <h3>Excel to PDF</h3>
+            <p>Convert Excel spreadsheets to PDF</p>
+          </a>
+          <a href="#ppt-to-pdf" class="tool-card" data-color="rose">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6M9 15l3 3 3-3"/></svg></div>
+            <h3>PPT to PDF</h3>
+            <p>Convert PowerPoint presentations to PDF</p>
+          </a>
+          <a href="#pdf-to-image" class="tool-card" data-color="cyan">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+            <h3>PDF to Images</h3>
+            <p>Convert each PDF page to JPG or PNG</p>
+          </a>
+          <a href="#image-to-pdf" class="tool-card" data-color="amber">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6M9 15l3 3 3-3"/></svg></div>
+            <h3>Images to PDF</h3>
+            <p>Create a PDF document from your images</p>
+          </a>
+          <a href="#pdf-to-html" class="tool-card" data-color="cyan"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 8l-4 4 4 4M17 8l4 4-4 4M14 4l-4 16"/></svg></div><h3>PDF to HTML</h3><p>Convert PDF content to HTML</p></a>
+          <a href="#markdown-to-pdf" class="tool-card" data-color="rose"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M7 13h4M7 17h10M7 9h2"/></svg></div><h3>Markdown to PDF</h3><p>Render Markdown as formatted PDF</p></a>
+          <a href="#pdf-to-json" class="tool-card" data-color="violet">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h2a2 2 0 012 2v1a2 2 0 01-2 2H5a2 2 0 00-2 2v1a2 2 0 002 2h2"/><path d="M20 6h-2a2 2 0 00-2 2v1a2 2 0 002 2h1a2 2 0 012 2v1a2 2 0 01-2 2h-2"/></svg></div>
+            <h3>PDF to JSON</h3>
+            <p>Extract PDF text content as JSON</p>
+          </a>
+          <a href="#pdf-to-xml" class="tool-card" data-color="blue">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M13 2v7h7"/><path d="M8 13l2 2-2 2M16 13l-2 2 2 2"/></svg></div>
+            <h3>PDF to XML</h3>
+            <p>Extract PDF text as structured XML</p>
+          </a>
+          <a href="#pdf-to-base64" class="tool-card" data-color="cyan">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h4M7 12h10M7 16h6"/></svg></div>
+            <h3>PDF to Base64</h3>
+            <p>Encode PDF file as Base64 string</p>
+          </a>
+          <a href="#pdf-to-tiff" class="tool-card" data-color="emerald">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg></div>
+            <h3>PDF to TIFF</h3>
+            <p>Convert PDF pages to TIFF images</p>
+          </a>
+          <a href="#pdf-to-yaml" class="tool-card" data-color="amber">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4l4 6v10M12 4l4 6M20 4l-4 6v10"/></svg></div>
+            <h3>PDF to YAML</h3>
+            <p>Extract PDF text as YAML format</p>
+          </a>
+          <a href="#json-to-pdf" class="tool-card" data-color="indigo">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6M9 15l3 3 3-3"/></svg></div>
+            <h3>JSON to PDF</h3>
+            <p>Render JSON data as a PDF document</p>
+          </a>
+          <a href="#xml-to-pdf" class="tool-card" data-color="rose">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6M9 15l3 3 3-3"/></svg></div>
+            <h3>XML to PDF</h3>
+            <p>Render XML content as a PDF document</p>
+          </a>
+          <a href="#base64-to-pdf" class="tool-card" data-color="teal">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6M9 15l3 3 3-3"/></svg></div>
+            <h3>Base64 to PDF</h3>
+            <p>Decode a Base64 string back to PDF</p>
+          </a>
+          <a href="#tiff-to-pdf" class="tool-card" data-color="orange">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6M9 15l3 3 3-3"/></svg></div>
+            <h3>TIFF to PDF</h3>
+            <p>Convert TIFF images to PDF document</p>
+          </a>
+          <a href="#yaml-to-pdf" class="tool-card" data-color="pink">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6"/><path d="M12 18v-6M9 15l3 3 3-3"/></svg></div>
+            <h3>YAML to PDF</h3>
+            <p>Render YAML content as a PDF document</p>
+          </a>
+        </div>
+
+        <!-- Image Tools -->
+        <h2 class="section-title" id="image-section">
+          <span class="section-icon image-icon">IMG</span>
+          Image Tools
+        </h2>
+        <div class="tools-grid">
+          <a href="#remove-bg" class="tool-card" data-color="violet">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78L12 21.23l8.84-8.84a5.5 5.5 0 000-7.78z"/><path d="M3 12h4l3-9 4 18 3-9h4"/></svg></div>
+            <h3>Remove Background</h3>
+            <p>Remove solid backgrounds from images</p>
+          </a>
+          <a href="#convert-image" class="tool-card" data-color="amber">
+            <div class="tool-card-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg>
+            </div>
+            <h3>Convert Image</h3>
+            <p>Change format: JPG, PNG, WEBP, BMP</p>
+          </a>
+          <a href="#resize-image" class="tool-card" data-color="teal">
+            <div class="tool-card-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+            </div>
+            <h3>Resize Image</h3>
+            <p>Change the dimensions of your image</p>
+          </a>
+          <a href="#compress-image" class="tool-card" data-color="orange">
+            <div class="tool-card-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg>
+            </div>
+            <h3>Compress Image</h3>
+            <p>Reduce image file size with quality control</p>
+          </a>
+          <a href="#crop-image" class="tool-card" data-color="pink">
+            <div class="tool-card-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6.13 1L6 16a2 2 0 002 2h15"/><path d="M1 6.13L16 6a2 2 0 012 2v15"/></svg>
+            </div>
+            <h3>Crop Image</h3>
+            <p>Crop and trim your images precisely</p>
+          </a>
+          <a href="#rotate-flip-image" class="tool-card" data-color="indigo"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 4v6h6"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg></div><h3>Rotate & Flip</h3><p>Rotate or flip images in any direction</p></a>
+          <a href="#image-filters" class="tool-card" data-color="rose"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 2a7 7 0 017 7c0 5-7 13-7 13S5 14 5 9a7 7 0 017-7"/></svg></div><h3>Image Filters</h3><p>Grayscale, sepia, blur, brightness & more</p></a>
+          <a href="#add-text-image" class="tool-card" data-color="cyan"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg></div><h3>Add Text to Image</h3><p>Overlay text on your images</p></a>
+          <a href="#image-to-base64" class="tool-card" data-color="emerald"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h4M7 12h10M7 16h6"/></svg></div><h3>Image to Base64</h3><p>Encode any image as Base64 string</p></a>
+          <a href="#qr-generate" class="tool-card" data-color="blue"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="3" height="3"/><path d="M21 14h-3v7h3"/></svg></div><h3>QR Code Generator</h3><p>Create QR codes from text or URLs</p></a>
+          <a href="#qr-reader" class="tool-card" data-color="violet"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 7V5a2 2 0 012-2h2M17 3h2a2 2 0 012 2v2M21 17v2a2 2 0 01-2 2h-2M7 21H5a2 2 0 01-2-2v-2"/><rect x="7" y="7" width="10" height="10" rx="1"/></svg></div><h3>QR Code Reader</h3><p>Scan QR codes from images</p></a>
+          <a href="#svg-to-png" class="tool-card" data-color="orange"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M13 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V9z"/><path d="M13 2v7h7"/></svg></div><h3>SVG to PNG</h3><p>Convert SVG files to PNG images</p></a>
+          <a href="#round-crop" class="tool-card" data-color="pink"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/></svg></div><h3>Circle Crop</h3><p>Crop images into circles or rounded shapes</p></a>
+          <a href="#upscale-image" class="tool-card" data-color="indigo">
+            <div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M15 3h6v6M14 10l7-7"/><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 15l5-5 4 4 3-3 6 6"/></svg></div>
+            <h3>Upscale Image</h3>
+            <p>Increase resolution — 2K to 4K and beyond</p>
+          </a>
+          <a href="#color-palette" class="tool-card" data-color="amber"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10c.93 0 1.5-.67 1.5-1.5 0-.39-.14-.74-.39-1.02A1.5 1.5 0 0114.5 18h1a5 5 0 005-5c0-5.52-3.82-10-8.5-11z"/><circle cx="7.5" cy="11.5" r="1.5"/><circle cx="12" cy="7.5" r="1.5"/><circle cx="16.5" cy="11.5" r="1.5"/></svg></div><h3>Color Palette</h3><p>Extract dominant colors from images</p></a>
+          <a href="#image-watermark" class="tool-card" data-color="teal"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01z"/></svg></div><h3>Image Watermark</h3><p>Add text watermarks to your photos</p></a>
+          <a href="#photo-collage" class="tool-card" data-color="rose"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg></div><h3>Photo Collage</h3><p>Combine multiple images into a grid</p></a>
+          <a href="#favicon-generator" class="tool-card" data-color="blue"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="4"/><circle cx="12" cy="12" r="4"/></svg></div><h3>Favicon Generator</h3><p>Generate multi-size favicons from an image</p></a>
+          <a href="#exif-viewer" class="tool-card" data-color="emerald"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg></div><h3>EXIF Viewer</h3><p>View and strip image metadata for privacy</p></a>
+          <a href="#meme-generator" class="tool-card" data-color="orange"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div><h3>Meme Generator</h3><p>Add top/bottom text to create memes</p></a>
+          <a href="#image-compare" class="tool-card" data-color="violet"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="3" width="8" height="18" rx="1"/><rect x="14" y="3" width="8" height="18" rx="1"/><path d="M12 6v12"/></svg></div><h3>Image Compare</h3><p>Side-by-side comparison with draggable slider</p></a>
+          <a href="#ico-generator" class="tool-card" data-color="cyan"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M9 9h6v6H9z"/></svg></div><h3>ICO Generator</h3><p>Convert images to .ico favicon format</p></a>
+          <a href="#ascii-art" class="tool-card" data-color="slate"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg></div><h3>ASCII Art</h3><p>Convert images to ASCII text art</p></a>
+        </div>
+
+        <!-- Text & Data Tools -->
+        <h2 class="section-title" id="text-section">
+          <span class="section-icon" style="background:linear-gradient(135deg,#10b981,#06b6d4)">TXT</span>
+          Text & Data Tools
+        </h2>
+        <div class="tools-grid">
+          <a href="#text-diff" class="tool-card" data-color="blue"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3v18M3 12h18"/></svg></div><h3>Text Diff</h3><p>Compare two texts side by side</p></a>
+          <a href="#word-counter" class="tool-card" data-color="emerald"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg></div><h3>Word Counter</h3><p>Count words, characters, sentences</p></a>
+          <a href="#json-formatter" class="tool-card" data-color="violet"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h2a2 2 0 012 2v1a2 2 0 01-2 2H5a2 2 0 00-2 2v1a2 2 0 002 2h2"/><path d="M20 6h-2a2 2 0 00-2 2v1a2 2 0 002 2h1a2 2 0 012 2v1a2 2 0 01-2 2h-2"/></svg></div><h3>JSON Formatter</h3><p>Format, validate & minify JSON</p></a>
+          <a href="#csv-json" class="tool-card" data-color="amber"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 1l4 4-4 4"/><path d="M3 11V9a4 4 0 014-4h14"/><path d="M7 23l-4-4 4-4"/><path d="M21 13v2a4 4 0 01-4 4H3"/></svg></div><h3>CSV ↔ JSON</h3><p>Convert between CSV and JSON</p></a>
+          <a href="#markdown-editor" class="tool-card" data-color="indigo"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M6 10v4l2-2 2 2v-4M14 10v4M14 12h2.5a1.5 1.5 0 000-3H14"/></svg></div><h3>Markdown Editor</h3><p>Live preview Markdown editor</p></a>
+          <a href="#hash-generator" class="tool-card" data-color="rose"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 9h16M4 15h16M10 3l-2 18M16 3l-2 18"/></svg></div><h3>Hash Generator</h3><p>Generate MD5, SHA-1, SHA-256 hashes</p></a>
+          <a href="#base64-tool" class="tool-card" data-color="cyan"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 8h4M7 12h10M7 16h6"/></svg></div><h3>Base64 Tool</h3><p>Encode and decode Base64 text</p></a>
+          <a href="#url-encode" class="tool-card" data-color="orange"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div><h3>URL Encode/Decode</h3><p>Encode or decode URL strings</p></a>
+          <a href="#lorem-ipsum" class="tool-card" data-color="teal"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 10h16M4 14h10M4 18h12"/></svg></div><h3>Lorem Ipsum</h3><p>Generate placeholder text</p></a>
+          <a href="#regex-tester" class="tool-card" data-color="pink"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div><h3>Regex Tester</h3><p>Test regular expressions live</p></a>
+          <a href="#color-converter" class="tool-card" data-color="violet"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0110 10H12V2z" fill="currentColor" opacity="0.15"/></svg></div><h3>Color Converter</h3><p>Convert HEX, RGB, HSL colors</p></a>
+          <a href="#code-to-pdf" class="tool-card" data-color="indigo"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 8l-4 4 4 4M17 8l4 4-4 4"/><path d="M14 4l-4 16"/></svg></div><h3>Code to PDF</h3><p>Print source code as formatted PDF</p></a>
+          <a href="#case-converter" class="tool-card" data-color="teal"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 7V4h16v3M9 20h6M12 4v16"/></svg></div><h3>Case Converter</h3><p>UPPER, lower, Title, camelCase, snake_case</p></a>
+          <a href="#slug-generator" class="tool-card" data-color="amber"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg></div><h3>Slug Generator</h3><p>Convert text to URL-friendly slugs</p></a>
+          <a href="#password-generator" class="tool-card" data-color="rose"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg></div><h3>Password Generator</h3><p>Generate secure random passwords</p></a>
+          <a href="#uuid-generator" class="tool-card" data-color="emerald"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 9h16M4 15h16M10 3l-2 18M16 3l-2 18"/></svg></div><h3>UUID Generator</h3><p>Generate v4 UUIDs in bulk</p></a>
+          <a href="#jwt-decoder" class="tool-card" data-color="orange"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3>JWT Decoder</h3><p>Decode and inspect JWT tokens</p></a>
+          <a href="#timestamp-converter" class="tool-card" data-color="blue"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div><h3>Timestamp Converter</h3><p>Unix timestamp ↔ human-readable date</p></a>
+          <a href="#cron-parser" class="tool-card" data-color="violet"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/><path d="M2 12h2M20 12h2"/></svg></div><h3>Cron Parser</h3><p>Explain cron expressions in plain English</p></a>
+          <a href="#json-to-ts" class="tool-card" data-color="cyan"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 8l-4 4 4 4M17 8l4 4-4 4"/><path d="M14 4l-4 16"/></svg></div><h3>JSON → TypeScript</h3><p>Generate TypeScript interfaces from JSON</p></a>
+          <a href="#minify-code" class="tool-card" data-color="pink"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M7 10l5 5 5-5"/><path d="M12 15V3"/></svg></div><h3>Minify Code</h3><p>Minify HTML, CSS, and JavaScript</p></a>
+          <a href="#html-prettifier" class="tool-card" data-color="indigo"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 8l-4 4 4 4M17 8l4 4-4 4M14 4l-4 16"/></svg></div><h3>HTML Prettifier</h3><p>Format and indent HTML/XML code</p></a>
+          <a href="#sql-formatter" class="tool-card" data-color="teal"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div><h3>SQL Formatter</h3><p>Format and beautify SQL queries</p></a>
+          <a href="#curl-to-code" class="tool-card" data-color="orange"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 9l3 3-3 3M13 15h3"/></svg></div><h3>cURL → Code</h3><p>Convert cURL commands to fetch, Python, PHP</p></a>
+        </div>
+
+        <!-- Utilities -->
+        <h2 class="section-title" id="utility-section">
+          <span class="section-icon" style="background:linear-gradient(135deg,#f59e0b,#ef4444)">UTL</span>
+          Utilities
+        </h2>
+        <div class="tools-grid">
+          <a href="#zip-tool" class="tool-card" data-color="amber"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 8v13H3V8"/><path d="M1 3h22v5H1z"/><path d="M10 12h4"/></svg></div><h3>Archive Tool</h3><p>ZIP, TAR, GZ, TAR.GZ — create & extract</p></a>
+          <a href="#file-hash" class="tool-card" data-color="emerald"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div><h3>File Hash Checker</h3><p>Verify file integrity with checksums</p></a>
+          <a href="#audio-trimmer" class="tool-card" data-color="rose"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg></div><h3>Audio Trimmer</h3><p>Trim audio files in the browser</p></a>
+          <a href="#video-to-gif" class="tool-card" data-color="orange"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="2" width="20" height="20" rx="2.18"/><path d="M7 2v20M17 2v20M2 12h20M2 7h5M2 17h5M17 17h5M17 7h5"/></svg></div><h3>Video to GIF</h3><p>Convert video clips to animated GIFs</p></a>
+          <a href="#text-encrypt" class="tool-card" data-color="violet"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/><circle cx="12" cy="16" r="1"/></svg></div><h3>Text Encrypt/Decrypt</h3><p>AES-256 encryption with password</p></a>
+          <a href="#steganography" class="tool-card" data-color="pink"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><h3>Steganography</h3><p>Hide secret text messages inside images</p></a>
+          <a href="#css-gradient" class="tool-card" data-color="indigo"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 3l18 18"/></svg></div><h3>CSS Gradient</h3><p>Visual gradient builder with CSS output</p></a>
+          <a href="#box-shadow" class="tool-card" data-color="blue"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="14" height="14" rx="2"/><rect x="7" y="7" width="14" height="14" rx="2" opacity="0.3"/></svg></div><h3>Box Shadow</h3><p>Visual CSS box-shadow generator</p></a>
+          <a href="#placeholder-image" class="tool-card" data-color="teal"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 3v18"/></svg></div><h3>Placeholder Image</h3><p>Generate placeholder images with custom size</p></a>
+          <a href="#chart-maker" class="tool-card" data-color="cyan"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div><h3>Chart Maker</h3><p>Create bar, pie, and line charts from data</p></a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== MERGE PDF ==================== -->
+    <section id="merge-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header">
+          <a href="#" class="back-btn">&larr; Back to tools</a>
+          <h1>Merge PDF</h1>
+          <p>Combine multiple PDF files into a single document. Drag to reorder.</p>
+        </div>
+        <div class="drop-zone" id="merge-pdf-dropzone" data-accept=".pdf" data-multiple="true">
+          <div class="drop-zone-content">
+            <div class="drop-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+            </div>
+            <p>Drag & drop PDF files here</p>
+            <span>or</span>
+            <label for="merge-pdf-input" class="btn btn-outline">Choose Files</label>
+            <input type="file" id="merge-pdf-input" accept=".pdf,application/pdf" multiple hidden>
+            <span class="drop-hint">PDF files only</span>
+          </div>
+        </div>
+        <div class="file-list sortable" id="merge-pdf-files"></div>
+        <div class="tool-actions">
+          <button class="btn btn-primary btn-lg" id="merge-pdf-action" disabled>
+            <span class="btn-text">Merge PDFs</span>
+            <span class="btn-loader"></span>
+          </button>
+        </div>
+        <div class="output-area" id="merge-pdf-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== SPLIT PDF ==================== -->
+    <section id="split-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header">
+          <a href="#" class="back-btn">&larr; Back to tools</a>
+          <h1>Split PDF</h1>
+          <p>Select pages to extract from your PDF file.</p>
+        </div>
+        <div class="drop-zone" id="split-pdf-dropzone" data-accept=".pdf">
+          <div class="drop-zone-content">
+            <div class="drop-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+            </div>
+            <p>Drag & drop a PDF file here</p>
+            <span>or</span>
+            <label for="split-pdf-input" class="btn btn-outline">Choose File</label>
+            <input type="file" id="split-pdf-input" accept=".pdf,application/pdf" hidden>
+            <span class="drop-hint">Single PDF file</span>
+          </div>
+        </div>
+        <div class="pages-grid" id="split-pdf-pages"></div>
+        <div class="tool-options" id="split-pdf-options" style="display:none">
+          <div class="option-group">
+            <label>Page range (e.g. 1-3, 5, 7-9):</label>
+            <input type="text" id="split-pdf-range" class="input" placeholder="1-3, 5, 7-9">
+          </div>
+          <div class="option-group">
+            <button class="btn btn-sm btn-outline" id="split-select-all">Select All</button>
+            <button class="btn btn-sm btn-outline" id="split-select-none">Deselect All</button>
+          </div>
+        </div>
+        <div class="tool-actions">
+          <button class="btn btn-primary btn-lg" id="split-pdf-action" disabled>
+            <span class="btn-text">Extract Pages</span>
+            <span class="btn-loader"></span>
+          </button>
+        </div>
+        <div class="output-area" id="split-pdf-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== COMPRESS PDF ==================== -->
+    <section id="compress-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header">
+          <a href="#" class="back-btn">&larr; Back to tools</a>
+          <h1>Compress PDF</h1>
+          <p>Reduce PDF file size by optimizing embedded images.</p>
+        </div>
+        <div class="drop-zone" id="compress-pdf-dropzone" data-accept=".pdf">
+          <div class="drop-zone-content">
+            <div class="drop-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+            </div>
+            <p>Drag & drop a PDF file here</p>
+            <span>or</span>
+            <label for="compress-pdf-input" class="btn btn-outline">Choose File</label>
+            <input type="file" id="compress-pdf-input" accept=".pdf,application/pdf" hidden>
+            <span class="drop-hint">Single PDF file</span>
+          </div>
+        </div>
+        <div class="file-list" id="compress-pdf-files"></div>
+        <div class="tool-options" id="compress-pdf-options" style="display:none">
+          <div class="option-group">
+            <label for="compress-pdf-quality">Compression level:</label>
+            <div class="range-group">
+              <input type="range" id="compress-pdf-quality" min="0.1" max="0.9" step="0.1" value="0.5">
+              <span id="compress-pdf-quality-val">Medium</span>
+            </div>
+          </div>
+        </div>
+        <div class="tool-actions">
+          <button class="btn btn-primary btn-lg" id="compress-pdf-action" disabled>
+            <span class="btn-text">Compress PDF</span>
+            <span class="btn-loader"></span>
+          </button>
+        </div>
+        <div class="output-area" id="compress-pdf-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== PDF TO IMAGE ==================== -->
+    <section id="pdf-to-image-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header">
+          <a href="#" class="back-btn">&larr; Back to tools</a>
+          <h1>PDF to Images</h1>
+          <p>Convert each page of your PDF into high-quality images.</p>
+        </div>
+        <div class="drop-zone" id="pdf-to-image-dropzone" data-accept=".pdf">
+          <div class="drop-zone-content">
+            <div class="drop-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+            </div>
+            <p>Drag & drop a PDF file here</p>
+            <span>or</span>
+            <label for="pdf-to-image-input" class="btn btn-outline">Choose File</label>
+            <input type="file" id="pdf-to-image-input" accept=".pdf,application/pdf" hidden>
+            <span class="drop-hint">Single PDF file</span>
+          </div>
+        </div>
+        <div class="file-list" id="pdf-to-image-files"></div>
+        <div class="tool-options" id="pdf-to-image-options" style="display:none">
+          <div class="option-row">
+            <div class="option-group">
+              <label for="pdf-to-image-format">Output format:</label>
+              <select id="pdf-to-image-format" class="select">
+                <option value="png">PNG</option>
+                <option value="jpeg">JPEG</option>
+                <option value="webp">WEBP</option>
+              </select>
+            </div>
+            <div class="option-group">
+              <label for="pdf-to-image-scale">Scale:</label>
+              <select id="pdf-to-image-scale" class="select">
+                <option value="1">1x (72 DPI)</option>
+                <option value="2" selected>2x (144 DPI)</option>
+                <option value="3">3x (216 DPI)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="tool-actions">
+          <button class="btn btn-primary btn-lg" id="pdf-to-image-action" disabled>
+            <span class="btn-text">Convert to Images</span>
+            <span class="btn-loader"></span>
+          </button>
+        </div>
+        <div class="output-area" id="pdf-to-image-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== IMAGE TO PDF ==================== -->
+    <section id="image-to-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header">
+          <a href="#" class="back-btn">&larr; Back to tools</a>
+          <h1>Images to PDF</h1>
+          <p>Create a PDF from your images. Drag to reorder pages.</p>
+        </div>
+        <div class="drop-zone" id="image-to-pdf-dropzone" data-accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr" data-multiple="true">
+          <div class="drop-zone-content">
+            <div class="drop-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+            </div>
+            <p>Drag & drop images here</p>
+            <span>or</span>
+            <label for="image-to-pdf-input" class="btn btn-outline">Choose Images</label>
+            <input type="file" id="image-to-pdf-input" accept="image/jpeg,image/png,image/webp,image/bmp" multiple hidden>
+            <span class="drop-hint">JPG, PNG, WEBP, BMP</span>
+          </div>
+        </div>
+        <div class="file-list sortable" id="image-to-pdf-files"></div>
+        <div class="tool-options" id="image-to-pdf-options" style="display:none">
+          <div class="option-row">
+            <div class="option-group">
+              <label for="image-to-pdf-size">Page size:</label>
+              <select id="image-to-pdf-size" class="select">
+                <option value="fit">Fit to image</option>
+                <option value="a4">A4</option>
+                <option value="letter">US Letter</option>
+              </select>
+            </div>
+            <div class="option-group">
+              <label for="image-to-pdf-orient">Orientation:</label>
+              <select id="image-to-pdf-orient" class="select">
+                <option value="auto">Auto</option>
+                <option value="portrait">Portrait</option>
+                <option value="landscape">Landscape</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="tool-actions">
+          <button class="btn btn-primary btn-lg" id="image-to-pdf-action" disabled>
+            <span class="btn-text">Create PDF</span>
+            <span class="btn-loader"></span>
+          </button>
+        </div>
+        <div class="output-area" id="image-to-pdf-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== ROTATE PDF ==================== -->
+    <section id="rotate-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header">
+          <a href="#" class="back-btn">&larr; Back to tools</a>
+          <h1>Rotate PDF</h1>
+          <p>Rotate all or specific pages of your PDF.</p>
+        </div>
+        <div class="drop-zone" id="rotate-pdf-dropzone" data-accept=".pdf">
+          <div class="drop-zone-content">
+            <div class="drop-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+            </div>
+            <p>Drag & drop a PDF file here</p>
+            <span>or</span>
+            <label for="rotate-pdf-input" class="btn btn-outline">Choose File</label>
+            <input type="file" id="rotate-pdf-input" accept=".pdf,application/pdf" hidden>
+            <span class="drop-hint">Single PDF file</span>
+          </div>
+        </div>
+        <div class="file-list" id="rotate-pdf-files"></div>
+        <div class="tool-options" id="rotate-pdf-options" style="display:none">
+          <div class="option-group">
+            <label>Rotation:</label>
+            <div class="rotation-btns">
+              <button class="btn btn-outline rotation-btn active" data-degrees="90">90° CW</button>
+              <button class="btn btn-outline rotation-btn" data-degrees="180">180°</button>
+              <button class="btn btn-outline rotation-btn" data-degrees="270">90° CCW</button>
+            </div>
+          </div>
+        </div>
+        <div class="tool-actions">
+          <button class="btn btn-primary btn-lg" id="rotate-pdf-action" disabled>
+            <span class="btn-text">Rotate PDF</span>
+            <span class="btn-loader"></span>
+          </button>
+        </div>
+        <div class="output-area" id="rotate-pdf-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== CONVERT IMAGE ==================== -->
+    <section id="convert-image-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header">
+          <a href="#" class="back-btn">&larr; Back to tools</a>
+          <h1>Convert Image</h1>
+          <p>Change the format of your image between JPG, PNG, WEBP, and BMP.</p>
+        </div>
+        <div class="drop-zone" id="convert-image-dropzone" data-accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr" data-multiple="true">
+          <div class="drop-zone-content">
+            <div class="drop-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+            </div>
+            <p>Drag & drop images here</p>
+            <span>or</span>
+            <label for="convert-image-input" class="btn btn-outline">Choose Images</label>
+            <input type="file" id="convert-image-input" accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr" multiple hidden>
+            <span class="drop-hint">JPG, PNG, WEBP, AVIF, HEIC, TIFF, DNG, BMP, GIF & more</span>
+          </div>
+        </div>
+        <div class="file-list" id="convert-image-files"></div>
+        <div class="tool-options" id="convert-image-options" style="display:none">
+          <div class="option-group">
+            <label for="convert-image-format">Convert to:</label>
+            <select id="convert-image-format" class="select">
+              <option value="image/jpeg">JPEG (.jpg)</option>
+              <option value="image/png">PNG (.png)</option>
+              <option value="image/webp">WEBP (.webp)</option>
+              <option value="image/avif">AVIF (.avif)</option>
+              <option value="image/bmp">BMP (.bmp)</option>
+              <option value="image/tiff">TIFF (.tiff)</option>
+            </select>
+          </div>
+        </div>
+        <div class="tool-actions">
+          <button class="btn btn-primary btn-lg" id="convert-image-action" disabled>
+            <span class="btn-text">Convert Images</span>
+            <span class="btn-loader"></span>
+          </button>
+        </div>
+        <div class="output-area" id="convert-image-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== RESIZE IMAGE ==================== -->
+    <section id="resize-image-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header">
+          <a href="#" class="back-btn">&larr; Back to tools</a>
+          <h1>Resize Image</h1>
+          <p>Change the dimensions of your image.</p>
+        </div>
+        <div class="drop-zone" id="resize-image-dropzone" data-accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr">
+          <div class="drop-zone-content">
+            <div class="drop-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+            </div>
+            <p>Drag & drop an image here</p>
+            <span>or</span>
+            <label for="resize-image-input" class="btn btn-outline">Choose Image</label>
+            <input type="file" id="resize-image-input" accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr" hidden>
+            <span class="drop-hint">Any image format</span>
+          </div>
+        </div>
+        <div class="file-list" id="resize-image-files"></div>
+        <div class="tool-options" id="resize-image-options" style="display:none">
+          <div class="option-row">
+            <div class="option-group">
+              <label for="resize-width">Width (px):</label>
+              <input type="number" id="resize-width" class="input" placeholder="Width" min="1">
+            </div>
+            <div class="option-group">
+              <label for="resize-height">Height (px):</label>
+              <input type="number" id="resize-height" class="input" placeholder="Height" min="1">
+            </div>
+          </div>
+          <div class="option-group">
+            <label class="checkbox-label">
+              <input type="checkbox" id="resize-lock-ratio" checked>
+              <span>Lock aspect ratio</span>
+            </label>
+          </div>
+          <div class="image-preview" id="resize-image-preview"></div>
+        </div>
+        <div class="tool-actions">
+          <button class="btn btn-primary btn-lg" id="resize-image-action" disabled>
+            <span class="btn-text">Resize Image</span>
+            <span class="btn-loader"></span>
+          </button>
+        </div>
+        <div class="output-area" id="resize-image-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== COMPRESS IMAGE ==================== -->
+    <section id="compress-image-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header">
+          <a href="#" class="back-btn">&larr; Back to tools</a>
+          <h1>Compress Image</h1>
+          <p>Reduce image file size with adjustable quality.</p>
+        </div>
+        <div class="drop-zone" id="compress-image-dropzone" data-accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr" data-multiple="true">
+          <div class="drop-zone-content">
+            <div class="drop-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+            </div>
+            <p>Drag & drop images here</p>
+            <span>or</span>
+            <label for="compress-image-input" class="btn btn-outline">Choose Images</label>
+            <input type="file" id="compress-image-input" accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr" multiple hidden>
+            <span class="drop-hint">JPG, PNG, WEBP</span>
+          </div>
+        </div>
+        <div class="file-list" id="compress-image-files"></div>
+        <div class="tool-options" id="compress-image-options" style="display:none">
+          <div class="option-group">
+            <label for="compress-image-quality">Quality: <strong id="compress-quality-val">75%</strong></label>
+            <input type="range" id="compress-image-quality" min="10" max="100" step="5" value="75">
+          </div>
+          <div class="option-group">
+            <label for="compress-image-output-format">Output format:</label>
+            <select id="compress-image-output-format" class="select">
+              <option value="image/jpeg">JPEG</option>
+              <option value="image/webp">WEBP</option>
+              <option value="image/png">PNG (lossless)</option>
+            </select>
+          </div>
+        </div>
+        <div class="tool-actions">
+          <button class="btn btn-primary btn-lg" id="compress-image-action" disabled>
+            <span class="btn-text">Compress Images</span>
+            <span class="btn-loader"></span>
+          </button>
+        </div>
+        <div class="output-area" id="compress-image-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== CROP IMAGE ==================== -->
+    <section id="crop-image-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header">
+          <a href="#" class="back-btn">&larr; Back to tools</a>
+          <h1>Crop Image</h1>
+          <p>Select an area to crop from your image.</p>
+        </div>
+        <div class="drop-zone" id="crop-image-dropzone" data-accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr">
+          <div class="drop-zone-content">
+            <div class="drop-icon">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg>
+            </div>
+            <p>Drag & drop an image here</p>
+            <span>or</span>
+            <label for="crop-image-input" class="btn btn-outline">Choose Image</label>
+            <input type="file" id="crop-image-input" accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr" hidden>
+            <span class="drop-hint">Any image format</span>
+          </div>
+        </div>
+        <div class="crop-workspace" id="crop-workspace" style="display:none">
+          <div class="crop-canvas-wrap">
+            <canvas id="crop-canvas"></canvas>
+            <div class="crop-overlay" id="crop-overlay"></div>
+          </div>
+          <div class="crop-info">
+            <span id="crop-dimensions">Select an area to crop</span>
+          </div>
+        </div>
+        <div class="tool-actions">
+          <button class="btn btn-primary btn-lg" id="crop-image-action" disabled>
+            <span class="btn-text">Crop & Download</span>
+            <span class="btn-loader"></span>
+          </button>
+        </div>
+        <div class="output-area" id="crop-image-output"></div>
+      </div>
+    </section>
+    <!-- ==================== WATERMARK PDF ==================== -->
+    <section id="watermark-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Watermark PDF</h1><p>Add a text watermark across all pages of your PDF.</p></div>
+        <div class="drop-zone" id="watermark-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="watermark-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="watermark-pdf-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">PDF files only</span></div></div>
+        <div class="file-list" id="watermark-pdf-files"></div>
+        <div class="tool-options" id="watermark-pdf-options" style="display:none">
+          <div class="option-group"><label for="watermark-text">Watermark text:</label><input type="text" id="watermark-text" class="input" value="CONFIDENTIAL"></div>
+          <div class="option-row"><div class="option-group"><label for="watermark-size">Font size:</label><input type="number" id="watermark-size" class="input" value="60" min="10" max="200"></div><div class="option-group"><label for="watermark-color">Color:</label><input type="color" id="watermark-color" value="#ff0000" style="width:100%;height:40px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer"></div></div>
+          <div class="option-row"><div class="option-group"><label for="watermark-opacity">Opacity: <strong id="watermark-opacity-val">30%</strong></label><input type="range" id="watermark-opacity" min="5" max="100" step="5" value="30"></div><div class="option-group"><label for="watermark-rotation">Rotation: <strong id="watermark-rotation-val">-45°</strong></label><input type="range" id="watermark-rotation" min="-90" max="90" step="5" value="-45"></div></div>
+        </div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="watermark-pdf-action" disabled><span class="btn-text">Add Watermark</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="watermark-pdf-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== PAGE NUMBERS ==================== -->
+    <section id="page-numbers-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Add Page Numbers</h1><p>Add page numbers to every page of your PDF.</p></div>
+        <div class="drop-zone" id="page-numbers-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="page-numbers-input" class="btn btn-outline">Choose File</label><input type="file" id="page-numbers-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">PDF files only</span></div></div>
+        <div class="file-list" id="page-numbers-files"></div>
+        <div class="tool-options" id="page-numbers-options" style="display:none">
+          <div class="option-row"><div class="option-group"><label for="pn-position">Position:</label><select id="pn-position" class="select"><option value="bottom-center">Bottom Center</option><option value="bottom-right">Bottom Right</option><option value="bottom-left">Bottom Left</option><option value="top-center">Top Center</option><option value="top-right">Top Right</option></select></div><div class="option-group"><label for="pn-start">Start from:</label><input type="number" id="pn-start" class="input" value="1" min="1"></div></div>
+          <div class="option-row"><div class="option-group"><label for="pn-format">Format:</label><select id="pn-format" class="select"><option value="num">1, 2, 3…</option><option value="page">Page 1, Page 2…</option><option value="of">1 of N</option><option value="dash">— 1 —</option></select></div><div class="option-group"><label for="pn-size">Font size:</label><input type="number" id="pn-size" class="input" value="11" min="6" max="36"></div></div>
+        </div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="page-numbers-action" disabled><span class="btn-text">Add Page Numbers</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="page-numbers-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== SIGN PDF ==================== -->
+    <section id="sign-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Sign PDF</h1><p>Draw your signature, then click on the page to place it.</p></div>
+        <div class="drop-zone" id="sign-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="sign-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="sign-pdf-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">PDF files only</span></div></div>
+        <div class="file-list" id="sign-pdf-files"></div>
+        <div id="sign-pdf-editor" class="pdf-editor" style="display:none">
+          <div class="sign-draw-section">
+            <label class="sign-draw-label">Draw your signature</label>
+            <canvas id="sign-canvas" class="sign-pad" width="500" height="160"></canvas>
+            <div class="sign-pad-controls">
+              <button class="btn btn-sm btn-outline" id="sign-clear">Clear</button>
+              <select id="sign-color" class="select" style="width:auto"><option value="#000000">Black</option><option value="#0000ff">Blue</option><option value="#ff0000">Red</option></select>
+            </div>
+            <p class="sign-draw-hint">Draw above, then click on the page below to place your signature. Drag to move, drag the corner to resize.</p>
+          </div>
+          <div class="pdf-editor-toolbar">
+            <div class="toolbar-group toolbar-page-nav" style="margin-left:0">
+              <button class="btn btn-sm btn-outline" id="sign-pdf-prev" title="Previous page">&#9664;</button>
+              <span id="sign-pdf-page-info">1 / 1</span>
+              <button class="btn btn-sm btn-outline" id="sign-pdf-next" title="Next page">&#9654;</button>
+            </div>
+          </div>
+          <div class="pdf-editor-canvas-wrap" id="sign-pdf-canvas-wrap">
+            <canvas id="sign-pdf-canvas"></canvas>
+            <div class="pdf-editor-overlay" id="sign-pdf-overlay"></div>
+          </div>
+        </div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="sign-pdf-action" disabled><span class="btn-text">Save Signed PDF</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="sign-pdf-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== EDIT PDF ==================== -->
+    <section id="edit-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Edit PDF</h1><p>Click anywhere on the page to add text. Drag to move, double-click to edit.</p></div>
+        <div class="drop-zone" id="edit-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="edit-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="edit-pdf-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">PDF files only</span></div></div>
+        <div class="file-list" id="edit-pdf-files"></div>
+        <div id="edit-pdf-editor" class="pdf-editor" style="display:none">
+          <div class="pdf-editor-toolbar">
+            <div class="toolbar-group">
+              <label>Size</label>
+              <input type="number" id="edit-pdf-size" class="input input-sm" value="16" min="6" max="120" style="width:56px">
+            </div>
+            <div class="toolbar-group">
+              <label>Color</label>
+              <input type="color" id="edit-pdf-color" value="#000000" class="toolbar-color-picker">
+            </div>
+            <div class="toolbar-group toolbar-opacity-group">
+              <label>Opacity</label>
+              <input type="range" id="edit-pdf-opacity" min="0" max="100" value="100" class="toolbar-opacity-slider">
+              <span id="edit-pdf-opacity-val" class="toolbar-opacity-val">100%</span>
+            </div>
+            <div class="toolbar-group toolbar-page-nav">
+              <button class="btn btn-sm btn-outline" id="edit-pdf-prev" title="Previous page">&#9664;</button>
+              <span id="edit-pdf-page-info">1 / 1</span>
+              <button class="btn btn-sm btn-outline" id="edit-pdf-next" title="Next page">&#9654;</button>
+            </div>
+          </div>
+          <div class="pdf-editor-canvas-wrap" id="edit-pdf-canvas-wrap">
+            <canvas id="edit-pdf-canvas"></canvas>
+            <div class="pdf-editor-overlay" id="edit-pdf-overlay"></div>
+          </div>
+        </div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="edit-pdf-action" disabled><span class="btn-text">Save Edited PDF</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="edit-pdf-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== ORGANIZE PDF ==================== -->
+    <section id="organize-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Organize PDF</h1><p>Reorder, delete, and rotate individual pages. Drag thumbnails to reorder.</p></div>
+        <div class="drop-zone" id="organize-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="organize-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="organize-pdf-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">PDF files only</span></div></div>
+        <div class="pages-grid organize-grid" id="organize-pdf-pages"></div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="organize-pdf-action" disabled><span class="btn-text">Save Organized PDF</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="organize-pdf-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== UNLOCK PDF ==================== -->
+    <section id="unlock-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Unlock PDF</h1><p>Remove password protection from your PDF. You must know the password.</p></div>
+        <div class="drop-zone" id="unlock-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a protected PDF here</p><span>or</span><label for="unlock-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="unlock-pdf-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">Password-protected PDF</span></div></div>
+        <div class="file-list" id="unlock-pdf-files"></div>
+        <div class="tool-options" id="unlock-pdf-options" style="display:none">
+          <div class="option-group"><label for="unlock-pdf-password">PDF password:</label><input type="password" id="unlock-pdf-password" class="input" placeholder="Enter the PDF password"></div>
+        </div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="unlock-pdf-action" disabled><span class="btn-text">Unlock PDF</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="unlock-pdf-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== LOCK PDF ==================== -->
+    <section id="lock-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Lock PDF</h1><p>Add password protection to your PDF document.</p></div>
+        <div class="drop-zone" id="lock-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="lock-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="lock-pdf-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">PDF files only</span></div></div>
+        <div class="file-list" id="lock-pdf-files"></div>
+        <div class="tool-options" id="lock-pdf-options" style="display:none">
+          <div class="option-group"><label for="lock-pdf-password">Password:</label><input type="password" id="lock-pdf-password" class="input" placeholder="Enter a password"></div>
+          <div class="option-group"><label for="lock-pdf-confirm">Confirm password:</label><input type="password" id="lock-pdf-confirm" class="input" placeholder="Re-enter the password"></div>
+          <div class="option-group">
+            <label>Allow users to:</label>
+            <div class="lock-permissions">
+              <label class="lock-perm-label"><input type="checkbox" id="lock-allow-print" checked> Print</label>
+              <label class="lock-perm-label"><input type="checkbox" id="lock-allow-copy"> Copy text</label>
+              <label class="lock-perm-label"><input type="checkbox" id="lock-allow-modify"> Modify</label>
+            </div>
+          </div>
+        </div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="lock-pdf-action" disabled><span class="btn-text">Lock PDF</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="lock-pdf-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== REPAIR PDF ==================== -->
+    <section id="repair-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Repair PDF</h1><p>Attempt to fix corrupted or broken PDF files by re-parsing them.</p></div>
+        <div class="drop-zone" id="repair-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="repair-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="repair-pdf-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">Corrupted or broken PDF</span></div></div>
+        <div class="file-list" id="repair-pdf-files"></div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="repair-pdf-action" disabled><span class="btn-text">Repair PDF</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="repair-pdf-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== OCR PDF ==================== -->
+    <section id="ocr-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>OCR PDF</h1><p>Extract text from scanned/image-based PDFs using optical character recognition.</p></div>
+        <div class="drop-zone" id="ocr-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a scanned PDF here</p><span>or</span><label for="ocr-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="ocr-pdf-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">Scanned or image-based PDF</span></div></div>
+        <div class="file-list" id="ocr-pdf-files"></div>
+        <div class="tool-options" id="ocr-pdf-options" style="display:none">
+          <div class="option-group"><label for="ocr-lang">Language:</label><select id="ocr-lang" class="select"><option value="eng">English</option><option value="spa">Spanish</option><option value="fra">French</option><option value="deu">German</option><option value="ita">Italian</option><option value="por">Portuguese</option><option value="chi_sim">Chinese (Simplified)</option><option value="jpn">Japanese</option></select></div>
+        </div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="ocr-pdf-action" disabled><span class="btn-text">Extract Text (OCR)</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="ocr-pdf-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== PDF TO WORD ==================== -->
+    <section id="pdf-to-word-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>PDF to Word</h1><p>Extract text from your PDF and convert it to an editable Word document (.docx).</p></div>
+        <div class="drop-zone" id="pdf-to-word-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="pdf-to-word-input" class="btn btn-outline">Choose File</label><input type="file" id="pdf-to-word-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">PDF files only</span></div></div>
+        <div class="file-list" id="pdf-to-word-files"></div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="pdf-to-word-action" disabled><span class="btn-text">Convert to Word</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="pdf-to-word-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== PDF TO EXCEL ==================== -->
+    <section id="pdf-to-excel-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>PDF to Excel</h1><p>Extract text and tables from your PDF into an Excel spreadsheet (.xlsx).</p></div>
+        <div class="drop-zone" id="pdf-to-excel-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="pdf-to-excel-input" class="btn btn-outline">Choose File</label><input type="file" id="pdf-to-excel-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">PDF files only</span></div></div>
+        <div class="file-list" id="pdf-to-excel-files"></div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="pdf-to-excel-action" disabled><span class="btn-text">Convert to Excel</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="pdf-to-excel-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== PDF TO PPT ==================== -->
+    <section id="pdf-to-ppt-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>PDF to PowerPoint</h1><p>Convert each PDF page into a PowerPoint slide as an image.</p></div>
+        <div class="drop-zone" id="pdf-to-ppt-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="pdf-to-ppt-input" class="btn btn-outline">Choose File</label><input type="file" id="pdf-to-ppt-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">PDF files only</span></div></div>
+        <div class="file-list" id="pdf-to-ppt-files"></div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="pdf-to-ppt-action" disabled><span class="btn-text">Convert to PowerPoint</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="pdf-to-ppt-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== WORD TO PDF ==================== -->
+    <section id="word-to-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Word to PDF</h1><p>Convert Word documents (.docx) to PDF format.</p></div>
+        <div class="drop-zone" id="word-to-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a Word file here</p><span>or</span><label for="word-to-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="word-to-pdf-input" accept=".docx,.doc,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden><span class="drop-hint">.docx files</span></div></div>
+        <div class="file-list" id="word-to-pdf-files"></div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="word-to-pdf-action" disabled><span class="btn-text">Convert to PDF</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="word-to-pdf-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== EXCEL TO PDF ==================== -->
+    <section id="excel-to-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Excel to PDF</h1><p>Convert Excel spreadsheets (.xlsx) to PDF format.</p></div>
+        <div class="drop-zone" id="excel-to-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop an Excel file here</p><span>or</span><label for="excel-to-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="excel-to-pdf-input" accept=".xlsx,.xls,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden><span class="drop-hint">.xlsx files</span></div></div>
+        <div class="file-list" id="excel-to-pdf-files"></div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="excel-to-pdf-action" disabled><span class="btn-text">Convert to PDF</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="excel-to-pdf-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== PPT TO PDF ==================== -->
+    <section id="ppt-to-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>PowerPoint to PDF</h1><p>Convert PowerPoint presentations (.pptx) to PDF format.</p></div>
+        <div class="drop-zone" id="ppt-to-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PowerPoint file here</p><span>or</span><label for="ppt-to-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="ppt-to-pdf-input" accept=".pptx,.ppt,application/vnd.openxmlformats-officedocument.presentationml.presentation" hidden><span class="drop-hint">.pptx files</span></div></div>
+        <div class="file-list" id="ppt-to-pdf-files"></div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="ppt-to-pdf-action" disabled><span class="btn-text">Convert to PDF</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="ppt-to-pdf-output"></div>
+      </div>
+    </section>
+    <!-- ==================== UPSCALE IMAGE ==================== -->
+    <section id="upscale-image-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Upscale Image</h1><p>Increase image resolution with enhanced quality. Uses multi-step upscaling and sharpening.</p></div>
+        <div class="drop-zone" id="upscale-image-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop image here</p><span>or</span><label for="upscale-image-input" class="btn btn-outline">Choose Image</label><input type="file" id="upscale-image-input" accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr" hidden><span class="drop-hint">JPG, PNG, WEBP</span></div></div>
+        <div class="file-list" id="upscale-image-files"></div>
+        <div class="tool-options" id="upscale-image-options" style="display:none">
+          <div class="option-group"><label>Current size: <strong id="upscale-current"></strong></label></div>
+          <div class="option-group"><label>Scale to:</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-sm btn-outline upscale-btn active" data-scale="2">2× (Double)</button>
+              <button class="btn btn-sm btn-outline upscale-btn" data-scale="3">3× (Triple)</button>
+              <button class="btn btn-sm btn-outline upscale-btn" data-scale="4">4× (Quadruple)</button>
+            </div>
+          </div>
+          <div class="option-group"><label>Quick presets:</label>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="btn btn-sm btn-outline upscale-preset" data-w="1920" data-h="1080">1080p (1920×1080)</button>
+              <button class="btn btn-sm btn-outline upscale-preset" data-w="2560" data-h="1440">2K (2560×1440)</button>
+              <button class="btn btn-sm btn-outline upscale-preset" data-w="3840" data-h="2160">4K (3840×2160)</button>
+              <button class="btn btn-sm btn-outline upscale-preset" data-w="7680" data-h="4320">8K (7680×4320)</button>
+            </div>
+          </div>
+          <div class="option-row">
+            <div class="option-group"><label>Custom width:</label><input type="number" id="upscale-w" class="input" placeholder="Width" min="1"></div>
+            <div class="option-group"><label>Custom height:</label><input type="number" id="upscale-h" class="input" placeholder="Height" min="1"></div>
+          </div>
+          <div class="option-group"><label class="checkbox-label"><input type="checkbox" id="upscale-lock" checked><span>Lock aspect ratio</span></label></div>
+          <div class="option-group"><label>Sharpening: <strong id="upscale-sharp-val">Medium</strong></label>
+            <input type="range" id="upscale-sharp" min="0" max="3" step="1" value="1">
+          </div>
+          <div class="option-group"><label>Output: <strong id="upscale-result-size"></strong></label></div>
+        </div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="upscale-image-action" disabled><span class="btn-text">Upscale Image</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="upscale-image-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== NEW PDF TOOLS ==================== -->
+    <section id="flatten-pdf-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Flatten PDF</h1><p>Flatten form fields and annotations by re-rendering pages.</p></div><div class="drop-zone" id="flatten-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop PDF here</p><span>or</span><label for="flatten-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="flatten-pdf-input" accept=".pdf" hidden></div></div><div class="file-list" id="flatten-pdf-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="flatten-pdf-action" disabled><span class="btn-text">Flatten PDF</span><span class="btn-loader"></span></button></div><div class="output-area" id="flatten-pdf-output"></div></div></section>
+
+    <section id="extract-images-pdf-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Extract Images from PDF</h1><p>Renders each page and extracts it as an image.</p></div><div class="drop-zone" id="extract-images-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop PDF here</p><span>or</span><label for="extract-images-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="extract-images-pdf-input" accept=".pdf" hidden></div></div><div class="file-list" id="extract-images-pdf-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="extract-images-pdf-action" disabled><span class="btn-text">Extract Images</span><span class="btn-loader"></span></button></div><div class="output-area" id="extract-images-pdf-output"></div></div></section>
+
+    <section id="pdf-metadata-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>PDF Metadata Editor</h1><p>View and edit PDF document properties.</p></div><div class="drop-zone" id="pdf-metadata-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop PDF here</p><span>or</span><label for="pdf-metadata-input" class="btn btn-outline">Choose File</label><input type="file" id="pdf-metadata-input" accept=".pdf" hidden></div></div><div class="file-list" id="pdf-metadata-files"></div><div class="tool-options" id="pdf-metadata-options" style="display:none"><div class="option-row"><div class="option-group"><label>Title:</label><input type="text" id="meta-title" class="input" placeholder="Document title"></div><div class="option-group"><label>Author:</label><input type="text" id="meta-author" class="input" placeholder="Author name"></div></div><div class="option-row"><div class="option-group"><label>Subject:</label><input type="text" id="meta-subject" class="input" placeholder="Subject"></div><div class="option-group"><label>Keywords:</label><input type="text" id="meta-keywords" class="input" placeholder="keyword1, keyword2"></div></div></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="pdf-metadata-action" disabled><span class="btn-text">Save Metadata</span><span class="btn-loader"></span></button></div><div class="output-area" id="pdf-metadata-output"></div></div></section>
+
+    <section id="grayscale-pdf-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Grayscale PDF</h1><p>Convert a color PDF to black and white.</p></div><div class="drop-zone" id="grayscale-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop PDF here</p><span>or</span><label for="grayscale-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="grayscale-pdf-input" accept=".pdf" hidden></div></div><div class="file-list" id="grayscale-pdf-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="grayscale-pdf-action" disabled><span class="btn-text">Convert to Grayscale</span><span class="btn-loader"></span></button></div><div class="output-area" id="grayscale-pdf-output"></div></div></section>
+
+    <section id="pdf-to-html-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>PDF to HTML</h1><p>Extract PDF text content and create an HTML file.</p></div><div class="drop-zone" id="pdf-to-html-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop PDF here</p><span>or</span><label for="pdf-to-html-input" class="btn btn-outline">Choose File</label><input type="file" id="pdf-to-html-input" accept=".pdf" hidden></div></div><div class="file-list" id="pdf-to-html-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="pdf-to-html-action" disabled><span class="btn-text">Convert to HTML</span><span class="btn-loader"></span></button></div><div class="output-area" id="pdf-to-html-output"></div></div></section>
+
+    <section id="markdown-to-pdf-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Markdown to PDF</h1><p>Upload a Markdown file or paste content below.</p></div><div class="drop-zone" id="markdown-to-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop .md file here</p><span>or</span><label for="markdown-to-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="markdown-to-pdf-input" accept=".md,.markdown,text/markdown" hidden></div></div><div class="file-list" id="markdown-to-pdf-files"></div><div class="tool-options" id="markdown-to-pdf-options"><div class="option-group"><label>Or paste Markdown:</label><textarea id="md-text-input" class="input" rows="8" placeholder="# Heading\n\nYour markdown here..."></textarea></div></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="markdown-to-pdf-action"><span class="btn-text">Convert to PDF</span><span class="btn-loader"></span></button></div><div class="output-area" id="markdown-to-pdf-output"></div></div></section>
+
+    <!-- ==================== NEW IMAGE TOOLS ==================== -->
+    <section id="rotate-flip-image-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Rotate & Flip Image</h1><p>Rotate or mirror your image. Preview updates live.</p></div>
+        <div class="drop-zone" id="rotate-flip-image-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop image here</p><span>or</span><label for="rotate-flip-image-input" class="btn btn-outline">Choose Image</label><input type="file" id="rotate-flip-image-input" accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr" hidden></div></div>
+        <div class="file-list" id="rotate-flip-image-files"></div>
+        <div class="tool-split" id="rf-split" style="display:none">
+          <div class="tool-split-preview" id="rf-preview">
+            <div class="split-preview-pair">
+              <div><canvas id="rf-canvas-before"></canvas><div class="split-label">Original</div></div>
+              <div><canvas id="rf-canvas-after"></canvas><div class="split-label">Preview</div></div>
+            </div>
+          </div>
+          <div class="tool-split-controls">
+            <div class="option-group"><label>Action:</label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-outline rf-btn active" data-action="cw90">90° CW</button><button class="btn btn-sm btn-outline rf-btn" data-action="ccw90">90° CCW</button><button class="btn btn-sm btn-outline rf-btn" data-action="180">180°</button><button class="btn btn-sm btn-outline rf-btn" data-action="flipH">Flip H</button><button class="btn btn-sm btn-outline rf-btn" data-action="flipV">Flip V</button></div>
+            </div>
+            <div class="tool-actions" style="margin-top:16px"><button class="btn btn-primary btn-lg" id="rotate-flip-image-action" disabled><span class="btn-text">Download</span><span class="btn-loader"></span></button></div>
+          </div>
+        </div>
+        <div class="output-area" id="rotate-flip-image-output"></div></div></section>
+
+    <section id="image-filters-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Image Filters</h1><p>Adjust filters and see changes live beside the controls.</p></div>
+        <div class="drop-zone" id="image-filters-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop image here</p><span>or</span><label for="image-filters-input" class="btn btn-outline">Choose Image</label><input type="file" id="image-filters-input" accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr" hidden></div></div>
+        <div class="file-list" id="image-filters-files"></div>
+        <div class="tool-split" id="flt-split" style="display:none">
+          <div class="tool-split-preview" id="flt-preview">
+            <div class="split-preview-pair">
+              <div><canvas id="flt-canvas-before"></canvas><div class="split-label">Original</div></div>
+              <div><canvas id="flt-canvas-after"></canvas><div class="split-label">Live Preview</div></div>
+            </div>
+          </div>
+          <div class="tool-split-controls">
+            <div class="option-group"><label>Brightness: <strong id="flt-bright-val">100%</strong></label><input type="range" id="flt-bright" min="0" max="300" value="100"></div>
+            <div class="option-group"><label>Contrast: <strong id="flt-contrast-val">100%</strong></label><input type="range" id="flt-contrast" min="0" max="300" value="100"></div>
+            <div class="option-group"><label>Saturate: <strong id="flt-saturate-val">100%</strong></label><input type="range" id="flt-saturate" min="0" max="300" value="100"></div>
+            <div class="option-group"><label>Blur: <strong id="flt-blur-val">0px</strong></label><input type="range" id="flt-blur" min="0" max="20" value="0"></div>
+            <div class="option-group"><label>Presets:</label><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-sm btn-outline flt-preset" data-p="gray">Grayscale</button><button class="btn btn-sm btn-outline flt-preset" data-p="sepia">Sepia</button><button class="btn btn-sm btn-outline flt-preset" data-p="invert">Invert</button><button class="btn btn-sm btn-outline flt-preset" data-p="reset">Reset</button></div></div>
+            <div class="tool-actions" style="margin-top:16px"><button class="btn btn-primary btn-lg" id="image-filters-action" disabled><span class="btn-text">Download</span><span class="btn-loader"></span></button></div>
+          </div>
+        </div>
+        <div class="output-area" id="image-filters-output"></div></div></section>
+
+    <section id="add-text-image-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Add Text to Image</h1><p>Overlay text and see the result live beside the controls.</p></div>
+        <div class="drop-zone" id="add-text-image-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop image here</p><span>or</span><label for="add-text-image-input" class="btn btn-outline">Choose Image</label><input type="file" id="add-text-image-input" accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr" hidden></div></div>
+        <div class="file-list" id="add-text-image-files"></div>
+        <div class="tool-split" id="ati-split" style="display:none">
+          <div class="tool-split-preview" id="ati-preview">
+            <h4>Live Preview</h4>
+            <canvas id="ati-canvas-preview"></canvas>
+          </div>
+          <div class="tool-split-controls">
+            <div class="option-group"><label>Text:</label><input type="text" id="ati-text" class="input" value="Sample Text"></div>
+            <div class="option-group"><label>Font size:</label><input type="number" id="ati-size" class="input" value="48" min="8" max="200"></div>
+            <div class="option-group"><label>Color:</label><input type="color" id="ati-color" value="#ffffff" style="width:100%;height:40px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer"></div>
+            <div class="option-group"><label>Position:</label><select id="ati-pos" class="select"><option value="center">Center</option><option value="top">Top</option><option value="bottom">Bottom</option></select></div>
+            <div class="option-group"><label class="checkbox-label"><input type="checkbox" id="ati-shadow" checked><span>Text shadow</span></label></div>
+            <div class="tool-actions" style="margin-top:16px"><button class="btn btn-primary btn-lg" id="add-text-image-action" disabled><span class="btn-text">Download</span><span class="btn-loader"></span></button></div>
+          </div>
+        </div>
+        <div class="output-area" id="add-text-image-output"></div></div></section>
+
+    <section id="image-to-base64-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Image to Base64</h1><p>Encode any image as a Base64 text string.</p></div><div class="drop-zone" id="image-to-base64-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop image here</p><span>or</span><label for="image-to-base64-input" class="btn btn-outline">Choose Image</label><input type="file" id="image-to-base64-input" accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr" hidden></div></div><div class="file-list" id="image-to-base64-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="image-to-base64-action" disabled><span class="btn-text">Encode to Base64</span><span class="btn-loader"></span></button></div><div class="output-area" id="image-to-base64-output"></div></div></section>
+
+    <section id="qr-generate-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>QR Code Generator</h1><p>Generate a QR code from any text or URL.</p></div><div class="text-tool-wrap"><div class="option-group"><label>Text or URL:</label><input type="text" id="qr-gen-input" class="input" placeholder="https://example.com" value=""></div><div class="option-row"><div class="option-group"><label>Size:</label><select id="qr-gen-size" class="select"><option value="200">200px</option><option value="400" selected>400px</option><option value="600">600px</option><option value="800">800px</option></select></div><div class="option-group"><label>Color:</label><input type="color" id="qr-gen-color" value="#000000" style="width:100%;height:40px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer"></div></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="qr-generate-action"><span class="btn-text">Generate QR Code</span><span class="btn-loader"></span></button></div><div class="output-area" id="qr-generate-output" style="text-align:center"></div></div></div></section>
+
+    <section id="qr-reader-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>QR Code Reader</h1><p>Upload an image containing a QR code to decode it.</p></div><div class="drop-zone" id="qr-reader-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop image with QR code</p><span>or</span><label for="qr-reader-input" class="btn btn-outline">Choose Image</label><input type="file" id="qr-reader-input" accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr" hidden></div></div><div class="file-list" id="qr-reader-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="qr-reader-action" disabled><span class="btn-text">Read QR Code</span><span class="btn-loader"></span></button></div><div class="output-area" id="qr-reader-output"></div></div></section>
+
+    <section id="svg-to-png-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>SVG to PNG</h1><p>Rasterize SVG vector files to PNG at any scale.</p></div><div class="drop-zone" id="svg-to-png-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop SVG file here</p><span>or</span><label for="svg-to-png-input" class="btn btn-outline">Choose File</label><input type="file" id="svg-to-png-input" accept=".svg,image/svg+xml" hidden></div></div><div class="file-list" id="svg-to-png-files"></div><div class="tool-options" id="svg-to-png-options" style="display:none"><div class="option-group"><label>Scale:</label><select id="svg-scale" class="select"><option value="1">1x</option><option value="2" selected>2x</option><option value="4">4x</option><option value="8">8x</option></select></div></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="svg-to-png-action" disabled><span class="btn-text">Convert to PNG</span><span class="btn-loader"></span></button></div><div class="output-area" id="svg-to-png-output"></div></div></section>
+
+    <section id="round-crop-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Circle Crop</h1><p>Crop your image into a circle or rounded rectangle.</p></div><div class="drop-zone" id="round-crop-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop image here</p><span>or</span><label for="round-crop-input" class="btn btn-outline">Choose Image</label><input type="file" id="round-crop-input" accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr" hidden></div></div><div class="file-list" id="round-crop-files"></div><div class="tool-options" id="round-crop-options" style="display:none"><div class="option-group"><label>Shape:</label><div style="display:flex;gap:8px"><button class="btn btn-sm btn-outline rc-shape active" data-shape="circle">Circle</button><button class="btn btn-sm btn-outline rc-shape" data-shape="rounded">Rounded</button></div></div></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="round-crop-action" disabled><span class="btn-text">Crop</span><span class="btn-loader"></span></button></div><div class="output-area" id="round-crop-output"></div></div></section>
+
+    <section id="color-palette-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Color Palette Extractor</h1><p>Extract the dominant colors from any image.</p></div><div class="drop-zone" id="color-palette-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop image here</p><span>or</span><label for="color-palette-input" class="btn btn-outline">Choose Image</label><input type="file" id="color-palette-input" accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr" hidden></div></div><div class="file-list" id="color-palette-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="color-palette-action" disabled><span class="btn-text">Extract Colors</span><span class="btn-loader"></span></button></div><div class="output-area" id="color-palette-output"></div></div></section>
+
+    <!-- ==================== TEXT TOOLS ==================== -->
+    <section id="text-diff-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Text Diff</h1><p>Compare two texts and see the differences highlighted.</p></div><div class="text-tool-wrap"><div class="option-row"><div class="option-group"><label>Text A:</label><textarea id="diff-a" class="input" rows="10" placeholder="Paste first text..."></textarea></div><div class="option-group"><label>Text B:</label><textarea id="diff-b" class="input" rows="10" placeholder="Paste second text..."></textarea></div></div><div class="tool-actions"><button class="btn btn-primary" id="text-diff-action">Compare</button></div><div class="output-area" id="text-diff-output"></div></div></div></section>
+
+    <section id="word-counter-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Word Counter</h1><p>Count words, characters, sentences, and paragraphs in real-time.</p></div><div class="text-tool-wrap"><textarea id="wc-input" class="input" rows="10" placeholder="Paste or type your text here..."></textarea><div class="text-tool-stats" id="wc-output"><div class="stat-grid"><div class="stat-card"><div class="stat-num">0</div><div class="stat-label">Words</div></div><div class="stat-card"><div class="stat-num">0</div><div class="stat-label">Characters</div></div><div class="stat-card"><div class="stat-num">0</div><div class="stat-label">Sentences</div></div><div class="stat-card"><div class="stat-num">0</div><div class="stat-label">Paragraphs</div></div></div></div></div></div></section>
+
+    <section id="json-formatter-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>JSON Formatter</h1><p>Format, validate, and minify JSON data.</p></div><div class="text-tool-wrap"><textarea id="jf-input" class="input" rows="10" placeholder="Paste JSON here..."></textarea><div style="display:flex;gap:8px;margin:12px 0"><button class="btn btn-primary" id="jf-format">Format</button><button class="btn btn-outline" id="jf-minify">Minify</button><button class="btn btn-outline" id="jf-validate">Validate</button></div><div class="output-area" id="json-formatter-output"></div></div></div></section>
+
+    <section id="csv-json-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>CSV ↔ JSON</h1><p>Convert between CSV and JSON formats.</p></div><div class="text-tool-wrap"><div class="option-group"><label>Direction:</label><div style="display:flex;gap:8px"><button class="btn btn-sm btn-outline active" id="csv-to-json-btn">CSV → JSON</button><button class="btn btn-sm btn-outline" id="json-to-csv-btn">JSON → CSV</button></div></div><textarea id="csvjson-input" class="input" rows="10" placeholder="Paste CSV or JSON here..."></textarea><div class="tool-actions"><button class="btn btn-primary" id="csv-json-action">Convert</button></div><div class="output-area" id="csv-json-output"></div></div></div></section>
+
+    <section id="markdown-editor-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Markdown Editor</h1><p>Write Markdown and see a live HTML preview.</p></div><div class="text-tool-wrap"><div class="option-row"><div class="option-group"><label>Markdown:</label><textarea id="md-editor-input" class="input" rows="16" placeholder="# Hello World\n\nType **markdown** here..."></textarea></div><div class="option-group"><label>Preview:</label><div id="md-editor-preview" class="md-preview"></div></div></div></div></div></section>
+
+    <section id="hash-generator-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Hash Generator</h1><p>Generate cryptographic hashes from text or files.</p></div><div class="text-tool-wrap"><textarea id="hash-input" class="input" rows="4" placeholder="Type or paste text to hash..."></textarea><p class="preview-meta" style="margin:8px 0">Or drop a file:</p><div class="drop-zone" id="file-hash-dropzone" style="padding:24px"><div class="drop-zone-content"><label for="hash-file-input" class="btn btn-outline btn-sm">Choose File</label><input type="file" id="hash-file-input" hidden></div></div><div class="tool-actions"><button class="btn btn-primary" id="hash-generator-action">Generate Hashes</button></div><div class="output-area" id="hash-generator-output"></div></div></div></section>
+
+    <section id="base64-tool-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Base64 Encode / Decode</h1><p>Encode text to Base64 or decode Base64 to text.</p></div><div class="text-tool-wrap"><textarea id="b64-input" class="input" rows="6" placeholder="Paste text or Base64 string..."></textarea><div style="display:flex;gap:8px;margin:12px 0"><button class="btn btn-primary" id="b64-encode">Encode</button><button class="btn btn-outline" id="b64-decode">Decode</button></div><textarea id="b64-output" class="input" rows="6" placeholder="Result..." readonly></textarea></div></div></section>
+
+    <section id="url-encode-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>URL Encode / Decode</h1><p>Encode or decode URL strings.</p></div><div class="text-tool-wrap"><textarea id="url-enc-input" class="input" rows="4" placeholder="Paste URL or text..."></textarea><div style="display:flex;gap:8px;margin:12px 0"><button class="btn btn-primary" id="url-enc-encode">Encode</button><button class="btn btn-outline" id="url-enc-decode">Decode</button></div><textarea id="url-enc-output" class="input" rows="4" placeholder="Result..." readonly></textarea></div></div></section>
+
+    <section id="lorem-ipsum-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Lorem Ipsum Generator</h1><p>Generate placeholder text.</p></div><div class="text-tool-wrap"><div class="option-row"><div class="option-group"><label>Paragraphs:</label><input type="number" id="lorem-count" class="input" value="3" min="1" max="50"></div><div class="option-group"><label>Type:</label><select id="lorem-type" class="select"><option value="paragraphs">Paragraphs</option><option value="sentences">Sentences</option><option value="words">Words</option></select></div></div><div class="tool-actions"><button class="btn btn-primary" id="lorem-ipsum-action">Generate</button></div><div class="output-area" id="lorem-ipsum-output"></div></div></div></section>
+
+    <section id="regex-tester-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Regex Tester</h1><p>Test regular expressions with live matching.</p></div><div class="text-tool-wrap"><div class="option-row"><div class="option-group" style="flex:2"><label>Pattern:</label><input type="text" id="regex-pattern" class="input" placeholder="[A-Z]\w+"></div><div class="option-group" style="flex:1"><label>Flags:</label><input type="text" id="regex-flags" class="input" value="gi" placeholder="gi"></div></div><div class="option-group"><label>Test string:</label><textarea id="regex-test" class="input" rows="6" placeholder="Type text to test against..."></textarea></div><div class="option-group"><label>Matches:</label><div id="regex-output" class="ocr-text-output" style="min-height:60px"></div></div></div></div></section>
+
+    <section id="color-converter-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Color Converter</h1><p>Convert between HEX, RGB, and HSL color formats.</p></div><div class="text-tool-wrap"><div class="option-group"><label>Pick a color:</label><input type="color" id="cc-picker" value="#6366f1" style="width:100%;height:60px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer"></div><div class="option-row"><div class="option-group"><label>HEX:</label><input type="text" id="cc-hex" class="input" value="#6366f1"></div><div class="option-group"><label>RGB:</label><input type="text" id="cc-rgb" class="input" value="rgb(99, 102, 241)"></div><div class="option-group"><label>HSL:</label><input type="text" id="cc-hsl" class="input" value="hsl(239, 84%, 67%)"></div></div></div></div></section>
+
+    <section id="code-to-pdf-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Code to PDF</h1><p>Convert source code files to formatted PDF documents.</p></div><div class="drop-zone" id="code-to-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop code file here</p><span>or</span><label for="code-to-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="code-to-pdf-input" accept=".js,.ts,.py,.java,.c,.cpp,.h,.cs,.rb,.go,.rs,.swift,.kt,.php,.html,.css,.scss,.sql,.sh,.bat,.r,.m,.pl" hidden></div></div><div class="file-list" id="code-to-pdf-files"></div><div class="tool-options" id="code-to-pdf-options"><div class="option-group"><label>Or paste code:</label><textarea id="code-text-input" class="input" rows="8" placeholder="// Paste your code here..."></textarea></div></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="code-to-pdf-action"><span class="btn-text">Convert to PDF</span><span class="btn-loader"></span></button></div><div class="output-area" id="code-to-pdf-output"></div></div></section>
+
+    <!-- ==================== UTILITIES ==================== -->
+    <section id="zip-tool-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Archive Tool</h1><p>Create or extract archives. Supports <strong>ZIP, TAR, GZ, TAR.GZ / TGZ</strong>.</p></div><div class="drop-zone" id="zip-tool-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop an archive to extract, or files to compress</p><span>or</span><label for="zip-tool-input" class="btn btn-outline">Choose Files</label><input type="file" id="zip-tool-input" multiple hidden><span class="drop-hint">.zip .tar .gz .tar.gz .tgz</span></div></div><div class="file-list" id="zip-tool-files"></div><div class="tool-options" id="zip-tool-options" style="display:none"><div class="option-group"><label for="zip-format">Output format (for creating archives):</label><select id="zip-format" class="select"><option value="zip">ZIP</option><option value="tar">TAR</option><option value="tar.gz">TAR.GZ (compressed)</option><option value="gz">GZIP (single file only)</option></select></div></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="zip-tool-action" disabled><span class="btn-text">Process</span><span class="btn-loader"></span></button></div><div class="output-area" id="zip-tool-output"></div></div></section>
+
+    <section id="file-hash-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>File Hash Checker</h1><p>Calculate SHA-256, SHA-1, and MD5 checksums for any file.</p></div><div class="drop-zone" id="file-hash-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop any file here</p><span>or</span><label for="file-hash-input" class="btn btn-outline">Choose File</label><input type="file" id="file-hash-input" hidden></div></div><div class="file-list" id="file-hash-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="file-hash-action" disabled><span class="btn-text">Calculate Hashes</span><span class="btn-loader"></span></button></div><div class="output-area" id="file-hash-output"></div></div></section>
+
+    <section id="audio-trimmer-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Audio Trimmer</h1><p>Trim audio files by setting start and end times.</p></div><div class="drop-zone" id="audio-trimmer-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop audio file here</p><span>or</span><label for="audio-trimmer-input" class="btn btn-outline">Choose File</label><input type="file" id="audio-trimmer-input" accept="audio/*" hidden></div></div><div class="file-list" id="audio-trimmer-files"></div><div class="tool-options" id="audio-trimmer-options" style="display:none"><div class="option-group"><audio id="audio-player" controls style="width:100%"></audio></div><div class="option-row"><div class="option-group"><label>Start (sec):</label><input type="number" id="audio-start" class="input" value="0" min="0" step="0.1"></div><div class="option-group"><label>End (sec):</label><input type="number" id="audio-end" class="input" value="0" min="0" step="0.1"></div></div></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="audio-trimmer-action" disabled><span class="btn-text">Trim Audio</span><span class="btn-loader"></span></button></div><div class="output-area" id="audio-trimmer-output"></div></div></section>
+
+    <section id="video-to-gif-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Video to GIF</h1><p>Convert a video clip to an animated GIF.</p></div><div class="drop-zone" id="video-to-gif-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop video file here</p><span>or</span><label for="video-to-gif-input" class="btn btn-outline">Choose Video</label><input type="file" id="video-to-gif-input" accept="video/*" hidden></div></div><div class="file-list" id="video-to-gif-files"></div><div class="tool-options" id="video-to-gif-options" style="display:none"><div class="option-row"><div class="option-group"><label>Start (sec):</label><input type="number" id="gif-start" class="input" value="0" min="0" step="0.1"></div><div class="option-group"><label>Duration (sec):</label><input type="number" id="gif-duration" class="input" value="3" min="0.5" max="15" step="0.5"></div></div><div class="option-row"><div class="option-group"><label>FPS:</label><select id="gif-fps" class="select"><option value="5">5</option><option value="10" selected>10</option><option value="15">15</option></select></div><div class="option-group"><label>Width:</label><input type="number" id="gif-width" class="input" value="480" min="100" max="800"></div></div></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="video-to-gif-action" disabled><span class="btn-text">Create GIF</span><span class="btn-loader"></span></button></div><div class="output-area" id="video-to-gif-output"></div></div></section>
+
+    <!-- ==================== REMOVE BACKGROUND ==================== -->
+    <section id="remove-bg-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Remove Background</h1><p>Automatically detect and remove solid-colored backgrounds. Live preview beside controls.</p></div>
+        <div class="drop-zone" id="remove-bg-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop an image here</p><span>or</span><label for="remove-bg-input" class="btn btn-outline">Choose Image</label><input type="file" id="remove-bg-input" accept="image/*,.heic,.heif,.dng,.avif,.tiff,.tif,.cr2,.nef,.arw,.orf,.rw2,.pef,.ico,.tga,.hdr" hidden><span class="drop-hint">JPG, PNG, WEBP</span></div></div>
+        <div class="file-list" id="remove-bg-files"></div>
+        <div class="tool-split" id="rbg-split" style="display:none">
+          <div class="tool-split-preview" id="rbg-preview">
+            <div class="split-preview-pair">
+              <div><canvas id="rbg-canvas-before"></canvas><div class="split-label">Original</div></div>
+              <div><canvas id="rbg-canvas-after"></canvas><div class="split-label">Live Preview</div></div>
+            </div>
+          </div>
+          <div class="tool-split-controls" id="remove-bg-options">
+            <div class="option-group"><label for="remove-bg-threshold">Sensitivity: <strong id="remove-bg-threshold-val">30</strong></label><input type="range" id="remove-bg-threshold" min="5" max="100" step="5" value="30"></div>
+            <div class="option-group"><label>Background color to remove:</label>
+              <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn btn-sm btn-outline active" id="bg-auto">Auto-detect</button><button class="btn btn-sm btn-outline" id="bg-white">White</button><button class="btn btn-sm btn-outline" id="bg-black">Black</button><input type="color" id="bg-custom-color" value="#ffffff" title="Custom color" style="width:36px;height:32px;border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer"></div>
+            </div>
+            <div class="tool-actions" style="margin-top:16px"><button class="btn btn-primary btn-lg" id="remove-bg-action" disabled><span class="btn-text">Download Result</span><span class="btn-loader"></span></button></div>
+          </div>
+        </div>
+        <div class="output-area" id="remove-bg-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== PDF TO JSON ==================== -->
+    <section id="pdf-to-json-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>PDF to JSON</h1><p>Extract text from each page and output as a structured JSON file.</p></div><div class="drop-zone" id="pdf-to-json-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="pdf-to-json-input" class="btn btn-outline">Choose File</label><input type="file" id="pdf-to-json-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">PDF files only</span></div></div><div class="file-list" id="pdf-to-json-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="pdf-to-json-action" disabled><span class="btn-text">Convert to JSON</span><span class="btn-loader"></span></button></div><div class="output-area" id="pdf-to-json-output"></div></div></section>
+
+    <!-- ==================== PDF TO XML ==================== -->
+    <section id="pdf-to-xml-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>PDF to XML</h1><p>Extract text from each page and output as structured XML.</p></div><div class="drop-zone" id="pdf-to-xml-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="pdf-to-xml-input" class="btn btn-outline">Choose File</label><input type="file" id="pdf-to-xml-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">PDF files only</span></div></div><div class="file-list" id="pdf-to-xml-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="pdf-to-xml-action" disabled><span class="btn-text">Convert to XML</span><span class="btn-loader"></span></button></div><div class="output-area" id="pdf-to-xml-output"></div></div></section>
+
+    <!-- ==================== PDF TO BASE64 ==================== -->
+    <section id="pdf-to-base64-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>PDF to Base64</h1><p>Encode your PDF file as a Base64 text string.</p></div><div class="drop-zone" id="pdf-to-base64-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="pdf-to-base64-input" class="btn btn-outline">Choose File</label><input type="file" id="pdf-to-base64-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">PDF files only</span></div></div><div class="file-list" id="pdf-to-base64-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="pdf-to-base64-action" disabled><span class="btn-text">Encode to Base64</span><span class="btn-loader"></span></button></div><div class="output-area" id="pdf-to-base64-output"></div></div></section>
+
+    <!-- ==================== PDF TO TIFF ==================== -->
+    <section id="pdf-to-tiff-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>PDF to TIFF</h1><p>Convert each PDF page to high-quality TIFF image format.</p></div><div class="drop-zone" id="pdf-to-tiff-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="pdf-to-tiff-input" class="btn btn-outline">Choose File</label><input type="file" id="pdf-to-tiff-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">PDF files only</span></div></div><div class="file-list" id="pdf-to-tiff-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="pdf-to-tiff-action" disabled><span class="btn-text">Convert to TIFF</span><span class="btn-loader"></span></button></div><div class="output-area" id="pdf-to-tiff-output"></div></div></section>
+
+    <!-- ==================== PDF TO YAML ==================== -->
+    <section id="pdf-to-yaml-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>PDF to YAML</h1><p>Extract PDF text content and output as YAML format.</p></div><div class="drop-zone" id="pdf-to-yaml-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="pdf-to-yaml-input" class="btn btn-outline">Choose File</label><input type="file" id="pdf-to-yaml-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">PDF files only</span></div></div><div class="file-list" id="pdf-to-yaml-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="pdf-to-yaml-action" disabled><span class="btn-text">Convert to YAML</span><span class="btn-loader"></span></button></div><div class="output-area" id="pdf-to-yaml-output"></div></div></section>
+
+    <!-- ==================== JSON TO PDF ==================== -->
+    <section id="json-to-pdf-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>JSON to PDF</h1><p>Convert a JSON file to a formatted PDF document.</p></div><div class="drop-zone" id="json-to-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a JSON file here</p><span>or</span><label for="json-to-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="json-to-pdf-input" accept=".json,application/json" hidden><span class="drop-hint">.json files</span></div></div><div class="file-list" id="json-to-pdf-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="json-to-pdf-action" disabled><span class="btn-text">Convert to PDF</span><span class="btn-loader"></span></button></div><div class="output-area" id="json-to-pdf-output"></div></div></section>
+
+    <!-- ==================== XML TO PDF ==================== -->
+    <section id="xml-to-pdf-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>XML to PDF</h1><p>Convert an XML file to a formatted PDF document.</p></div><div class="drop-zone" id="xml-to-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop an XML file here</p><span>or</span><label for="xml-to-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="xml-to-pdf-input" accept=".xml,text/xml,application/xml" hidden><span class="drop-hint">.xml files</span></div></div><div class="file-list" id="xml-to-pdf-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="xml-to-pdf-action" disabled><span class="btn-text">Convert to PDF</span><span class="btn-loader"></span></button></div><div class="output-area" id="xml-to-pdf-output"></div></div></section>
+
+    <!-- ==================== BASE64 TO PDF ==================== -->
+    <section id="base64-to-pdf-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Base64 to PDF</h1><p>Decode a Base64 string back into a PDF file. Paste or upload a .txt file.</p></div><div class="drop-zone" id="base64-to-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a text file or paste below</p><span>or</span><label for="base64-to-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="base64-to-pdf-input" accept=".txt,.b64,text/plain" hidden><span class="drop-hint">.txt file with Base64 content</span></div></div><div class="file-list" id="base64-to-pdf-files"></div><div class="tool-options" id="base64-to-pdf-options"><div class="option-group"><label for="base64-text-input">Or paste Base64 string:</label><textarea id="base64-text-input" class="input" rows="4" placeholder="Paste base64-encoded PDF here..."></textarea></div></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="base64-to-pdf-action"><span class="btn-text">Decode to PDF</span><span class="btn-loader"></span></button></div><div class="output-area" id="base64-to-pdf-output"></div></div></section>
+
+    <!-- ==================== TIFF TO PDF ==================== -->
+    <section id="tiff-to-pdf-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>TIFF to PDF</h1><p>Convert TIFF image files to PDF documents.</p></div><div class="drop-zone" id="tiff-to-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a TIFF image here</p><span>or</span><label for="tiff-to-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="tiff-to-pdf-input" accept=".tiff,.tif,image/tiff" hidden><span class="drop-hint">.tiff / .tif files</span></div></div><div class="file-list" id="tiff-to-pdf-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="tiff-to-pdf-action" disabled><span class="btn-text">Convert to PDF</span><span class="btn-loader"></span></button></div><div class="output-area" id="tiff-to-pdf-output"></div></div></section>
+
+    <!-- ==================== YAML TO PDF ==================== -->
+    <section id="yaml-to-pdf-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>YAML to PDF</h1><p>Convert a YAML file to a formatted PDF document.</p></div><div class="drop-zone" id="yaml-to-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a YAML file here</p><span>or</span><label for="yaml-to-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="yaml-to-pdf-input" accept=".yaml,.yml,text/yaml" hidden><span class="drop-hint">.yaml / .yml files</span></div></div><div class="file-list" id="yaml-to-pdf-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="yaml-to-pdf-action" disabled><span class="btn-text">Convert to PDF</span><span class="btn-loader"></span></button></div><div class="output-area" id="yaml-to-pdf-output"></div></div></section>
+
+    <!-- ==================== COMPARE PDF ==================== -->
+    <section id="compare-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Compare PDF</h1><p>Upload two PDFs to compare them side by side with visual difference highlighting.</p></div>
+        <div class="drop-zone" id="compare-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop <strong>two</strong> PDF files here</p><span>or</span><label for="compare-pdf-input" class="btn btn-outline">Choose Files</label><input type="file" id="compare-pdf-input" accept=".pdf,application/pdf" multiple hidden><span class="drop-hint">Exactly 2 PDF files required</span></div></div>
+        <div class="file-list" id="compare-pdf-files"></div>
+        <div id="compare-pdf-viewer" style="display:none">
+          <div class="compare-toolbar">
+            <div class="compare-nav">
+              <button class="btn btn-sm btn-outline" id="compare-prev">‹ Prev</button>
+              <span id="compare-page-info">Page 1 / 1</span>
+              <button class="btn btn-sm btn-outline" id="compare-next">Next ›</button>
+            </div>
+            <label class="checkbox-label"><input type="checkbox" id="compare-show-diff"><span>Highlight differences</span></label>
+          </div>
+          <div class="compare-panels">
+            <div class="compare-panel"><h4 id="compare-name-a">PDF A</h4><canvas id="compare-canvas-a"></canvas></div>
+            <div class="compare-panel"><h4 id="compare-name-b">PDF B</h4><canvas id="compare-canvas-b"></canvas></div>
+          </div>
+          <div class="compare-diff-panel" id="compare-diff-panel" style="display:none">
+            <h4>Difference Map</h4>
+            <canvas id="compare-canvas-diff"></canvas>
+            <div class="preview-meta" id="compare-diff-info"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== REDACT PDF ==================== -->
+    <section id="redact-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Redact PDF</h1><p>Draw rectangles over sensitive areas to permanently black them out.</p></div>
+        <div class="drop-zone" id="redact-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="redact-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="redact-pdf-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">PDF files only</span></div></div>
+        <div class="file-list" id="redact-pdf-files"></div>
+        <div id="redact-workspace" style="display:none">
+          <div class="redact-toolbar">
+            <div class="compare-nav">
+              <button class="btn btn-sm btn-outline" id="redact-prev">‹ Prev</button>
+              <span id="redact-page-info">Page 1 / 1</span>
+              <button class="btn btn-sm btn-outline" id="redact-next">Next ›</button>
+            </div>
+            <div style="display:flex;gap:8px;align-items:center">
+              <button class="btn btn-sm btn-outline" id="redact-undo">Undo Last</button>
+              <span class="preview-meta" id="redact-count">0 redactions</span>
+            </div>
+          </div>
+          <div class="redact-canvas-wrap">
+            <canvas id="redact-canvas"></canvas>
+            <canvas id="redact-overlay" class="redact-overlay-canvas"></canvas>
+          </div>
+          <p class="preview-meta" style="margin-top:8px">Click and drag to draw redaction boxes. They will be permanently burned into the PDF.</p>
+        </div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="redact-pdf-action" disabled><span class="btn-text">Apply Redactions</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="redact-pdf-output"></div>
+      </div>
+    </section>
+
+    <!-- ==================== CROP PDF ==================== -->
+    <section id="crop-pdf-view" class="view tool-view">
+      <div class="container">
+        <div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Crop PDF</h1><p>Select a region to crop. The rest of the page will be trimmed.</p></div>
+        <div class="drop-zone" id="crop-pdf-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drag & drop a PDF file here</p><span>or</span><label for="crop-pdf-input" class="btn btn-outline">Choose File</label><input type="file" id="crop-pdf-input" accept=".pdf,application/pdf" hidden><span class="drop-hint">PDF files only</span></div></div>
+        <div class="file-list" id="crop-pdf-files"></div>
+        <div id="crop-pdf-workspace" style="display:none">
+          <div class="crop-canvas-wrap">
+            <canvas id="crop-pdf-canvas"></canvas>
+            <div class="crop-overlay" id="crop-pdf-overlay"></div>
+          </div>
+          <div class="crop-info" style="margin-top:8px">
+            <span id="crop-pdf-dimensions">Click and drag to select the area to keep</span>
+          </div>
+          <div class="tool-options" style="margin-top:12px">
+            <label class="checkbox-label"><input type="checkbox" id="crop-pdf-all" checked><span>Apply crop to all pages</span></label>
+          </div>
+        </div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="crop-pdf-action" disabled><span class="btn-text">Crop PDF</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="crop-pdf-output"></div>
+      </div>
+    </section>
+    <!-- ==================== IMAGE WATERMARK ==================== -->
+    <section id="image-watermark-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Image Watermark</h1><p>Add text watermarks to your photos with live preview.</p></div>
+        <div class="drop-zone" id="image-watermark-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop image here</p><span>or</span><label for="image-watermark-input" class="btn btn-outline">Choose Image</label><input type="file" id="image-watermark-input" accept="image/*" hidden></div></div>
+        <div class="file-list" id="image-watermark-files"></div>
+        <div class="tool-split" id="imgwm-split" style="display:none">
+          <div class="tool-split-preview" id="imgwm-preview"><h4>Live Preview</h4><canvas id="imgwm-canvas-preview"></canvas></div>
+          <div class="tool-split-controls">
+            <div class="option-group"><label>Text:</label><input type="text" id="imgwm-text" class="input" value="WATERMARK"></div>
+            <div class="option-group"><label>Size:</label><input type="number" id="imgwm-size" class="input" value="48" min="12" max="200"></div>
+            <div class="option-group"><label>Color:</label><input type="color" id="imgwm-color" value="#ffffff" style="width:100%;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border)"></div>
+            <div class="option-group"><label>Opacity: <strong id="imgwm-opacity-val">30%</strong></label><input type="range" id="imgwm-opacity" min="5" max="100" step="5" value="30"></div>
+            <div class="option-group"><label>Pattern:</label><select id="imgwm-pattern" class="select"><option value="tile">Tile (repeat)</option><option value="center">Center</option><option value="diagonal">Diagonal</option></select></div>
+            <div class="tool-actions" style="margin-top:16px"><button class="btn btn-primary btn-lg" id="image-watermark-action" disabled><span class="btn-text">Download</span><span class="btn-loader"></span></button></div>
+          </div>
+        </div>
+        <div class="output-area" id="image-watermark-output"></div></div></section>
+
+    <!-- ==================== PHOTO COLLAGE ==================== -->
+    <section id="photo-collage-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Photo Collage</h1><p>Combine multiple images into a grid layout.</p></div>
+        <div class="drop-zone" id="photo-collage-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop images here (2 or more)</p><span>or</span><label for="photo-collage-input" class="btn btn-outline">Choose Images</label><input type="file" id="photo-collage-input" accept="image/*" multiple hidden></div></div>
+        <div class="file-list" id="photo-collage-files"></div>
+        <div class="tool-options" id="photo-collage-options" style="display:none">
+          <div class="option-row"><div class="option-group"><label>Layout:</label><select id="collage-layout" class="select"><option value="grid">Grid</option><option value="horizontal">Horizontal</option><option value="vertical">Vertical</option></select></div><div class="option-group"><label>Gap (px):</label><input type="number" id="collage-gap" class="input" value="4" min="0" max="20"></div><div class="option-group"><label>Background:</label><input type="color" id="collage-bg" value="#ffffff" style="width:100%;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border)"></div></div>
+        </div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="photo-collage-action" disabled><span class="btn-text">Create Collage</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="photo-collage-output"></div></div></section>
+
+    <!-- ==================== FAVICON GENERATOR ==================== -->
+    <section id="favicon-generator-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Favicon Generator</h1><p>Generate favicons in all standard sizes from a single image.</p></div><div class="drop-zone" id="favicon-generator-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop image here</p><span>or</span><label for="favicon-generator-input" class="btn btn-outline">Choose Image</label><input type="file" id="favicon-generator-input" accept="image/*" hidden></div></div><div class="file-list" id="favicon-generator-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="favicon-generator-action" disabled><span class="btn-text">Generate Favicons</span><span class="btn-loader"></span></button></div><div class="output-area" id="favicon-generator-output"></div></div></section>
+
+    <!-- ==================== EXIF VIEWER ==================== -->
+    <section id="exif-viewer-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>EXIF Viewer & Stripper</h1><p>View camera metadata and strip it for privacy.</p></div><div class="drop-zone" id="exif-viewer-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop image here</p><span>or</span><label for="exif-viewer-input" class="btn btn-outline">Choose Image</label><input type="file" id="exif-viewer-input" accept="image/*" hidden></div></div><div class="file-list" id="exif-viewer-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="exif-viewer-action" disabled><span class="btn-text">Read EXIF Data</span><span class="btn-loader"></span></button></div><div class="output-area" id="exif-viewer-output"></div></div></section>
+
+    <!-- ==================== MEME GENERATOR ==================== -->
+    <section id="meme-generator-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Meme Generator</h1><p>Add Impact text to create classic memes.</p></div>
+        <div class="drop-zone" id="meme-generator-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop image here</p><span>or</span><label for="meme-generator-input" class="btn btn-outline">Choose Image</label><input type="file" id="meme-generator-input" accept="image/*" hidden></div></div>
+        <div class="file-list" id="meme-generator-files"></div>
+        <div class="tool-split" id="meme-split" style="display:none">
+          <div class="tool-split-preview" id="meme-preview"><h4>Preview</h4><canvas id="meme-canvas-preview"></canvas></div>
+          <div class="tool-split-controls">
+            <div class="option-group"><label>Top text:</label><input type="text" id="meme-top-text" class="input" placeholder="TOP TEXT"></div>
+            <div class="option-group"><label>Bottom text:</label><input type="text" id="meme-bottom-text" class="input" placeholder="BOTTOM TEXT"></div>
+            <div class="tool-actions" style="margin-top:16px"><button class="btn btn-primary btn-lg" id="meme-generator-action" disabled><span class="btn-text">Download Meme</span><span class="btn-loader"></span></button></div>
+          </div>
+        </div>
+        <div class="output-area" id="meme-generator-output"></div></div></section>
+
+    <!-- ==================== IMAGE COMPARE ==================== -->
+    <section id="image-compare-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Image Compare</h1><p>Upload two images and compare them with a draggable slider.</p></div>
+        <div class="drop-zone" id="image-compare-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop two images here</p><span>or</span><label for="image-compare-input" class="btn btn-outline">Choose Images</label><input type="file" id="image-compare-input" accept="image/*" multiple hidden></div></div>
+        <div class="file-list" id="image-compare-files"></div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="image-compare-action" disabled><span class="btn-text">Compare Images</span><span class="btn-loader"></span></button></div>
+        <div class="output-area" id="image-compare-output"></div></div></section>
+
+    <!-- ==================== ICO GENERATOR ==================== -->
+    <section id="ico-generator-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>ICO Generator</h1><p>Convert any image to .ico format with multiple sizes embedded.</p></div><div class="drop-zone" id="ico-generator-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop image here</p><span>or</span><label for="ico-generator-input" class="btn btn-outline">Choose Image</label><input type="file" id="ico-generator-input" accept="image/*" hidden></div></div><div class="file-list" id="ico-generator-files"></div><div class="tool-actions"><button class="btn btn-primary btn-lg" id="ico-generator-action" disabled><span class="btn-text">Create ICO</span><span class="btn-loader"></span></button></div><div class="output-area" id="ico-generator-output"></div></div></section>
+
+    <!-- ==================== ASCII ART ==================== -->
+    <section id="ascii-art-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>ASCII Art Generator</h1><p>Convert images to ASCII text art.</p></div><div class="drop-zone" id="ascii-art-dropzone"><div class="drop-zone-content"><div class="drop-icon"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><path d="M17 8l-5-5-5 5"/><path d="M12 3v12"/></svg></div><p>Drop image here</p><span>or</span><label for="ascii-art-input" class="btn btn-outline">Choose Image</label><input type="file" id="ascii-art-input" accept="image/*" hidden></div></div><div class="file-list" id="ascii-art-files"></div>
+        <div class="tool-options"><div class="option-row"><div class="option-group"><label>Width (chars):</label><input type="number" id="ascii-width" class="input" value="80" min="20" max="200"></div><div class="option-group"><label>Character set:</label><input type="text" id="ascii-chars" class="input" value=" .:-=+*#%@"></div></div></div>
+        <div class="tool-actions"><button class="btn btn-primary btn-lg" id="ascii-art-action" disabled><span class="btn-text">Generate ASCII Art</span><span class="btn-loader"></span></button></div><div class="output-area" id="ascii-art-output"></div></div></section>
+
+    <!-- ==================== CASE CONVERTER ==================== -->
+    <section id="case-converter-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Case Converter</h1><p>Convert text between different case formats.</p></div><div class="text-tool-wrap"><textarea id="case-input" class="input" rows="6" placeholder="Paste your text here..."></textarea><div style="display:flex;gap:6px;flex-wrap:wrap;margin:12px 0"><button class="btn btn-sm btn-outline case-btn" data-type="upper">UPPERCASE</button><button class="btn btn-sm btn-outline case-btn" data-type="lower">lowercase</button><button class="btn btn-sm btn-outline case-btn" data-type="title">Title Case</button><button class="btn btn-sm btn-outline case-btn" data-type="sentence">Sentence case</button><button class="btn btn-sm btn-outline case-btn" data-type="camel">camelCase</button><button class="btn btn-sm btn-outline case-btn" data-type="pascal">PascalCase</button><button class="btn btn-sm btn-outline case-btn" data-type="snake">snake_case</button><button class="btn btn-sm btn-outline case-btn" data-type="kebab">kebab-case</button><button class="btn btn-sm btn-outline case-btn" data-type="constant">CONSTANT_CASE</button><button class="btn btn-sm btn-outline case-btn" data-type="dot">dot.case</button><button class="btn btn-sm btn-outline case-btn" data-type="reverse">esreveR</button><button class="btn btn-sm btn-outline case-btn" data-type="alternating">aLtErNaTiNg</button></div><div class="output-area" id="case-converter-output"></div></div></div></section>
+
+    <!-- ==================== SLUG GENERATOR ==================== -->
+    <section id="slug-generator-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Slug Generator</h1><p>Convert text to URL-friendly slugs.</p></div><div class="text-tool-wrap"><div class="option-group"><label>Input text:</label><input type="text" id="slug-input" class="input" placeholder="My Blog Post Title!"></div><div class="option-group"><label>Separator:</label><select id="slug-separator" class="select"><option value="-">Hyphens (kebab-style)</option><option value="_">Underscores</option><option value=".">Dots</option></select></div><div class="option-group"><label>Result:</label><input type="text" id="slug-output" class="input" readonly placeholder="slug-will-appear-here"></div><button class="btn btn-success" id="slug-copy">Copy Slug</button></div></div></section>
+
+    <!-- ==================== PASSWORD GENERATOR ==================== -->
+    <section id="password-generator-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Password Generator</h1><p>Generate cryptographically secure random passwords.</p></div><div class="text-tool-wrap">
+        <div class="option-row"><div class="option-group"><label>Length:</label><input type="number" id="pw-length" class="input" value="16" min="4" max="128"></div><div class="option-group"><label>Count:</label><input type="number" id="pw-count" class="input" value="5" min="1" max="50"></div></div>
+        <div class="option-group"><label>Include:</label><div style="display:flex;gap:12px;flex-wrap:wrap"><label class="checkbox-label"><input type="checkbox" id="pw-upper" checked><span>A-Z</span></label><label class="checkbox-label"><input type="checkbox" id="pw-lower" checked><span>a-z</span></label><label class="checkbox-label"><input type="checkbox" id="pw-numbers" checked><span>0-9</span></label><label class="checkbox-label"><input type="checkbox" id="pw-symbols" checked><span>Symbols</span></label></div></div>
+        <div class="tool-actions"><button class="btn btn-primary" id="password-gen-btn">Generate Passwords</button></div>
+        <div class="output-area" id="password-generator-output"></div></div></div></section>
+
+    <!-- ==================== UUID GENERATOR ==================== -->
+    <section id="uuid-generator-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>UUID Generator</h1><p>Generate v4 UUIDs (universally unique identifiers).</p></div><div class="text-tool-wrap">
+        <div class="option-row"><div class="option-group"><label>Count:</label><input type="number" id="uuid-count" class="input" value="5" min="1" max="100"></div><div class="option-group"><label>Format:</label><select id="uuid-format" class="select"><option value="lower">lowercase</option><option value="upper">UPPERCASE</option><option value="no-dash">No dashes</option></select></div></div>
+        <div class="tool-actions"><button class="btn btn-primary" id="uuid-gen-btn">Generate UUIDs</button></div>
+        <div class="output-area" id="uuid-generator-output"></div></div></div></section>
+
+    <!-- ==================== JWT DECODER ==================== -->
+    <section id="jwt-decoder-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>JWT Decoder</h1><p>Decode JSON Web Tokens and inspect header, payload & expiry.</p></div><div class="text-tool-wrap"><textarea id="jwt-input" class="input" rows="6" placeholder="Paste your JWT token here (eyJhbG...)"></textarea><div class="tool-actions"><button class="btn btn-primary" id="jwt-decode-btn">Decode JWT</button></div><div class="output-area" id="jwt-decoder-output"></div></div></div></section>
+
+    <!-- ==================== TIMESTAMP CONVERTER ==================== -->
+    <section id="timestamp-converter-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Timestamp Converter</h1><p>Convert between Unix timestamps and human-readable dates.</p></div><div class="text-tool-wrap">
+        <div class="option-group"><label>Unix Timestamp:</label><div style="display:flex;gap:8px"><input type="text" id="ts-input" class="input" placeholder="e.g. 1704067200"><button class="btn btn-outline" id="ts-now">Now</button></div></div>
+        <div class="output-area" id="timestamp-converter-output"></div>
+        <hr style="margin:24px 0;border-color:var(--border)">
+        <div class="option-group"><label>Date to Timestamp:</label><input type="datetime-local" id="ts-date-input" class="input"></div>
+        <div class="tool-actions"><button class="btn btn-primary" id="ts-from-date-btn">Convert to Timestamp</button></div>
+        <div id="ts-date-result" style="font-weight:600;margin-top:12px;color:var(--primary)"></div></div></div></section>
+
+    <!-- ==================== CRON PARSER ==================== -->
+    <section id="cron-parser-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Cron Expression Parser</h1><p>Explain cron expressions in plain English.</p></div><div class="text-tool-wrap">
+        <div class="option-group"><label>Cron Expression:</label><input type="text" id="cron-input" class="input" placeholder="* * * * *"></div>
+        <div class="option-group"><label>Examples:</label><div style="display:flex;gap:6px;flex-wrap:wrap"><button class="btn btn-sm btn-outline cron-example" data-cron="0 * * * *">Every hour</button><button class="btn btn-sm btn-outline cron-example" data-cron="0 9 * * 1-5">Weekdays 9am</button><button class="btn btn-sm btn-outline cron-example" data-cron="*/5 * * * *">Every 5 min</button><button class="btn btn-sm btn-outline cron-example" data-cron="0 0 1 * *">Monthly</button><button class="btn btn-sm btn-outline cron-example" data-cron="0 0 * * 0">Weekly</button></div></div>
+        <div class="output-area" id="cron-parser-output"></div></div></div></section>
+
+    <!-- ==================== JSON TO TYPESCRIPT ==================== -->
+    <section id="json-to-ts-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>JSON → TypeScript</h1><p>Generate TypeScript interfaces from JSON data.</p></div><div class="text-tool-wrap"><div class="option-group"><label>Interface name:</label><input type="text" id="jts-name" class="input" value="Root" placeholder="InterfaceName"></div><textarea id="jts-input" class="input" rows="10" placeholder='{"name": "John", "age": 30, "address": {"city": "NYC"}}'></textarea><div class="tool-actions"><button class="btn btn-primary" id="json-to-ts-btn">Generate Interface</button></div><div class="output-area" id="json-to-ts-output"></div></div></div></section>
+
+    <!-- ==================== MINIFY CODE ==================== -->
+    <section id="minify-code-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Minify Code</h1><p>Minify HTML, CSS, or JavaScript by removing whitespace and comments.</p></div><div class="text-tool-wrap"><div class="option-group"><label>Type:</label><select id="minify-type" class="select"><option value="html">HTML</option><option value="css">CSS</option><option value="js">JavaScript</option></select></div><textarea id="minify-input" class="input" rows="10" placeholder="Paste your code here..."></textarea><div class="tool-actions"><button class="btn btn-primary" id="minify-btn">Minify</button></div><div class="output-area" id="minify-code-output"></div></div></div></section>
+
+    <!-- ==================== HTML PRETTIFIER ==================== -->
+    <section id="html-prettifier-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>HTML Prettifier</h1><p>Format and indent messy HTML/XML code.</p></div><div class="text-tool-wrap"><textarea id="prettify-input" class="input" rows="10" placeholder="Paste HTML/XML here..."></textarea><div class="tool-actions"><button class="btn btn-primary" id="prettify-btn">Prettify</button></div><div class="output-area" id="html-prettifier-output"></div></div></div></section>
+
+    <!-- ==================== SQL FORMATTER ==================== -->
+    <section id="sql-formatter-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>SQL Formatter</h1><p>Format and beautify SQL queries.</p></div><div class="text-tool-wrap"><textarea id="sql-input" class="input" rows="10" placeholder="SELECT * FROM users WHERE active = 1 AND name LIKE '%john%' ORDER BY created_at DESC"></textarea><div class="tool-actions"><button class="btn btn-primary" id="sql-format-btn">Format SQL</button></div><div class="output-area" id="sql-formatter-output"></div></div></div></section>
+
+    <!-- ==================== cURL TO CODE ==================== -->
+    <section id="curl-to-code-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>cURL → Code</h1><p>Convert cURL commands to various programming languages.</p></div><div class="text-tool-wrap"><textarea id="curl-input" class="input" rows="6" placeholder="curl -X POST https://api.example.com/data -H 'Content-Type: application/json' -d '{\"key\": \"value\"}'"></textarea><div class="option-group"><label>Language:</label><select id="curl-lang" class="select"><option value="fetch">JavaScript (fetch)</option><option value="axios">JavaScript (axios)</option><option value="python">Python (requests)</option><option value="php">PHP (cURL)</option></select></div><div class="tool-actions"><button class="btn btn-primary" id="curl-convert-btn">Convert</button></div><div class="output-area" id="curl-to-code-output"></div></div></div></section>
+
+    <!-- ==================== TEXT ENCRYPT ==================== -->
+    <section id="text-encrypt-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Text Encrypt / Decrypt</h1><p>AES-256 encryption using Web Crypto API. All client-side.</p></div><div class="text-tool-wrap"><textarea id="enc-input" class="input" rows="6" placeholder="Enter text to encrypt, or paste encrypted text to decrypt..."></textarea><div class="option-group"><label>Password:</label><input type="password" id="enc-password" class="input" placeholder="Enter encryption password"></div><div style="display:flex;gap:8px;margin:12px 0"><button class="btn btn-primary" id="enc-encrypt">Encrypt</button><button class="btn btn-outline" id="enc-decrypt">Decrypt</button></div><div class="output-area" id="text-encrypt-output"></div></div></div></section>
+
+    <!-- ==================== STEGANOGRAPHY ==================== -->
+    <section id="steganography-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Steganography</h1><p>Hide secret messages inside images, or extract hidden messages.</p></div><div class="text-tool-wrap">
+        <h3 style="margin-bottom:8px">Hide Message</h3>
+        <div class="option-group"><label>Image:</label><input type="file" id="steg-encode-input" accept="image/png,image/bmp" class="input"></div>
+        <div class="option-group"><label>Secret text:</label><textarea id="steg-text" class="input" rows="3" placeholder="Your secret message..."></textarea></div>
+        <div class="tool-actions"><button class="btn btn-primary" id="steg-encode-btn">Hide Message</button></div>
+        <hr style="margin:24px 0;border-color:var(--border)">
+        <h3 style="margin-bottom:8px">Extract Message</h3>
+        <div class="option-group"><label>Image with hidden message:</label><input type="file" id="steg-decode-input" accept="image/png,image/bmp" class="input"></div>
+        <div class="tool-actions"><button class="btn btn-outline" id="steg-decode-btn">Extract Message</button></div>
+        <div class="output-area" id="steganography-output"></div></div></div></section>
+
+    <!-- ==================== CSS GRADIENT ==================== -->
+    <section id="css-gradient-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>CSS Gradient Generator</h1><p>Build beautiful gradients with live preview and CSS output.</p></div><div class="text-tool-wrap">
+        <div id="gradient-preview" class="gradient-preview"></div>
+        <div class="option-row"><div class="option-group"><label>Type:</label><select id="grad-type" class="select"><option value="linear">Linear</option><option value="radial">Radial</option><option value="conic">Conic</option></select></div><div class="option-group"><label>Angle: <strong id="grad-angle-val">135°</strong></label><input type="range" id="grad-angle" min="0" max="360" value="135"></div></div>
+        <div class="option-row"><div class="option-group"><label>Color 1:</label><input type="color" id="grad-color1" value="#6366f1" style="width:100%;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border)"></div><div class="option-group"><label>Color 2:</label><input type="color" id="grad-color2" value="#a855f7" style="width:100%;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border)"></div><div class="option-group"><label>Color 3 (optional):</label><input type="color" id="grad-color3" value="#ec4899" style="width:100%;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border)"></div></div>
+        <div class="option-group"><label>CSS:</label><div id="grad-css-output" class="ocr-text-output" style="word-break:break-all"></div></div>
+        <button class="btn btn-success" id="grad-copy">Copy CSS</button></div></div></section>
+
+    <!-- ==================== BOX SHADOW ==================== -->
+    <section id="box-shadow-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Box Shadow Generator</h1><p>Visual CSS box-shadow builder with live preview.</p></div><div class="text-tool-wrap">
+        <div class="shadow-preview-wrap"><div id="shadow-preview" class="shadow-preview-box"></div></div>
+        <div class="option-group"><label>X Offset: <strong id="shd-x-val">4px</strong></label><input type="range" id="shd-x" min="-50" max="50" value="4"></div>
+        <div class="option-group"><label>Y Offset: <strong id="shd-y-val">4px</strong></label><input type="range" id="shd-y" min="-50" max="50" value="4"></div>
+        <div class="option-group"><label>Blur: <strong id="shd-blur-val">12px</strong></label><input type="range" id="shd-blur" min="0" max="100" value="12"></div>
+        <div class="option-group"><label>Spread: <strong id="shd-spread-val">0px</strong></label><input type="range" id="shd-spread" min="-50" max="50" value="0"></div>
+        <div class="option-group"><label>Color:</label><input type="color" id="shd-color" value="#000000" style="width:100%;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer"></div>
+        <div class="option-group"><label class="checkbox-label"><input type="checkbox" id="shd-inset"><span>Inset shadow</span></label></div>
+        <div class="option-group"><label>CSS:</label><div id="shd-css-output" class="ocr-text-output" style="word-break:break-all"></div></div>
+        <button class="btn btn-success" id="shd-copy">Copy CSS</button></div></div></section>
+
+    <!-- ==================== PLACEHOLDER IMAGE ==================== -->
+    <section id="placeholder-image-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Placeholder Image</h1><p>Generate placeholder images with custom dimensions and colors.</p></div><div class="text-tool-wrap">
+        <div class="option-row"><div class="option-group"><label>Width:</label><input type="number" id="ph-width" class="input" value="400" min="1" max="4000"></div><div class="option-group"><label>Height:</label><input type="number" id="ph-height" class="input" value="300" min="1" max="4000"></div></div>
+        <div class="option-row"><div class="option-group"><label>Background:</label><input type="color" id="ph-bg" value="#cccccc" style="width:100%;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border)"></div><div class="option-group"><label>Text color:</label><input type="color" id="ph-fg" value="#666666" style="width:100%;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border)"></div></div>
+        <div class="option-group"><label>Text (optional):</label><input type="text" id="ph-text" class="input" placeholder="Leave empty for WxH"></div>
+        <div class="tool-actions"><button class="btn btn-primary" id="placeholder-gen-btn">Generate</button></div>
+        <div class="output-area" id="placeholder-image-output"></div></div></div></section>
+
+    <!-- ==================== CHART MAKER ==================== -->
+    <section id="chart-maker-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Chart Maker</h1><p>Create simple charts from your data. One label,value pair per line.</p></div><div class="text-tool-wrap">
+        <div class="option-group"><label>Chart type:</label><select id="chart-type" class="select"><option value="bar">Bar Chart</option><option value="pie">Pie Chart</option><option value="line">Line Chart</option></select></div>
+        <div class="option-group"><label>Data (label, value per line):</label><textarea id="chart-data" class="input" rows="8" placeholder="JavaScript, 65&#10;Python, 48&#10;TypeScript, 35&#10;Rust, 22&#10;Go, 18"></textarea></div>
+        <div class="tool-actions"><button class="btn btn-primary" id="chart-gen-btn">Create Chart</button></div>
+        <div class="output-area" id="chart-maker-output"></div></div></div></section>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="container">
+      <p>
+        <strong>file.tools</strong> — All processing happens locally in your browser.
+        <br>No files are uploaded. No data is stored. 100% private.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Toast Container -->
+  <div id="toast-container"></div>
+
+  <!-- File Preview Modal -->
+  <div class="modal" id="preview-modal">
+    <div class="preview-modal-inner">
+      <div class="preview-modal-header">
+        <div class="preview-modal-title">
+          <span id="preview-modal-name">File Preview</span>
+          <span id="preview-modal-meta" class="preview-modal-meta"></span>
+        </div>
+        <div class="preview-modal-actions">
+          <button class="btn btn-sm btn-outline" id="preview-modal-prev" title="Previous page" style="display:none">‹ Prev</button>
+          <span id="preview-modal-page-info" class="preview-modal-meta" style="display:none"></span>
+          <button class="btn btn-sm btn-outline" id="preview-modal-next" title="Next page" style="display:none">Next ›</button>
+          <button class="btn btn-sm btn-outline" id="preview-modal-close" title="Close">✕</button>
+        </div>
+      </div>
+      <div class="preview-modal-body" id="preview-modal-body">
+        <div class="preview-modal-loader" id="preview-modal-loader">Loading preview…</div>
+        <img id="preview-modal-img" alt="Preview" style="display:none">
+        <canvas id="preview-modal-canvas" style="display:none"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <!-- Progress Modal -->
+  <div class="modal" id="progress-modal">
+    <div class="modal-content">
+      <div class="progress-info">
+        <span id="progress-text">Processing...</span>
+        <span id="progress-percent">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scripts (CDN) -->
+  <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.12.0/dist/pptxgenjs.bundle.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mammoth@1.8.0/mammoth.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/utif2@4.1.0/UTIF.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/heic2any@0.0.4/dist/heic2any.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+
+  <!-- App Scripts -->
+  <script src="js/app.js"></script>
+  <script src="js/pdf-tools.js"></script>
+  <script src="js/image-tools.js"></script>
+  <script src="js/pdf-tools-extra.js"></script>
+  <script src="js/extra-tools.js"></script>
+  <script src="js/new-tools.js"></script>
+</body>
+</html>
