@@ -31,8 +31,8 @@
 **Live: [https://the-developer-diaries.github.io/ZeroUpload](https://the-developer-diaries.github.io/ZeroUpload/#)**
 
 ### Access Methods
-- Direct URL: `https://zeroupload.io`
-- Domain: `zeroupload.io`
+- Direct URL: `https://the-developer-diaries.github.io/ZeroUpload/#`
+- Domain: `the-developer-diaries.github.io/ZeroUpload/`
 - Fully client-side application — no backend server required
 
 ---
