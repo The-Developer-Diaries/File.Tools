@@ -1,4 +1,4 @@
-# File.Tools — Free Online File Tools
+# ZeroUpload — Free Online File Tools
 
 <div align="center">
 
@@ -12,7 +12,7 @@
 
 ## 🎯 Overview
 
-**File.Tools** is a comprehensive web-based application that provides a complete suite of tools for working with files. Every operation happens directly in your browser—no data is uploaded to any server, ensuring 100% privacy and security. Whether you need to merge PDFs, compress images, convert file formats, or perform text transformations, File.Tools has you covered.
+**ZeroUpload** is a comprehensive web-based application that provides a complete suite of tools for working with files. Every operation happens directly in your browser—no data is uploaded to any server, ensuring 100% privacy and security. Whether you need to merge PDFs, compress images, convert file formats, or perform text transformations, ZeroUpload has you covered.
 
 ### Key Highlights
 
@@ -28,11 +28,11 @@
 
 ## 🌐 Website URL
 
-**Live: [https://file.tools](https://file.tools)**
+**Live: [https://zeroupload.io](https://zeroupload.io)**
 
 ### Access Methods
-- Direct URL: `https://file.tools`
-- Domain: `file.tools`
+- Direct URL: `https://zeroupload.io`
+- Domain: `zeroupload.io`
 - Fully client-side application — no backend server required
 
 ---
@@ -318,6 +318,8 @@ We'd love to hear from you! Share your:
 - User experience feedback
 - Tool suggestions
 
+**📧 Email: [subhanshu20135@iiitd.ac.in](mailto:subhanshu20135@iiitd.ac.in)**
+
 ---
 
 ## 🔄 Updates & Changelog
@@ -366,7 +368,9 @@ We'd love to hear from you! Share your:
 
 - [Apache 2.0 License](LICENSE)
 - [GitHub Repository](https://github.com/The-Developer-Diaries/File.Tools)
-- [Official Website](https://file.tools)
+- [Official Website](https://zeroupload.io)
+- [Full Documentation](DOCUMENTATION.md)
+- [Contributing Guide](CONTRIBUTING.md)
 
 ---
 
@@ -386,6 +390,10 @@ If you find File.Tools helpful, please consider:
 
 *100% Private • 100% Free • 100% Open Source*
 
-[🌐 Visit Website](#-website-url) • [📖 Full Documentation](#features)
+[🌐 Visit Website](#-website-url) • [📖 Full Documentation](DOCUMENTATION.md) • [📋 Contributing](CONTRIBUTING.md) • [✉️ Contact](mailto:subhanshu20135@iiitd.ac.in)
+
+---
+
+**ZeroUpload** — Because your files deserve privacy. Zero uploads. Zero tracking. Zero excuses.
 
 </div>
