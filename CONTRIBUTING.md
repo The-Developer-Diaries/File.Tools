@@ -55,11 +55,11 @@ We are committed to providing a welcoming and inspiring community for all. Pleas
 
 ```bash
 # Clone your fork
-git clone https://github.com/YOUR-USERNAME/File.Tools.git
-cd File.Tools
+git clone https://github.com/YOUR-USERNAME/ZeroUpload.git
+cd ZeroUpload
 
 # Add upstream remote
-git remote add upstream https://github.com/The-Developer-Diaries/File.Tools.git
+git remote add upstream https://github.com/The-Developer-Diaries/ZeroUpload.git
 
 # Create a feature branch
 git checkout -b feature/your-feature-name
@@ -117,8 +117,8 @@ git checkout -b feature/your-feature-name
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/YOUR-USERNAME/File.Tools.git
-cd File.Tools
+git clone https://github.com/YOUR-USERNAME/ZeroUpload.git
+cd ZeroUpload
 
 # 2. Install dependencies (if applicable)
 npm install
