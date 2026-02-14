@@ -4,7 +4,7 @@
 
 **The ultimate collection of 130+ free, privacy-focused tools for editing, merging, converting, and manipulating files directly in your browser.**
 
-[🌐 Visit Website](https://zeroupload.io) • [📄 Documentation](DOCUMENTATION.md) • [⚖️ License](LICENSE) • [🤝 Contributing](CONTRIBUTING.md)
+[🌐 Visit Website](https://the-developer-diaries.github.io/ZeroUpload/#) • [📄 Documentation](DOCUMENTATION.md) • [⚖️ License](LICENSE) • [🤝 Contributing](CONTRIBUTING.md)
 
 </div>
 
@@ -28,7 +28,7 @@
 
 ## 🌐 Website URL
 
-**Live: [https://zeroupload.io](https://zeroupload.io)**
+**Live: [https://the-developer-diaries.github.io/ZeroUpload](https://the-developer-diaries.github.io/ZeroUpload/#)**
 
 ### Access Methods
 - Direct URL: `https://zeroupload.io`
@@ -64,7 +64,7 @@ ZeroUpload/
 
 ### For Users
 
-1. Visit [https://zeroupload.io](https://zeroupload.io)
+1. Visit [https://the-developer-diaries.github.io/ZeroUpload/#](https://the-developer-diaries.github.io/ZeroUpload/#)
 2. Select your desired tool from the menu or search bar
 3. Upload or select your file(s)
 4. Configure tool settings if needed
@@ -126,7 +126,7 @@ We welcome contributions! See `CONTRIBUTING.md` for guidelines.
 ## 📚 Additional Resources
 
 - [GitHub Repository](https://github.com/The-Developer-Diaries/ZeroUpload)
-- [Official Website](https://zeroupload.io)
+- [Official Website](https://the-developer-diaries.github.io/ZeroUpload/#)
 - [Full Documentation](DOCUMENTATION.md)
 - [Contributing Guide](CONTRIBUTING.md)
 
