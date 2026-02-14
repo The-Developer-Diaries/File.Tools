@@ -7025,3 +7025,1738 @@
   })();
 
 })();
+
+
+// ===== file.tools — Batch 3: 28 Additional Tools =====
+(function () {
+  'use strict';
+
+  function dlCard(el, title, info, blob, name, preview) {
+    el.innerHTML = '<div class="output-card"><h3>\u2713 ' + title + '</h3><p>' + info + '</p>' + (preview || '') + '<div class="output-filename"><label>File name:</label><input type="text" class="input output-dl-name" value="' + name + '"></div><button class="btn btn-success output-dl-btn">Download</button></div>';
+    el.querySelector('.output-dl-btn').addEventListener('click', function () { EditIt.downloadBlob(blob, el.querySelector('.output-dl-name').value.trim() || name); });
+  }
+
+  // 1. SOCIAL MEDIA RESIZER
+  (function () {
+    var sizes = { 'ig-post': [1080,1080], 'ig-story': [1080,1920], 'ig-landscape': [1080,566], 'fb-post': [1200,630], 'fb-cover': [820,312], 'tw-post': [1200,675], 'tw-header': [1500,500], 'li-post': [1200,627], 'li-banner': [1584,396], 'yt-thumb': [1280,720], 'yt-banner': [2560,1440] };
+    var actionBtn = document.getElementById('social-resizer-action');
+    if (!actionBtn) return;
+    var file = null;
+    document.addEventListener('files-added', function (e) {
+      if (e.detail.toolId !== 'social-resizer') return;
+      file = e.detail.files.find(function (f) { return f.type.startsWith('image/'); });
+      if (!file) return;
+      var fl = document.getElementById('social-resizer-files'); fl.innerHTML = '';
+      var item = EditIt.createFileItem(file, 0);
+      item.querySelector('.file-item-remove').addEventListener('click', function () { file = null; fl.innerHTML = ''; actionBtn.disabled = true; document.getElementById('social-resizer-options').style.display = 'none'; });
+      fl.appendChild(item); actionBtn.disabled = false;
+      document.getElementById('social-resizer-options').style.display = 'block';
+    });
+    actionBtn.addEventListener('click', async function () {
+      if (!file) return; EditIt.setButtonLoading(actionBtn, true);
+      try {
+        var du = await EditIt.readImageAsDataURL(file);
+        var img = await EditIt.loadImage(du);
+        var key = document.getElementById('social-platform').value;
+        var tw = sizes[key][0], th = sizes[key][1];
+        var c = document.createElement('canvas'); c.width = tw; c.height = th;
+        var ctx = c.getContext('2d');
+        var scale = Math.max(tw / img.naturalWidth, th / img.naturalHeight);
+        var dw = img.naturalWidth * scale, dh = img.naturalHeight * scale;
+        ctx.drawImage(img, (tw - dw) / 2, (th - dh) / 2, dw, dh);
+        var blob = await new Promise(function (r) { c.toBlob(r, 'image/png'); });
+        dlCard(document.getElementById('social-resizer-output'), 'Resized!', tw + '×' + th + ' • ' + EditIt.formatFileSize(blob.size), blob, file.name.replace(/\.[^.]+$/, '') + '_' + key + '.png');
+        EditIt.showToast('Image resized!', 'success');
+      } catch (err) { EditIt.showToast('Error: ' + err.message, 'error'); }
+      EditIt.setButtonLoading(actionBtn, false);
+    });
+  })();
+
+  // 2. WHITEBOARD
+  (function () {
+    var canvas = document.getElementById('wb-canvas');
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    var drawing = false;
+    function getPos(e) { var r = canvas.getBoundingClientRect(); var ev = e.touches ? e.touches[0] : e; return { x: ev.clientX - r.left, y: ev.clientY - r.top }; }
+    function startDraw(e) { drawing = true; var p = getPos(e); ctx.beginPath(); ctx.moveTo(p.x, p.y); }
+    function draw(e) {
+      if (!drawing) return; e.preventDefault();
+      var p = getPos(e);
+      var tool = document.getElementById('wb-tool').value;
+      ctx.lineWidth = document.getElementById('wb-size').value;
+      ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+      ctx.strokeStyle = tool === 'eraser' ? '#ffffff' : document.getElementById('wb-color').value;
+      ctx.lineTo(p.x, p.y); ctx.stroke();
+    }
+    function stopDraw() { drawing = false; }
+    canvas.addEventListener('mousedown', startDraw); canvas.addEventListener('mousemove', draw); canvas.addEventListener('mouseup', stopDraw); canvas.addEventListener('mouseleave', stopDraw);
+    canvas.addEventListener('touchstart', startDraw, { passive: false }); canvas.addEventListener('touchmove', draw, { passive: false }); canvas.addEventListener('touchend', stopDraw);
+    document.getElementById('wb-clear').addEventListener('click', function () { ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, canvas.width, canvas.height); });
+    document.getElementById('wb-download').addEventListener('click', function () { canvas.toBlob(function (b) { EditIt.downloadBlob(b, 'whiteboard.png'); }, 'image/png'); });
+  })();
+
+  // 3. TEXT LOGO MAKER
+  (function () {
+    var btn = document.getElementById('tl-generate');
+    if (!btn) return;
+    btn.addEventListener('click', async function () {
+      var text = document.getElementById('tl-text').value || 'Logo';
+      var size = parseInt(document.getElementById('tl-size').value) || 72;
+      var font = document.getElementById('tl-font').value;
+      var color = document.getElementById('tl-color').value;
+      var bg = document.getElementById('tl-bg').value;
+      var transparent = document.getElementById('tl-transparent').checked;
+      var c = document.createElement('canvas');
+      var tmpCtx = c.getContext('2d');
+      tmpCtx.font = 'bold ' + size + 'px ' + font;
+      var m = tmpCtx.measureText(text);
+      c.width = m.width + size; c.height = size * 1.8;
+      var ctx = c.getContext('2d');
+      if (!transparent) { ctx.fillStyle = bg; ctx.fillRect(0, 0, c.width, c.height); }
+      ctx.font = 'bold ' + size + 'px ' + font;
+      ctx.fillStyle = color; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(text, c.width / 2, c.height / 2);
+      var blob = await new Promise(function (r) { c.toBlob(r, 'image/png'); });
+      var out = document.getElementById('text-logo-output');
+      var url = URL.createObjectURL(blob);
+      out.innerHTML = '<div class="output-card"><h3>\u2713 Logo Created!</h3><img src="' + url + '" style="max-width:100%;border:1px solid var(--border);border-radius:8px;margin:12px 0"><div class="output-filename"><label>File name:</label><input type="text" class="input output-dl-name" value="logo.png"></div><button class="btn btn-success output-dl-btn">Download</button></div>';
+      out.querySelector('.output-dl-btn').addEventListener('click', function () { EditIt.downloadBlob(blob, out.querySelector('.output-dl-name').value || 'logo.png'); });
+    });
+  })();
+
+  // 4. COLOR CONTRAST CHECKER
+  (function () {
+    var fg = document.getElementById('cc2-fg'), bg = document.getElementById('cc2-bg');
+    if (!fg) return;
+    function hexToRgb(hex) { hex = hex.replace('#', ''); return [parseInt(hex.substr(0,2),16), parseInt(hex.substr(2,2),16), parseInt(hex.substr(4,2),16)]; }
+    function luminance(r,g,b) { var a = [r,g,b].map(function(v){ v/=255; return v<=0.03928?v/12.92:Math.pow((v+0.055)/1.055,2.4); }); return a[0]*0.2126+a[1]*0.7152+a[2]*0.0722; }
+    function contrast(c1,c2) { var l1 = luminance(c1[0],c1[1],c1[2])+0.05, l2 = luminance(c2[0],c2[1],c2[2])+0.05; return l1>l2?l1/l2:l2/l1; }
+    function update() {
+      var fgC = hexToRgb(fg.value), bgC = hexToRgb(bg.value);
+      var ratio = contrast(fgC, bgC);
+      var preview = document.getElementById('cc2-preview');
+      preview.style.color = fg.value; preview.style.background = bg.value;
+      var aa = ratio >= 4.5 ? 'PASS' : 'FAIL', aaL = ratio >= 3 ? 'PASS' : 'FAIL';
+      var aaa = ratio >= 7 ? 'PASS' : 'FAIL', aaaL = ratio >= 4.5 ? 'PASS' : 'FAIL';
+      document.getElementById('color-contrast-output').innerHTML = '<div class="output-card"><h3>Contrast Ratio: ' + ratio.toFixed(2) + ':1</h3><div class="stat-grid"><div class="stat-card"><div class="stat-num" style="color:' + (aa==='PASS'?'var(--success)':'var(--danger)') + '">' + aa + '</div><div class="stat-label">AA Normal</div></div><div class="stat-card"><div class="stat-num" style="color:' + (aaL==='PASS'?'var(--success)':'var(--danger)') + '">' + aaL + '</div><div class="stat-label">AA Large</div></div><div class="stat-card"><div class="stat-num" style="color:' + (aaa==='PASS'?'var(--success)':'var(--danger)') + '">' + aaa + '</div><div class="stat-label">AAA Normal</div></div><div class="stat-card"><div class="stat-num" style="color:' + (aaaL==='PASS'?'var(--success)':'var(--danger)') + '">' + aaaL + '</div><div class="stat-label">AAA Large</div></div></div></div>';
+    }
+    fg.addEventListener('input', update); bg.addEventListener('input', update);
+    update();
+  })();
+
+  // 5. BARCODE GENERATOR (Code128 subset B)
+  (function () {
+    var btn = document.getElementById('bc-generate');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var text = document.getElementById('bc-input').value;
+      var out = document.getElementById('barcode-gen-output');
+      if (!text) { EditIt.showToast('Enter text', 'error'); return; }
+      var barW = parseInt(document.getElementById('bc-width').value) || 2;
+      var barH = parseInt(document.getElementById('bc-height').value) || 80;
+      // Simple Code128B encoding
+      var PATTERNS = ['11011001100','11001101100','11001100110','10010011000','10010001100','10001001100','10011001000','10011000100','10001100100','11001001000','11001000100','11000100100','10110011100','10011011100','10011001110','10111001100','10011101100','10011100110','11001110010','11001011100','11000101110','11011100100','11001110100','11001110010','11010010000','11010000100','11000010100','10100110000','10010011000','10010000110','10000101100','10000100110','10110010000','10110000100','10011010000','10011000010','10000110100','10000110010','11010110000','11010000110','11000010110','10100011000','10001011000','10001000110','10110001000','10001101000','10001100010','11010001000','11000010010','11011000010','11000111010','10100110000','11010110000','11000110100','10011000010','11110111010','11000110010','10100011000'];
+      var START_B = 104;
+      var indices = [START_B];
+      var checksum = START_B;
+      for (var i = 0; i < text.length; i++) {
+        var idx = text.charCodeAt(i) - 32;
+        if (idx < 0 || idx > 94) idx = 0;
+        indices.push(idx);
+        checksum += idx * (i + 1);
+      }
+      indices.push(checksum % 103);
+      indices.push(106); // STOP
+      var binary = '';
+      indices.forEach(function (idx) { binary += PATTERNS[idx] || PATTERNS[0]; });
+      binary += '11'; // final bar
+      var c = document.createElement('canvas');
+      c.width = binary.length * barW + 40;
+      c.height = barH + 30;
+      var ctx = c.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+      ctx.fillStyle = '#000';
+      for (var b = 0; b < binary.length; b++) {
+        if (binary[b] === '1') ctx.fillRect(20 + b * barW, 5, barW, barH);
+      }
+      ctx.font = '12px Arial'; ctx.textAlign = 'center';
+      ctx.fillText(text, c.width / 2, barH + 20);
+      c.toBlob(function (blob) {
+        var url = URL.createObjectURL(blob);
+        out.innerHTML = '<div class="output-card"><h3>\u2713 Barcode Generated!</h3><img src="' + url + '" style="margin:12px 0"><div class="output-filename"><label>File name:</label><input type="text" class="input output-dl-name" value="barcode.png"></div><button class="btn btn-success output-dl-btn">Download</button></div>';
+        out.querySelector('.output-dl-btn').addEventListener('click', function () { EditIt.downloadBlob(blob, out.querySelector('.output-dl-name').value || 'barcode.png'); });
+      }, 'image/png');
+    });
+  })();
+
+  // 6. PATTERN GENERATOR
+  (function () {
+    var preview = document.getElementById('pat-preview');
+    if (!preview) return;
+    function generate() {
+      var type = document.getElementById('pat-type').value;
+      var size = parseInt(document.getElementById('pat-size').value) || 24;
+      var c1 = document.getElementById('pat-c1').value, c2 = document.getElementById('pat-c2').value;
+      var c = document.createElement('canvas'); c.width = size; c.height = size;
+      var ctx = c.getContext('2d');
+      ctx.fillStyle = c2; ctx.fillRect(0, 0, size, size);
+      ctx.fillStyle = c1;
+      if (type === 'stripes') { ctx.beginPath(); ctx.moveTo(0, size); ctx.lineTo(size, 0); ctx.lineTo(size, size/4); ctx.lineTo(size/4, size); ctx.fill(); ctx.beginPath(); ctx.moveTo(0, size*0.5); ctx.lineTo(size*0.5, 0); ctx.lineTo(0, 0); ctx.fill(); }
+      else if (type === 'dots') { ctx.beginPath(); ctx.arc(size/2, size/2, size/5, 0, Math.PI*2); ctx.fill(); }
+      else if (type === 'grid') { ctx.fillRect(0, 0, 1, size); ctx.fillRect(0, 0, size, 1); }
+      else if (type === 'checkers') { ctx.fillRect(0, 0, size/2, size/2); ctx.fillRect(size/2, size/2, size/2, size/2); }
+      else if (type === 'zigzag') { ctx.beginPath(); ctx.moveTo(0,size); ctx.lineTo(size/2,0); ctx.lineTo(size,size); ctx.lineWidth=2; ctx.strokeStyle=c1; ctx.stroke(); }
+      var dataUrl = c.toDataURL();
+      preview.style.backgroundImage = 'url(' + dataUrl + ')';
+      preview.style.backgroundRepeat = 'repeat';
+      preview.style.backgroundSize = size + 'px ' + size + 'px';
+      preview._canvas = c; preview._css = 'background-image:url(' + dataUrl + ');background-repeat:repeat;background-size:' + size + 'px ' + size + 'px;';
+    }
+    ['pat-type','pat-size','pat-c1','pat-c2'].forEach(function(id) { var el = document.getElementById(id); if(el) { el.addEventListener('input', generate); el.addEventListener('change', generate); } });
+    generate();
+    document.getElementById('pat-download').addEventListener('click', function () {
+      var big = document.createElement('canvas'); big.width = 512; big.height = 512;
+      var bctx = big.getContext('2d');
+      var pat = bctx.createPattern(preview._canvas, 'repeat');
+      bctx.fillStyle = pat; bctx.fillRect(0, 0, 512, 512);
+      big.toBlob(function (b) { EditIt.downloadBlob(b, 'pattern.png'); }, 'image/png');
+    });
+    document.getElementById('pat-copy-css').addEventListener('click', function () {
+      navigator.clipboard.writeText(preview._css).then(function () { EditIt.showToast('CSS copied!', 'success'); });
+    });
+  })();
+
+  // 7. GIF FROM IMAGES
+  (function () {
+    var actionBtn = document.getElementById('gif-from-images-action');
+    if (!actionBtn) return;
+    var files = [], fileListEl = document.getElementById('gif-from-images-files');
+    document.addEventListener('files-added', function (e) {
+      if (e.detail.toolId !== 'gif-from-images') return;
+      files = files.concat(e.detail.files.filter(function(f){return f.type.startsWith('image/');}));
+      fileListEl.innerHTML = '';
+      files.forEach(function (f, i) { var item = EditIt.createFileItem(f, i); item.querySelector('.file-item-remove').addEventListener('click', function () { files.splice(i, 1); fileListEl.innerHTML = ''; actionBtn.disabled = files.length < 2; }); fileListEl.appendChild(item); });
+      actionBtn.disabled = files.length < 2;
+      document.getElementById('gif-from-images-options').style.display = 'block';
+    });
+    actionBtn.addEventListener('click', async function () {
+      if (files.length < 2) return; EditIt.setButtonLoading(actionBtn, true);
+      try {
+        var delay = parseInt(document.getElementById('gfi-delay').value) || 200;
+        var gw = parseInt(document.getElementById('gfi-width').value) || 480;
+        var imgs = [];
+        for (var i = 0; i < files.length; i++) {
+          var du = await EditIt.readImageAsDataURL(files[i]);
+          imgs.push(await EditIt.loadImage(du));
+        }
+        var gh = Math.round(gw * (imgs[0].naturalHeight / imgs[0].naturalWidth));
+        var canvas = document.createElement('canvas'); canvas.width = gw; canvas.height = gh;
+        var ctx = canvas.getContext('2d');
+        var frames = [];
+        for (var j = 0; j < imgs.length; j++) {
+          EditIt.showProgress('Processing frame ' + (j+1), (j/imgs.length)*90);
+          ctx.clearRect(0,0,gw,gh);
+          ctx.drawImage(imgs[j], 0, 0, gw, gh);
+          frames.push(ctx.getImageData(0, 0, gw, gh));
+        }
+        EditIt.showProgress('Encoding GIF...', 95);
+        // Reuse existing GIF encoder from video-to-gif section
+        var buf = []; function w16(v){buf.push(v&0xFF,(v>>8)&0xFF);}
+        [0x47,0x49,0x46,0x38,0x39,0x61].forEach(function(b){buf.push(b);}); w16(gw);w16(gh);buf.push(0x70,0,0);
+        buf.push(0x21,0xFF,0x0B);[0x4E,0x45,0x54,0x53,0x43,0x41,0x50,0x45,0x32,0x2E,0x30].forEach(function(b){buf.push(b);});buf.push(0x03,0x01);w16(0);buf.push(0x00);
+        frames.forEach(function(frame){var pixels=frame.data;var colorMap={};var palette=[];var indexed=new Uint8Array(gw*gh);for(var i=0;i<pixels.length;i+=4){var r=pixels[i]>>4<<4,g=pixels[i+1]>>4<<4,b=pixels[i+2]>>4<<4;var key=(r<<16)|(g<<8)|b;if(!(key in colorMap)){if(palette.length<256){colorMap[key]=palette.length;palette.push([r,g,b]);}else{colorMap[key]=0;}}indexed[i/4]=colorMap[key];}while(palette.length<256)palette.push([0,0,0]);buf.push(0x21,0xF9,0x04,0x00);w16(Math.round(delay/10));buf.push(0x00,0x00);buf.push(0x2C);w16(0);w16(0);w16(gw);w16(gh);buf.push(0x87);palette.forEach(function(c){buf.push(c[0],c[1],c[2]);});buf.push(8);var clearCode=256,eoi=257,codeSize=9,nextCode=258;var dict={};for(var k=0;k<256;k++)dict[k]=k;var out2=[],bits=0,bf=0;function emit(code){bf|=code<<bits;bits+=codeSize;while(bits>=8){out2.push(bf&0xFF);bf>>=8;bits-=8;}}emit(clearCode);var prev=indexed[0];for(var j=1;j<indexed.length;j++){var curr=indexed[j];var ky=prev+','+curr;if(ky in dict){prev=dict[ky];}else{emit(prev);if(nextCode<4096){dict[ky]=nextCode++;if(nextCode>(1<<codeSize)&&codeSize<12)codeSize++;}else{emit(clearCode);dict={};for(var m=0;m<256;m++)dict[m]=m;nextCode=eoi+1;codeSize=9;}prev=curr;}}emit(prev);emit(eoi);if(bits>0)out2.push(bf&0xFF);var pos=0;while(pos<out2.length){var chunk=Math.min(255,out2.length-pos);buf.push(chunk);for(var n=0;n<chunk;n++)buf.push(out2[pos++]);}buf.push(0x00);});
+        buf.push(0x3B);
+        var blob = new Blob([new Uint8Array(buf)], { type: 'image/gif' });
+        EditIt.hideProgress();
+        var url = URL.createObjectURL(blob);
+        var out = document.getElementById('gif-from-images-output');
+        out.innerHTML = '<div class="output-card"><h3>\u2713 GIF Created!</h3><p>' + frames.length + ' frames • ' + EditIt.formatFileSize(blob.size) + '</p><img src="' + url + '" style="max-width:100%;border:1px solid var(--border);border-radius:8px;margin:12px 0"><div class="output-filename"><label>File name:</label><input type="text" class="input output-dl-name" value="animation.gif"></div><button class="btn btn-success output-dl-btn">Download</button></div>';
+        out.querySelector('.output-dl-btn').addEventListener('click', function(){EditIt.downloadBlob(blob, out.querySelector('.output-dl-name').value||'animation.gif');});
+        EditIt.showToast('GIF created!', 'success');
+      } catch (err) { EditIt.hideProgress(); EditIt.showToast('Error: ' + err.message, 'error'); }
+      EditIt.setButtonLoading(actionBtn, false);
+    });
+  })();
+
+  // 8. LINE SORTER
+  (function () {
+    document.querySelectorAll('.ls-btn').forEach(function (b) {
+      b.addEventListener('click', function () {
+        var input = document.getElementById('ls-input').value;
+        var lines = input.split('\n');
+        var action = b.dataset.action;
+        if (action === 'az') lines.sort(function(a,b){return a.localeCompare(b);});
+        else if (action === 'za') lines.sort(function(a,b){return b.localeCompare(a);});
+        else if (action === 'num') lines.sort(function(a,b){return parseFloat(a)||0 - (parseFloat(b)||0);});
+        else if (action === 'dedup') lines = [...new Set(lines)];
+        else if (action === 'shuffle') { for(var i=lines.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=lines[i];lines[i]=lines[j];lines[j]=t;} }
+        else if (action === 'reverse') lines.reverse();
+        else if (action === 'trim') lines = lines.map(function(l){return l.trim();});
+        else if (action === 'empty') lines = lines.filter(function(l){return l.trim()!=='';});
+        var result = lines.join('\n');
+        document.getElementById('line-sorter-output').innerHTML = '<div class="ocr-text-output">' + result.replace(/</g,'&lt;') + '</div><button class="btn btn-success ls-copy" style="margin-top:8px">Copy</button>';
+        document.querySelector('.ls-copy').addEventListener('click', function(){navigator.clipboard.writeText(result).then(function(){EditIt.showToast('Copied!','success');});});
+      });
+    });
+  })();
+
+  // 9. TEXT REPEATER
+  (function () {
+    var btn = document.getElementById('tr-go');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var text = document.getElementById('tr-text').value;
+      var count = parseInt(document.getElementById('tr-count').value) || 10;
+      var sep = document.getElementById('tr-sep').value.replace(/\\n/g, '\n');
+      if (!text) { EditIt.showToast('Enter text', 'error'); return; }
+      var result = Array(count).fill(text).join(sep);
+      document.getElementById('text-repeater-output').innerHTML = '<div class="ocr-text-output">' + result.substring(0,5000).replace(/</g,'&lt;') + '</div><button class="btn btn-success" id="tr-copy" style="margin-top:8px">Copy</button>';
+      document.getElementById('tr-copy').addEventListener('click', function(){navigator.clipboard.writeText(result).then(function(){EditIt.showToast('Copied!','success');});});
+    });
+  })();
+
+  // 10. FIND & REPLACE
+  (function () {
+    var btn = document.getElementById('fr-go');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var text = document.getElementById('fr-text').value;
+      var find = document.getElementById('fr-find').value;
+      var replace = document.getElementById('fr-replace').value;
+      var useRegex = document.getElementById('fr-regex').checked;
+      if (!text || !find) { EditIt.showToast('Enter text and search term', 'error'); return; }
+      try {
+        var re = useRegex ? new RegExp(find, 'g') : new RegExp(find.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g');
+        var count = (text.match(re) || []).length;
+        var result = text.replace(re, replace);
+        document.getElementById('find-replace-output').innerHTML = '<div class="output-card"><h3>\u2713 ' + count + ' replacements made</h3><div class="ocr-text-output">' + result.replace(/</g,'&lt;') + '</div><button class="btn btn-success" id="fr-copy" style="margin-top:8px">Copy</button></div>';
+        document.getElementById('fr-copy').addEventListener('click', function(){navigator.clipboard.writeText(result).then(function(){EditIt.showToast('Copied!','success');});});
+      } catch (e) { EditIt.showToast('Regex error: ' + e.message, 'error'); }
+    });
+  })();
+
+  // 11. FAKE DATA GENERATOR
+  (function () {
+    var btn = document.getElementById('fd-go');
+    if (!btn) return;
+    var firstNames = ['James','Mary','John','Patricia','Robert','Jennifer','Michael','Linda','David','Elizabeth','William','Barbara','Richard','Susan','Joseph','Jessica','Thomas','Sarah','Christopher','Karen','Emma','Olivia','Liam','Noah','Sophia','Ava','Isabella','Mia','Charlotte','Amelia'];
+    var lastNames = ['Smith','Johnson','Williams','Brown','Jones','Garcia','Miller','Davis','Rodriguez','Martinez','Hernandez','Lopez','Gonzalez','Wilson','Anderson','Thomas','Taylor','Moore','Jackson','Martin','Lee','Perez','Thompson','White','Harris','Sanchez','Clark','Ramirez','Lewis','Robinson'];
+    var domains = ['gmail.com','yahoo.com','outlook.com','proton.me','company.com','work.org'];
+    var streets = ['Main St','Oak Ave','Elm St','Park Dr','Cedar Ln','Maple Rd','Pine St','Lake Ave','Hill Dr','River Rd'];
+    var cities = ['New York','Los Angeles','Chicago','Houston','Phoenix','San Antonio','Dallas','San Jose','Austin','San Francisco','Seattle','Denver','Boston','Miami','Portland'];
+    var companies = ['Acme Corp','TechStart Inc','Digital Wave','Cloud Nine Labs','Pixel Perfect','DataFlow Systems','NovaTech','BlueSky Solutions','GreenLeaf Co','QuantumEdge'];
+    function rnd(arr) { return arr[Math.floor(Math.random()*arr.length)]; }
+    function rndNum(min,max) { return Math.floor(Math.random()*(max-min+1))+min; }
+    btn.addEventListener('click', function () {
+      var type = document.getElementById('fd-type').value;
+      var count = parseInt(document.getElementById('fd-count').value) || 5;
+      var out = document.getElementById('fake-data-output');
+      var html = '<div class="output-card"><h3>\u2713 ' + count + ' Records Generated</h3><table class="exif-table">';
+      for (var i = 0; i < count; i++) {
+        if (type === 'person') {
+          var fn = rnd(firstNames), ln = rnd(lastNames);
+          html += '<tr><td><strong>' + fn + ' ' + ln + '</strong></td><td>' + fn.toLowerCase() + '.' + ln.toLowerCase() + '@' + rnd(domains) + '</td><td>+1 ' + rndNum(200,999) + ' ' + rndNum(100,999) + ' ' + rndNum(1000,9999) + '</td></tr>';
+        } else if (type === 'address') {
+          html += '<tr><td>' + rndNum(1,9999) + ' ' + rnd(streets) + '</td><td>' + rnd(cities) + '</td><td>' + rndNum(10000,99999) + '</td></tr>';
+        } else {
+          html += '<tr><td><strong>' + rnd(companies) + '</strong></td><td>Founded ' + rndNum(1990,2023) + '</td><td>' + rndNum(5,5000) + ' employees</td></tr>';
+        }
+      }
+      html += '</table><button class="btn btn-outline" id="fd-copy" style="margin-top:8px">Copy as JSON</button></div>';
+      out.innerHTML = html;
+      document.getElementById('fd-copy').addEventListener('click', function(){
+        var rows = out.querySelectorAll('tr');
+        var data = []; rows.forEach(function(r){var cells=[]; r.querySelectorAll('td').forEach(function(c){cells.push(c.textContent);}); data.push(cells);});
+        navigator.clipboard.writeText(JSON.stringify(data,null,2)).then(function(){EditIt.showToast('Copied!','success');});
+      });
+    });
+  })();
+
+  // 12. TYPING SPEED TEST
+  (function () {
+    var startBtn = document.getElementById('tt-start'), resetBtn = document.getElementById('tt-reset');
+    if (!startBtn) return;
+    var passages = ['The quick brown fox jumps over the lazy dog. Pack my box with five dozen liquor jugs. How vexingly quick daft zebras jump. The five boxing wizards jump quickly.', 'Programming is the art of telling another human being what one wants the computer to do. Software is a great combination between artistry and engineering.', 'In the beginning there was nothing, which exploded. Time is a drug. Too much of it kills you. The ships hung in the sky in much the same way that bricks do not.'];
+    var passage, startTime, timer, done;
+    startBtn.addEventListener('click', function () {
+      passage = passages[Math.floor(Math.random()*passages.length)];
+      document.getElementById('tt-passage').textContent = passage;
+      document.getElementById('tt-input').value = ''; document.getElementById('tt-input').disabled = false; document.getElementById('tt-input').focus();
+      startTime = null; done = false;
+      startBtn.style.display = 'none'; resetBtn.style.display = 'inline-flex';
+      document.getElementById('tt-wpm').textContent = '0'; document.getElementById('tt-acc').textContent = '0%'; document.getElementById('tt-time').textContent = '0s';
+    });
+    resetBtn.addEventListener('click', function () {
+      clearInterval(timer); document.getElementById('tt-input').disabled = true;
+      startBtn.style.display = 'inline-flex'; resetBtn.style.display = 'none';
+      document.getElementById('tt-passage').textContent = ''; document.getElementById('tt-input').value = '';
+    });
+    document.getElementById('tt-input').addEventListener('input', function () {
+      if (done) return;
+      if (!startTime) { startTime = Date.now(); timer = setInterval(updateStats, 500); }
+      var typed = this.value;
+      if (typed.length >= passage.length) { done = true; clearInterval(timer); updateStats(); EditIt.showToast('Test complete!', 'success'); }
+    });
+    function updateStats() {
+      var elapsed = (Date.now() - startTime) / 1000;
+      var typed = document.getElementById('tt-input').value;
+      var words = typed.trim().split(/\s+/).length;
+      var wpm = Math.round((words / elapsed) * 60) || 0;
+      var correct = 0;
+      for (var i = 0; i < typed.length; i++) { if (typed[i] === passage[i]) correct++; }
+      var acc = typed.length ? Math.round((correct / typed.length) * 100) : 0;
+      document.getElementById('tt-wpm').textContent = wpm;
+      document.getElementById('tt-acc').textContent = acc + '%';
+      document.getElementById('tt-time').textContent = Math.round(elapsed) + 's';
+    }
+  })();
+
+  // 13. EMOJI SEARCH
+  (function () {
+    var input = document.getElementById('emo-search');
+    if (!input) return;
+    var emojis = [['😀','grinning'],['😂','joy laughing'],['🥹','holding tears'],['😍','heart eyes love'],['🥰','smiling hearts'],['😎','cool sunglasses'],['🤔','thinking'],['😱','scream shocked'],['🥳','party'],['😴','sleeping'],['🤮','vomit'],['🤡','clown'],['👻','ghost'],['💀','skull dead'],['👽','alien'],['🤖','robot'],['💩','poop'],['❤️','red heart love'],['🧡','orange heart'],['💛','yellow heart'],['💚','green heart'],['💙','blue heart'],['💜','purple heart'],['🖤','black heart'],['🤍','white heart'],['💔','broken heart'],['🔥','fire hot'],['⭐','star'],['🌟','glowing star'],['✨','sparkles'],['⚡','lightning zap'],['💡','lightbulb idea'],['🎉','party celebration'],['🎊','confetti'],['🏆','trophy winner'],['🥇','gold medal first'],['🎯','target bullseye'],['🚀','rocket launch'],['✅','check mark done'],['❌','cross mark wrong'],['⚠️','warning'],['🔴','red circle'],['🟢','green circle'],['🔵','blue circle'],['👍','thumbs up like'],['👎','thumbs down dislike'],['👏','clapping'],['🤝','handshake'],['✌️','peace victory'],['🤞','fingers crossed'],['💪','strong muscle'],['🙏','pray please'],['👋','wave hello bye'],['📱','phone mobile'],['💻','laptop computer'],['⌨️','keyboard'],['🖥️','desktop computer'],['🔗','link chain'],['📧','email'],['📅','calendar date'],['📊','chart graph'],['📈','trending up'],['📉','trending down'],['🔒','lock secure'],['🔓','unlock'],['🔑','key'],['🛡️','shield'],['⚙️','gear settings'],['🔧','wrench tool'],['🔨','hammer'],['🗑️','trash delete'],['📁','folder'],['📄','document page'],['✏️','pencil edit'],['🖊️','pen'],['📌','pin'],['🔍','search magnify'],['💬','speech bubble chat'],['🌍','earth globe world'],['🌈','rainbow'],['☀️','sun'],['🌙','moon night'],['⛅','cloud sun'],['🌧️','rain'],['❄️','snowflake cold'],['🌊','wave ocean'],['🍕','pizza food'],['🍔','burger food'],['☕','coffee'],['🍺','beer'],['🎵','music note'],['🎶','music notes'],['🎮','game controller'],['🎨','art palette paint'],['📸','camera photo'],['🎥','video camera film'],['🎬','clapperboard movie']];
+    function render(filter) {
+      var grid = document.getElementById('emo-grid');
+      var html = '';
+      emojis.forEach(function (e) {
+        if (filter && !e[1].includes(filter) && !e[0].includes(filter)) return;
+        html += '<span class="emoji-item" data-emoji="' + e[0] + '" title="' + e[1] + '">' + e[0] + '</span>';
+      });
+      grid.innerHTML = html;
+      grid.querySelectorAll('.emoji-item').forEach(function (el) {
+        el.addEventListener('click', function () { navigator.clipboard.writeText(el.dataset.emoji).then(function () { document.getElementById('emo-copied').textContent = 'Copied: ' + el.dataset.emoji; EditIt.showToast('Copied ' + el.dataset.emoji, 'success'); }); });
+      });
+    }
+    render('');
+    input.addEventListener('input', function () { render(input.value.toLowerCase().trim()); });
+  })();
+
+  // 14. HTML → MARKDOWN
+  (function () {
+    var btn = document.getElementById('h2m-go');
+    if (!btn) return;
+    btn.addEventListener('click', function () {
+      var html = document.getElementById('h2m-input').value;
+      if (!html.trim()) { EditIt.showToast('Paste HTML', 'error'); return; }
+      var md = html.replace(/<h1[^>]*>(.*?)<\/h1>/gi, '# $1\n').replace(/<h2[^>]*>(.*?)<\/h2>/gi, '## $1\n').replace(/<h3[^>]*>(.*?)<\/h3>/gi, '### $1\n').replace(/<h4[^>]*>(.*?)<\/h4>/gi, '#### $1\n').replace(/<strong[^>]*>(.*?)<\/strong>/gi, '**$1**').replace(/<b[^>]*>(.*?)<\/b>/gi, '**$1**').replace(/<em[^>]*>(.*?)<\/em>/gi, '*$1*').replace(/<i[^>]*>(.*?)<\/i>/gi, '*$1*').replace(/<a[^>]*href="([^"]*)"[^>]*>(.*?)<\/a>/gi, '[$2]($1)').replace(/<img[^>]*src="([^"]*)"[^>]*alt="([^"]*)"[^>]*/gi, '![$2]($1)').replace(/<br\s*\/?>/gi, '\n').replace(/<li[^>]*>(.*?)<\/li>/gi, '- $1\n').replace(/<code[^>]*>(.*?)<\/code>/gi, '`$1`').replace(/<blockquote[^>]*>(.*?)<\/blockquote>/gi, '> $1\n').replace(/<p[^>]*>(.*?)<\/p>/gi, '$1\n\n').replace(/<hr\s*\/?>/gi, '---\n').replace(/<[^>]+>/g, '').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&nbsp;/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+      document.getElementById('html-to-md-output').innerHTML = '<div class="output-card"><h3>\u2713 Converted!</h3><div class="ocr-text-output" style="text-align:left;white-space:pre-wrap">' + md.replace(/</g,'&lt;') + '</div><button class="btn btn-success" id="h2m-copy" style="margin-top:8px">Copy</button></div>';
+      document.getElementById('h2m-copy').addEventListener('click', function(){navigator.clipboard.writeText(md).then(function(){EditIt.showToast('Copied!','success');});});
+    });
+  })();
+
+  // 15. TEXT TO HANDWRITING
+  (function () {
+    var btn = document.getElementById('hw-go');
+    if (!btn) return;
+    btn.addEventListener('click', async function () {
+      var text = document.getElementById('hw-input').value;
+      if (!text.trim()) { EditIt.showToast('Enter text', 'error'); return; }
+      var color = document.getElementById('hw-color').value;
+      var size = parseInt(document.getElementById('hw-size').value) || 22;
+      var lineH = size * 1.8;
+      var lines = text.split('\n');
+      var c = document.createElement('canvas'); c.width = 800; c.height = Math.max(400, lines.length * lineH + 80);
+      var ctx = c.getContext('2d');
+      // Paper background
+      ctx.fillStyle = '#fef9ef'; ctx.fillRect(0, 0, c.width, c.height);
+      // Ruled lines
+      ctx.strokeStyle = '#d4c5a9'; ctx.lineWidth = 0.5;
+      for (var i = 0; i < c.height; i += lineH) { ctx.beginPath(); ctx.moveTo(40, 60 + i); ctx.lineTo(c.width - 40, 60 + i); ctx.stroke(); }
+      // Red margin line
+      ctx.strokeStyle = '#e8a0a0'; ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(70, 0); ctx.lineTo(70, c.height); ctx.stroke();
+      // Text
+      ctx.fillStyle = color;
+      ctx.font = size + 'px "Segoe Script", "Comic Sans MS", cursive';
+      lines.forEach(function (line, idx) {
+        var x = 80;
+        for (var j = 0; j < line.length; j++) {
+          var jitter = (Math.random() - 0.5) * 2;
+          ctx.fillText(line[j], x, 56 + idx * lineH + jitter);
+          x += ctx.measureText(line[j]).width + (Math.random() - 0.5) * 1;
+        }
+      });
+      var blob = await new Promise(function (r) { c.toBlob(r, 'image/png'); });
+      var out = document.getElementById('text-to-handwriting-output');
+      dlCard(out, 'Handwriting Generated!', EditIt.formatFileSize(blob.size), blob, 'handwriting.png', '<img src="' + URL.createObjectURL(blob) + '" style="max-width:100%;border:1px solid var(--border);border-radius:8px;margin:12px 0">');
+      EditIt.showToast('Handwriting generated!', 'success');
+    });
+  })();
+
+  // 16. INVOICE GENERATOR
+  (function () {
+    var btn = document.getElementById('inv-go');
+    if (!btn) return;
+    btn.addEventListener('click', async function () {
+      EditIt.setButtonLoading(btn, true);
+      try {
+        var PDFDoc = PDFLib.PDFDocument, SF = PDFLib.StandardFonts, rgb = PDFLib.rgb;
+        var pdf = await PDFDoc.create();
+        var font = await pdf.embedFont(SF.Helvetica);
+        var bold = await pdf.embedFont(SF.HelveticaBold);
+        var page = pdf.addPage([595, 842]);
+        var from = document.getElementById('inv-from').value || 'Your Company';
+        var to = document.getElementById('inv-to').value || 'Client';
+        var num = document.getElementById('inv-num').value || 'INV-001';
+        var date = document.getElementById('inv-date').value || new Date().toLocaleDateString();
+        var notes = document.getElementById('inv-notes').value || '';
+        var itemsRaw = document.getElementById('inv-items').value.trim().split('\n');
+        page.drawText('INVOICE', { x: 50, y: 780, size: 28, font: bold, color: rgb(0.39,0.4,0.95) });
+        page.drawText(from, { x: 50, y: 740, size: 12, font: bold }); page.drawText('Bill To: ' + to, { x: 50, y: 710, size: 11, font: font });
+        page.drawText('Invoice #: ' + num, { x: 400, y: 740, size: 10, font: font }); page.drawText('Date: ' + date, { x: 400, y: 725, size: 10, font: font });
+        // Table header
+        var y = 660;
+        page.drawRectangle({ x: 50, y: y - 5, width: 495, height: 25, color: rgb(0.39,0.4,0.95) });
+        page.drawText('Description', { x: 60, y: y, size: 10, font: bold, color: rgb(1,1,1) });
+        page.drawText('Qty', { x: 350, y: y, size: 10, font: bold, color: rgb(1,1,1) });
+        page.drawText('Price', { x: 400, y: y, size: 10, font: bold, color: rgb(1,1,1) });
+        page.drawText('Total', { x: 470, y: y, size: 10, font: bold, color: rgb(1,1,1) });
+        y -= 30; var total = 0;
+        itemsRaw.forEach(function (line) {
+          var parts = line.split(',').map(function(s){return s.trim();}); if (parts.length < 3) return;
+          var desc = parts[0], qty = parseFloat(parts[1]) || 1, price = parseFloat(parts[2]) || 0;
+          var lineTotal = qty * price; total += lineTotal;
+          page.drawText(desc, { x: 60, y: y, size: 10, font: font }); page.drawText(String(qty), { x: 355, y: y, size: 10, font: font });
+          page.drawText('$' + price.toFixed(2), { x: 400, y: y, size: 10, font: font }); page.drawText('$' + lineTotal.toFixed(2), { x: 470, y: y, size: 10, font: font });
+          y -= 22;
+        });
+        y -= 10;
+        page.drawLine({ start: { x: 350, y: y + 5 }, end: { x: 545, y: y + 5 }, thickness: 1 });
+        page.drawText('Total: $' + total.toFixed(2), { x: 400, y: y - 15, size: 14, font: bold, color: rgb(0.39,0.4,0.95) });
+        if (notes) page.drawText('Notes: ' + notes, { x: 50, y: y - 50, size: 9, font: font, color: rgb(0.4,0.4,0.4) });
+        var saved = await pdf.save(); var blob = new Blob([saved], { type: 'application/pdf' });
+        dlCard(document.getElementById('invoice-gen-output'), 'Invoice Created!', '$' + total.toFixed(2) + ' total • ' + EditIt.formatFileSize(blob.size), blob, 'invoice_' + num + '.pdf');
+        EditIt.showToast('Invoice created!', 'success');
+      } catch (err) { EditIt.showToast('Error: ' + err.message, 'error'); }
+      EditIt.setButtonLoading(btn, false);
+    });
+  })();
+
+  // 17. RESUME BUILDER
+  (function () {
+    var btn = document.getElementById('res-go');
+    if (!btn) return;
+    btn.addEventListener('click', async function () {
+      EditIt.setButtonLoading(btn, true);
+      try {
+        var PDFDoc = PDFLib.PDFDocument, SF = PDFLib.StandardFonts, rgb = PDFLib.rgb;
+        var pdf = await PDFDoc.create();
+        var font = await pdf.embedFont(SF.Helvetica); var bold = await pdf.embedFont(SF.HelveticaBold);
+        var page = pdf.addPage([595, 842]);
+        var name = document.getElementById('res-name').value || 'Your Name';
+        var title = document.getElementById('res-title').value || '';
+        var email = document.getElementById('res-email').value || '';
+        var phone = document.getElementById('res-phone').value || '';
+        var summary = document.getElementById('res-summary').value || '';
+        var expRaw = document.getElementById('res-exp').value || '';
+        var skills = document.getElementById('res-skills').value || '';
+        var y = 780;
+        page.drawText(name, { x: 50, y: y, size: 24, font: bold, color: rgb(0.2,0.2,0.2) }); y -= 22;
+        if (title) { page.drawText(title, { x: 50, y: y, size: 13, font: font, color: rgb(0.39,0.4,0.95) }); y -= 18; }
+        var contact = [email, phone].filter(Boolean).join(' • ');
+        if (contact) { page.drawText(contact, { x: 50, y: y, size: 9, font: font, color: rgb(0.5,0.5,0.5) }); y -= 25; }
+        page.drawLine({ start:{x:50,y:y}, end:{x:545,y:y}, thickness:1, color:rgb(0.85,0.85,0.85) }); y -= 20;
+        if (summary) { page.drawText('SUMMARY', { x: 50, y: y, size: 11, font: bold, color: rgb(0.39,0.4,0.95) }); y -= 16; page.drawText(summary.substring(0,200), { x: 50, y: y, size: 9, font: font }); y -= 25; }
+        if (expRaw) {
+          page.drawText('EXPERIENCE', { x: 50, y: y, size: 11, font: bold, color: rgb(0.39,0.4,0.95) }); y -= 16;
+          expRaw.split('\n').forEach(function (line) {
+            var parts = line.split('|').map(function(s){return s.trim();});
+            page.drawText(parts[0] || '', { x: 50, y: y, size: 10, font: bold }); page.drawText((parts[1]||'') + ' • ' + (parts[2]||''), { x: 250, y: y, size: 9, font: font, color: rgb(0.5,0.5,0.5) });
+            y -= 18;
+          });
+          y -= 10;
+        }
+        if (skills) {
+          page.drawText('SKILLS', { x: 50, y: y, size: 11, font: bold, color: rgb(0.39,0.4,0.95) }); y -= 16;
+          page.drawText(skills, { x: 50, y: y, size: 9, font: font });
+        }
+        var saved = await pdf.save(); var blob = new Blob([saved], { type: 'application/pdf' });
+        dlCard(document.getElementById('resume-builder-output'), 'Resume Created!', EditIt.formatFileSize(blob.size), blob, name.replace(/\s+/g,'_') + '_Resume.pdf');
+        EditIt.showToast('Resume created!', 'success');
+      } catch (err) { EditIt.showToast('Error: ' + err.message, 'error'); }
+      EditIt.setButtonLoading(btn, false);
+    });
+  })();
+
+  // 18. CERTIFICATE GENERATOR
+  (function () {
+    var btn = document.getElementById('cert-go');
+    if (!btn) return;
+    btn.addEventListener('click', async function () {
+      var name = document.getElementById('cert-name').value || 'Recipient Name';
+      var course = document.getElementById('cert-course').value || 'Achievement';
+      var date = document.getElementById('cert-date').value || new Date().toLocaleDateString();
+      var issuer = document.getElementById('cert-issuer').value || 'Organization';
+      var c = document.createElement('canvas'); c.width = 1200; c.height = 800;
+      var ctx = c.getContext('2d');
+      // Background
+      ctx.fillStyle = '#fff'; ctx.fillRect(0,0,1200,800);
+      ctx.strokeStyle = '#6366f1'; ctx.lineWidth = 8; ctx.strokeRect(30,30,1140,740);
+      ctx.strokeStyle = '#a855f7'; ctx.lineWidth = 3; ctx.strokeRect(45,45,1110,710);
+      // Title
+      ctx.font = 'bold 48px Georgia'; ctx.fillStyle = '#6366f1'; ctx.textAlign = 'center';
+      ctx.fillText('Certificate of Completion', 600, 150);
+      // Subtitle
+      ctx.font = '20px Georgia'; ctx.fillStyle = '#666';
+      ctx.fillText('This is to certify that', 600, 260);
+      // Name
+      ctx.font = 'bold 52px Georgia'; ctx.fillStyle = '#1a1a2e';
+      ctx.fillText(name, 600, 340);
+      // Line
+      ctx.strokeStyle = '#6366f1'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.moveTo(250, 360); ctx.lineTo(950, 360); ctx.stroke();
+      // Course
+      ctx.font = '20px Georgia'; ctx.fillStyle = '#666';
+      ctx.fillText('has successfully completed', 600, 420);
+      ctx.font = 'bold 30px Georgia'; ctx.fillStyle = '#333';
+      ctx.fillText(course, 600, 470);
+      // Footer
+      ctx.font = '16px Georgia'; ctx.fillStyle = '#888';
+      ctx.fillText('Date: ' + date, 350, 620);
+      ctx.fillText('Issued by: ' + issuer, 850, 620);
+      // Decorative
+      ctx.font = '80px serif'; ctx.fillStyle = '#6366f120';
+      ctx.fillText('★', 100, 400); ctx.fillText('★', 1100, 400);
+      var blob = await new Promise(function(r){c.toBlob(r,'image/png');});
+      var out = document.getElementById('certificate-gen-output');
+      dlCard(out, 'Certificate Created!', EditIt.formatFileSize(blob.size), blob, 'certificate_' + name.replace(/\s+/g,'_') + '.png', '<img src="' + URL.createObjectURL(blob) + '" style="max-width:100%;border:1px solid var(--border);border-radius:8px;margin:12px 0">');
+      EditIt.showToast('Certificate created!', 'success');
+    });
+  })();
+
+  // 19. EMAIL SIGNATURE
+  (function () {
+    var refreshBtn = document.getElementById('sig-refresh'), copyBtn = document.getElementById('sig-copy');
+    if (!refreshBtn) return;
+    function generate() {
+      var name = document.getElementById('sig-name').value || 'John Doe';
+      var title = document.getElementById('sig-title').value || '';
+      var email = document.getElementById('sig-email').value || '';
+      var phone = document.getElementById('sig-phone').value || '';
+      var web = document.getElementById('sig-web').value || '';
+      var color = document.getElementById('sig-color').value || '#6366f1';
+      var html = '<table cellpadding="0" cellspacing="0" style="font-family:Arial,sans-serif;font-size:14px;color:#333"><tr><td style="border-right:3px solid ' + color + ';padding-right:16px"><strong style="font-size:16px;color:' + color + '">' + name + '</strong>' + (title ? '<br><span style="font-size:12px;color:#666">' + title + '</span>' : '') + '</td><td style="padding-left:16px">' + (email ? '<div style="font-size:12px">✉ <a href="mailto:' + email + '" style="color:' + color + ';text-decoration:none">' + email + '</a></div>' : '') + (phone ? '<div style="font-size:12px">☎ ' + phone + '</div>' : '') + (web ? '<div style="font-size:12px">🌐 <a href="' + web + '" style="color:' + color + ';text-decoration:none">' + web.replace(/https?:\/\//, '') + '</a></div>' : '') + '</td></tr></table>';
+      document.getElementById('sig-preview').innerHTML = html;
+      return html;
+    }
+    refreshBtn.addEventListener('click', generate);
+    copyBtn.addEventListener('click', function () {
+      var html = generate();
+      navigator.clipboard.writeText(html).then(function () { EditIt.showToast('HTML copied! Paste in your email client settings.', 'success'); });
+    });
+    generate();
+  })();
+
+  // 20. BUSINESS CARD
+  (function () {
+    var btn = document.getElementById('bc2-go');
+    if (!btn) return;
+    btn.addEventListener('click', async function () {
+      var name = document.getElementById('bc2-name').value || 'Jane Smith';
+      var title = document.getElementById('bc2-title').value || '';
+      var email = document.getElementById('bc2-email').value || '';
+      var phone = document.getElementById('bc2-phone').value || '';
+      var company = document.getElementById('bc2-company').value || '';
+      var color = document.getElementById('bc2-color').value;
+      var c = document.createElement('canvas'); c.width = 700; c.height = 400;
+      var ctx = c.getContext('2d');
+      ctx.fillStyle = '#fff'; ctx.fillRect(0,0,700,400);
+      // Accent bar
+      ctx.fillStyle = color; ctx.fillRect(0,0,8,400);
+      // Name
+      ctx.font = 'bold 32px Arial'; ctx.fillStyle = '#1a1a2e'; ctx.textAlign = 'left';
+      ctx.fillText(name, 40, 120);
+      if (title) { ctx.font = '18px Arial'; ctx.fillStyle = color; ctx.fillText(title, 40, 155); }
+      if (company) { ctx.font = 'bold 16px Arial'; ctx.fillStyle = '#555'; ctx.fillText(company, 40, 195); }
+      // Contact info
+      ctx.font = '14px Arial'; ctx.fillStyle = '#666'; var cy = 260;
+      if (email) { ctx.fillText('✉  ' + email, 40, cy); cy += 28; }
+      if (phone) { ctx.fillText('☎  ' + phone, 40, cy); cy += 28; }
+      // Border
+      ctx.strokeStyle = '#eee'; ctx.lineWidth = 2; ctx.strokeRect(1,1,698,398);
+      var blob = await new Promise(function(r){c.toBlob(r,'image/png');});
+      var out = document.getElementById('biz-card-output');
+      dlCard(out, 'Business Card Created!', '700×400 • ' + EditIt.formatFileSize(blob.size), blob, 'business_card.png', '<img src="' + URL.createObjectURL(blob) + '" style="max-width:100%;border:1px solid var(--border);border-radius:8px;margin:12px 0">');
+    });
+  })();
+
+  // 21. POMODORO TIMER
+  (function () {
+    var startBtn = document.getElementById('pom-start'), pauseBtn = document.getElementById('pom-pause'), resetBtn = document.getElementById('pom-reset');
+    if (!startBtn) return;
+    var timer, seconds, isWork = true, sessions = 0, running = false;
+    function display() { var m = Math.floor(seconds/60), s = seconds%60; document.getElementById('pom-display').textContent = String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0'); }
+    function reset() {
+      clearInterval(timer); running = false;
+      seconds = parseInt(document.getElementById('pom-work').value) * 60 || 1500; isWork = true;
+      document.getElementById('pom-label').textContent = 'Work Session';
+      display(); startBtn.style.display = 'inline-flex'; pauseBtn.style.display = 'none';
+    }
+    startBtn.addEventListener('click', function () {
+      if (!running) { seconds = (isWork ? parseInt(document.getElementById('pom-work').value) : parseInt(document.getElementById('pom-break').value)) * 60; }
+      running = true; startBtn.style.display = 'none'; pauseBtn.style.display = 'inline-flex';
+      timer = setInterval(function () {
+        seconds--;
+        if (seconds < 0) {
+          clearInterval(timer);
+          if (isWork) { sessions++; document.getElementById('pom-sessions').textContent = 'Sessions completed: ' + sessions; isWork = false; seconds = parseInt(document.getElementById('pom-break').value) * 60; document.getElementById('pom-label').textContent = 'Break Time!'; }
+          else { isWork = true; seconds = parseInt(document.getElementById('pom-work').value) * 60; document.getElementById('pom-label').textContent = 'Work Session'; }
+          EditIt.showToast(isWork ? 'Break over! Back to work!' : 'Great work! Take a break!', 'info');
+          display(); startBtn.style.display = 'inline-flex'; pauseBtn.style.display = 'none'; running = false;
+          return;
+        }
+        display();
+      }, 1000);
+    });
+    pauseBtn.addEventListener('click', function () { clearInterval(timer); running = false; startBtn.style.display = 'inline-flex'; pauseBtn.style.display = 'none'; startBtn.textContent = 'Resume'; });
+    resetBtn.addEventListener('click', function () { sessions = 0; document.getElementById('pom-sessions').textContent = 'Sessions completed: 0'; startBtn.textContent = 'Start'; reset(); });
+    reset();
+  })();
+
+  // 23. VIDEO TRIMMER
+  (function () {
+    var actionBtn = document.getElementById('video-trimmer-action');
+    if (!actionBtn) return;
+    var file = null;
+    document.addEventListener('files-added', function (e) {
+      if (e.detail.toolId !== 'video-trimmer') return;
+      file = e.detail.files.find(function (f) { return f.type.startsWith('video/'); });
+      if (!file) { EditIt.showToast('Select a video file', 'error'); return; }
+      var fl = document.getElementById('video-trimmer-files'); fl.innerHTML = '';
+      var item = EditIt.createFileItem(file, 0); item.querySelector('.file-item-remove').addEventListener('click', function () { file = null; fl.innerHTML = ''; actionBtn.disabled = true; document.getElementById('video-trimmer-options').style.display = 'none'; });
+      fl.appendChild(item);
+      var player = document.getElementById('vt-player');
+      player.src = URL.createObjectURL(file);
+      player.addEventListener('loadedmetadata', function () { document.getElementById('vt-end').value = player.duration.toFixed(1); });
+      document.getElementById('video-trimmer-options').style.display = 'block'; actionBtn.disabled = false;
+    });
+    actionBtn.addEventListener('click', async function () {
+      if (!file) return;
+      EditIt.showToast('Video trimming uses MediaRecorder. The video will play and record in real-time.', 'info');
+      EditIt.setButtonLoading(actionBtn, true);
+      try {
+        var start = parseFloat(document.getElementById('vt-start').value) || 0;
+        var end = parseFloat(document.getElementById('vt-end').value) || 5;
+        var video = document.createElement('video'); video.src = URL.createObjectURL(file); video.muted = false;
+        await new Promise(function(r){video.onloadeddata=r;video.load();});
+        video.currentTime = start;
+        await new Promise(function(r){video.onseeked=r;});
+        var stream = video.captureStream();
+        var recorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
+        var chunks = [];
+        recorder.ondataavailable = function (e) { if (e.data.size > 0) chunks.push(e.data); };
+        recorder.onstop = function () {
+          var blob = new Blob(chunks, { type: 'video/webm' });
+          dlCard(document.getElementById('video-trimmer-output'), 'Video Trimmed!', (end-start).toFixed(1) + 's • ' + EditIt.formatFileSize(blob.size), blob, file.name.replace(/\.[^.]+$/, '') + '_trimmed.webm');
+          EditIt.showToast('Video trimmed!', 'success');
+          EditIt.setButtonLoading(actionBtn, false);
+        };
+        recorder.start();
+        video.play();
+        setTimeout(function () { recorder.stop(); video.pause(); }, (end - start) * 1000);
+      } catch (err) { EditIt.showToast('Error: ' + err.message, 'error'); EditIt.setButtonLoading(actionBtn, false); }
+    });
+  })();
+
+  // 24. AUDIO VISUALIZER
+  (function () {
+    var actionBtn = document.getElementById('audio-visualizer-action');
+    if (!actionBtn) return;
+    var file = null;
+    document.addEventListener('files-added', function (e) {
+      if (e.detail.toolId !== 'audio-visualizer') return;
+      file = e.detail.files.find(function(f){return f.type.startsWith('audio/');});
+      if (!file) { EditIt.showToast('Select an audio file', 'error'); return; }
+      var fl = document.getElementById('audio-visualizer-files'); fl.innerHTML = '';
+      var item = EditIt.createFileItem(file, 0); item.querySelector('.file-item-remove').addEventListener('click', function(){file=null;fl.innerHTML='';actionBtn.disabled=true;});
+      fl.appendChild(item); actionBtn.disabled = false;
+      document.getElementById('audio-visualizer-opts').style.display = 'block';
+    });
+    actionBtn.addEventListener('click', async function () {
+      if (!file) return; EditIt.setButtonLoading(actionBtn, true);
+      try {
+        var audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        var buf = await file.arrayBuffer();
+        var audioBuffer = await audioCtx.decodeAudioData(buf);
+        var data = audioBuffer.getChannelData(0);
+        var waveColor = document.getElementById('av-color').value;
+        var bgColor = document.getElementById('av-bg').value;
+        var c = document.createElement('canvas'); c.width = 1200; c.height = 300;
+        var ctx = c.getContext('2d');
+        ctx.fillStyle = bgColor; ctx.fillRect(0,0,c.width,c.height);
+        var step = Math.ceil(data.length / c.width);
+        ctx.fillStyle = waveColor;
+        for (var i = 0; i < c.width; i++) {
+          var min = 1, max = -1;
+          for (var j = 0; j < step; j++) {
+            var val = data[i * step + j] || 0;
+            if (val < min) min = val; if (val > max) max = val;
+          }
+          var barH = Math.max(1, (max - min) * c.height / 2);
+          ctx.fillRect(i, (c.height - barH) / 2, 1, barH);
+        }
+        audioCtx.close();
+        var blob = await new Promise(function(r){c.toBlob(r,'image/png');});
+        var out = document.getElementById('audio-visualizer-output');
+        dlCard(out, 'Waveform Generated!', audioBuffer.duration.toFixed(1) + 's • ' + EditIt.formatFileSize(blob.size), blob, file.name.replace(/\.[^.]+$/,'') + '_waveform.png', '<img src="'+URL.createObjectURL(blob)+'" style="max-width:100%;border:1px solid var(--border);border-radius:8px;margin:12px 0">');
+        EditIt.showToast('Waveform generated!', 'success');
+      } catch(err) { EditIt.showToast('Error: ' + err.message, 'error'); }
+      EditIt.setButtonLoading(actionBtn, false);
+    });
+  })();
+
+  // 25. VIDEO THUMBNAIL EXTRACTOR
+  (function () {
+    var captureBtn = document.getElementById('vth-capture');
+    if (!captureBtn) return;
+    var file = null;
+    document.addEventListener('files-added', function (e) {
+      if (e.detail.toolId !== 'video-thumb') return;
+      file = e.detail.files.find(function(f){return f.type.startsWith('video/');});
+      if (!file) return;
+      var fl = document.getElementById('video-thumb-files'); fl.innerHTML = '';
+      var item = EditIt.createFileItem(file,0); item.querySelector('.file-item-remove').addEventListener('click', function(){file=null;fl.innerHTML='';document.getElementById('vth-workspace').style.display='none';});
+      fl.appendChild(item);
+      var video = document.getElementById('vth-video');
+      video.src = URL.createObjectURL(file);
+      video.addEventListener('loadedmetadata', function(){
+        document.getElementById('vth-seek').max = video.duration;
+        document.getElementById('vth-workspace').style.display = 'block';
+      });
+    });
+    document.getElementById('vth-seek').addEventListener('input', function(){
+      var video = document.getElementById('vth-video');
+      video.currentTime = parseFloat(this.value);
+      document.getElementById('vth-time-val').textContent = parseFloat(this.value).toFixed(1) + 's';
+    });
+    captureBtn.addEventListener('click', async function(){
+      var video = document.getElementById('vth-video');
+      var c = document.createElement('canvas'); c.width = video.videoWidth; c.height = video.videoHeight;
+      c.getContext('2d').drawImage(video, 0, 0);
+      var blob = await new Promise(function(r){c.toBlob(r,'image/png');});
+      var out = document.getElementById('video-thumb-output');
+      dlCard(out, 'Frame Captured!', c.width+'×'+c.height+' • '+EditIt.formatFileSize(blob.size), blob, 'thumbnail.png', '<img src="'+URL.createObjectURL(blob)+'" style="max-width:100%;border:1px solid var(--border);border-radius:8px;margin:12px 0">');
+      EditIt.showToast('Frame captured!', 'success');
+    });
+  })();
+
+})();
+
+
+// ===== file.tools — Batch 4: Font Preview, Habit Tracker, Kanban Board =====
+(function () {
+  'use strict';
+
+  // 1. FONT PREVIEW
+  (function () {
+    var textInput = document.getElementById('fp-text');
+    var sizeInput = document.getElementById('fp-size');
+    if (!textInput) return;
+    var fonts = ['Arial','Arial Black','Georgia','Times New Roman','Courier New','Verdana','Trebuchet MS','Impact','Comic Sans MS','Lucida Console','Palatino Linotype','Garamond','Book Antiqua','Tahoma','Geneva','Helvetica','Futura','Optima','Didot','Baskerville','Copperplate','Papyrus','Brush Script MT','Segoe UI','Candara','Calibri','Cambria','Consolas','Monaco','Menlo','SF Pro Display','system-ui','cursive','fantasy','monospace','serif','sans-serif'];
+    function render() {
+      var text = textInput.value || 'The quick brown fox jumps over the lazy dog';
+      var size = parseInt(sizeInput.value) || 28;
+      var grid = document.getElementById('fp-grid');
+      var html = '';
+      fonts.forEach(function (font) {
+        html += '<div class="fp-item"><div class="fp-font-name">' + font + '</div><div class="fp-sample" style="font-family:\'' + font + '\',sans-serif;font-size:' + size + 'px">' + text.replace(/</g, '&lt;') + '</div></div>';
+      });
+      grid.innerHTML = html;
+    }
+    textInput.addEventListener('input', render);
+    sizeInput.addEventListener('input', render);
+    render();
+  })();
+
+})();
+
+
+// ===== file.tools — LaTeX Editor =====
+(function () {
+  'use strict';
+
+  var input = document.getElementById('latex-input');
+  var preview = document.getElementById('latex-preview');
+  if (!input || !preview) return;
+
+  var renderTimer = null;
+
+  // Image store: maps filename -> data URL
+  var imageStore = {};
+
+  // Helper to match balanced braces (handles nested braces)
+  function matchBalancedBraces(str, startIndex) {
+    if (str[startIndex] !== '{') return null;
+    var depth = 0;
+    var start = startIndex;
+    for (var i = startIndex; i < str.length; i++) {
+      if (str[i] === '{') depth++;
+      else if (str[i] === '}') {
+        depth--;
+        if (depth === 0) {
+          return { content: str.slice(start + 1, i), end: i };
+        }
+      }
+    }
+    return null;
+  }
+
+  // Replace LaTeX command with balanced brace handling
+  function replaceCommand(text, cmd, replaceFn) {
+    var pattern = new RegExp('\\\\' + cmd + '\\*?\\s*\\{', 'g');
+    var result = '';
+    var lastIndex = 0;
+    var match;
+    while ((match = pattern.exec(text)) !== null) {
+      result += text.slice(lastIndex, match.index);
+      var braceMatch = matchBalancedBraces(text, match.index + match[0].length - 1);
+      if (braceMatch) {
+        result += replaceFn(braceMatch.content);
+        lastIndex = braceMatch.end + 1;
+        pattern.lastIndex = lastIndex;
+      } else {
+        result += match[0];
+        lastIndex = match.index + match[0].length;
+      }
+    }
+    result += text.slice(lastIndex);
+    return result;
+  }
+
+  // Process \includegraphics[options]{filename} into <img> tags
+  function processIncludeGraphics(text) {
+    var pattern = /\\includegraphics(\[[^\]]*\])?\{/g;
+    var result = '';
+    var lastIndex = 0;
+    var match;
+    while ((match = pattern.exec(text)) !== null) {
+      result += text.slice(lastIndex, match.index);
+      var braceStart = match.index + match[0].length - 1;
+      var braceMatch = matchBalancedBraces(text, braceStart);
+      if (braceMatch) {
+        var filename = braceMatch.content.trim();
+        var options = match[1] || '';
+        var style = '';
+
+        // Parse common options: width, height, scale
+        if (options) {
+          var widthMatch = options.match(/width\s*=\s*([\d.]+(?:\\?(?:textwidth|linewidth|columnwidth)|\s*(?:cm|mm|in|pt|px|em|%)))/);
+          var heightMatch = options.match(/height\s*=\s*([\d.]+(?:\\?(?:textheight)|\s*(?:cm|mm|in|pt|px|em|%)))/);
+          var scaleMatch = options.match(/scale\s*=\s*([\d.]+)/);
+
+          if (widthMatch) {
+            var w = widthMatch[1];
+            if (w.match(/\\?textwidth|\\?linewidth|\\?columnwidth/)) {
+              var num = parseFloat(w) || 1;
+              style += 'width:' + (num * 100) + '%;';
+            } else {
+              style += 'width:' + w + ';';
+            }
+          }
+          if (heightMatch) {
+            var h = heightMatch[1];
+            if (h.match(/\\?textheight/)) {
+              var hnum = parseFloat(h) || 1;
+              style += 'height:' + (hnum * 100) + 'vh;';
+            } else {
+              style += 'height:' + h + ';';
+            }
+          }
+          if (scaleMatch) {
+            var s = parseFloat(scaleMatch[1]);
+            style += 'width:' + (s * 100) + '%;';
+          }
+        }
+
+        // Look up the image in our store
+        var imgSrc = imageStore[filename] || imageStore[filename.replace(/\.[^.]+$/, '')] || '';
+
+        if (imgSrc) {
+          result += '<img class="latex-img" src="' + imgSrc + '" alt="' + filename + '"' + (style ? ' style="' + style + '"' : '') + '>';
+        } else {
+          // Show placeholder for missing image
+          result += '<div class="latex-img" style="' + (style || 'width:200px;height:120px;') + 'background:#f0f0f0;border:2px dashed #ccc;border-radius:4px;display:flex;align-items:center;justify-content:center;margin:12px auto;color:#999;font-size:0.85em;padding:12px;text-align:center">' +
+            '<span>Image: ' + filename + '<br><small>Use the Image button to upload</small></span></div>';
+        }
+        lastIndex = braceMatch.end + 1;
+        pattern.lastIndex = lastIndex;
+      } else {
+        result += match[0];
+        lastIndex = match.index + match[0].length;
+      }
+    }
+    result += text.slice(lastIndex);
+    return result;
+  }
+
+  // Parse LaTeX source into structured HTML for preview
+  function latexToHTML(src) {
+    var body = src;
+    // Extract body content if \begin{document} exists
+    var bodyMatch = src.match(/\\begin\{document\}([\s\S]*?)\\end\{document\}/);
+    if (bodyMatch) body = bodyMatch[1];
+
+    var html = body;
+
+    // Remove preamble commands first
+    html = html.replace(/\\documentclass(\[[^\]]*\])?\{[^}]*\}/g, '');
+    html = html.replace(/\\usepackage(\[[^\]]*\])?\{[^}]*\}/g, '');
+    html = html.replace(/\\setlength\{[^}]*\}\{[^}]*\}/g, '');
+    html = html.replace(/\\pagestyle\{[^}]*\}/g, '');
+
+    // Title, author, date (with balanced brace support)
+    html = replaceCommand(html, 'title', function (c) { return '<h1 class="latex-title">' + c + '</h1>'; });
+    html = replaceCommand(html, 'author', function (c) { return '<div class="latex-author">' + c + '</div>'; });
+    html = replaceCommand(html, 'date', function (c) { return '<div class="latex-date">' + c + '</div>'; });
+    html = html.replace(/\\maketitle/g, '');
+
+    // Sections (with balanced brace support)
+    html = replaceCommand(html, 'section', function (c) { return '<h2 class="latex-section">' + c + '</h2>'; });
+    html = replaceCommand(html, 'subsection', function (c) { return '<h3 class="latex-subsection">' + c + '</h3>'; });
+    html = replaceCommand(html, 'subsubsection', function (c) { return '<h4 class="latex-subsubsection">' + c + '</h4>'; });
+
+    // Text formatting (with balanced brace support for nested commands)
+    html = replaceCommand(html, 'textbf', function (c) { return '<strong>' + c + '</strong>'; });
+    html = replaceCommand(html, 'textit', function (c) { return '<em>' + c + '</em>'; });
+    html = replaceCommand(html, 'underline', function (c) { return '<u>' + c + '</u>'; });
+    html = replaceCommand(html, 'texttt', function (c) { return '<code>' + c + '</code>'; });
+    html = replaceCommand(html, 'emph', function (c) { return '<em>' + c + '</em>'; });
+
+    // Environments
+    html = html.replace(/\\begin\{itemize\}([\s\S]*?)\\end\{itemize\}/g, function (m, content) {
+      var items = content.split('\\item').filter(function (s) { return s.trim(); });
+      return '<ul>' + items.map(function (item) { return '<li>' + item.trim() + '</li>'; }).join('') + '</ul>';
+    });
+    html = html.replace(/\\begin\{enumerate\}([\s\S]*?)\\end\{enumerate\}/g, function (m, content) {
+      var items = content.split('\\item').filter(function (s) { return s.trim(); });
+      return '<ol>' + items.map(function (item) { return '<li>' + item.trim() + '</li>'; }).join('') + '</ol>';
+    });
+
+    // Verbatim / code blocks
+    html = html.replace(/\\begin\{verbatim\}([\s\S]*?)\\end\{verbatim\}/g, '<pre class="latex-verbatim">$1</pre>');
+    // Quote
+    html = html.replace(/\\begin\{quote\}([\s\S]*?)\\end\{quote\}/g, '<blockquote>$1</blockquote>');
+    // Center
+    html = html.replace(/\\begin\{center\}([\s\S]*?)\\end\{center\}/g, '<div style="text-align:center">$1</div>');
+
+    // Figure environment: \begin{figure}...\end{figure}
+    html = html.replace(/\\begin\{figure\}(\[[^\]]*\])?([\s\S]*?)\\end\{figure\}/g, function (m, pos, content) {
+      // Process the content inside the figure
+      var figHtml = content;
+      var caption = '';
+      var captionMatch = figHtml.match(/\\caption\{/);
+      if (captionMatch) {
+        var braceStart = figHtml.indexOf('{', figHtml.indexOf('\\caption'));
+        var braceResult = matchBalancedBraces(figHtml, braceStart);
+        if (braceResult) {
+          caption = braceResult.content;
+          figHtml = figHtml.slice(0, figHtml.indexOf('\\caption')) + figHtml.slice(braceResult.end + 1);
+        }
+      }
+      // Remove \centering, \label
+      figHtml = figHtml.replace(/\\centering/g, '');
+      figHtml = figHtml.replace(/\\label\{[^}]*\}/g, '');
+      // Process \includegraphics inside the figure
+      figHtml = processIncludeGraphics(figHtml);
+      var captionHtml = caption ? '<div class="latex-caption">' + caption + '</div>' : '';
+      return '<div class="latex-figure">' + figHtml.trim() + captionHtml + '</div>';
+    });
+
+    // Standalone \includegraphics (outside figure environment)
+    html = processIncludeGraphics(html);
+
+    // Horizontal rule
+    html = html.replace(/\\hrule|\\hline/g, '<hr>');
+    html = html.replace(/\\newpage|\\clearpage|\\pagebreak/g, '<hr class="latex-pagebreak">');
+
+    // Line breaks - but preserve \\ inside math mode for MathJax
+    // First, protect math content by temporarily replacing it
+    var mathBlocks = [];
+    html = html.replace(/\$\$[\s\S]*?\$\$/g, function (m) {
+      mathBlocks.push(m);
+      return '%%MATHBLOCK' + (mathBlocks.length - 1) + '%%';
+    });
+    html = html.replace(/\$[^$]+\$/g, function (m) {
+      mathBlocks.push(m);
+      return '%%MATHBLOCK' + (mathBlocks.length - 1) + '%%';
+    });
+
+    // Now safely replace line breaks
+    html = html.replace(/\\\\\s*/g, '<br>');
+    html = html.replace(/\\newline/g, '<br>');
+
+    // Restore math blocks
+    html = html.replace(/%%MATHBLOCK(\d+)%%/g, function (m, idx) {
+      return mathBlocks[parseInt(idx, 10)];
+    });
+
+    // Spacing
+    html = replaceCommand(html, 'vspace', function () { return '<div style="margin:12px 0"></div>'; });
+    html = replaceCommand(html, 'hspace', function () { return '&nbsp;&nbsp;'; });
+    html = html.replace(/\\noindent/g, '');
+
+    // Special chars (but preserve \$ for math mode)
+    html = html.replace(/\\&/g, '&amp;');
+    html = html.replace(/\\%/g, '%');
+    html = html.replace(/\\#/g, '#');
+    html = html.replace(/\\ldots|\\dots/g, '…');
+    html = html.replace(/\\LaTeX/g, 'L<sup>A</sup>T<sub>E</sub>X');
+    html = html.replace(/\\TeX/g, 'T<sub>E</sub>X');
+
+    // Remove unknown commands (but keep their content)
+    html = html.replace(/\\(?:begin|end)\{(?:document|abstract|table|tabular)\}/g, '');
+
+    // Paragraphs from double newlines
+    html = html.replace(/\n\s*\n/g, '</p><p>');
+    // Clean up
+    html = html.replace(/^\s*<\/p>/, '').trim();
+
+    if (html && !html.startsWith('<')) html = '<p>' + html;
+    if (html && !html.endsWith('>')) html += '</p>';
+
+    return html;
+  }
+
+  function renderPreview() {
+    var src = input.value;
+    if (!src.trim()) {
+      preview.innerHTML = '<p style="color:var(--text-muted);font-style:italic">Start typing LaTeX to see the preview...</p>';
+      return;
+    }
+
+    // Convert LaTeX structure to HTML
+    var html = latexToHTML(src);
+    preview.innerHTML = html;
+
+    // Use MathJax to render math expressions
+    if (window.MathJax) {
+      // Clear previous MathJax rendering before re-typesetting
+      if (MathJax.typesetClear) {
+        MathJax.typesetClear([preview]);
+      }
+      if (MathJax.typesetPromise) {
+        MathJax.typesetPromise([preview]).catch(function (err) {
+          console.warn('MathJax render error:', err);
+        });
+      }
+    }
+  }
+
+  // Debounced live preview
+  input.addEventListener('input', function () {
+    clearTimeout(renderTimer);
+    renderTimer = setTimeout(renderPreview, 300);
+  });
+
+  // Snippet buttons
+  document.querySelectorAll('.latex-snippet').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var snippet = btn.dataset.snippet.replace(/\\n/g, '\n');
+      var start = input.selectionStart;
+      var end = input.selectionEnd;
+      var text = input.value;
+      input.value = text.substring(0, start) + snippet + text.substring(end);
+      input.selectionStart = input.selectionEnd = start + snippet.length;
+      input.focus();
+      clearTimeout(renderTimer);
+      renderTimer = setTimeout(renderPreview, 300);
+    });
+  });
+
+  // Image upload handler
+  var imageUploadInput = document.getElementById('latex-image-upload');
+  var insertImageBtn = document.getElementById('latex-insert-image');
+
+  if (insertImageBtn && imageUploadInput) {
+    insertImageBtn.addEventListener('click', function () {
+      imageUploadInput.click();
+    });
+
+    imageUploadInput.addEventListener('change', function () {
+      if (!imageUploadInput.files || !imageUploadInput.files.length) return;
+
+      // Snapshot the files array BEFORE any async work — resetting the input
+      // later clears the live FileList, so we must copy everything now.
+      var fileList = Array.from(imageUploadInput.files);
+      var pending = fileList.length;
+      var snippets = [];
+      var fileNames = [];
+
+      fileList.forEach(function (file) {
+        if (!file.type.startsWith('image/')) {
+          pending--;
+          if (pending <= 0) finishInsert();
+          return;
+        }
+
+        // Capture the name before any async gap
+        var name = file.name;
+        fileNames.push(name);
+
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          var dataUrl = e.target.result;
+
+          // Store image by filename (with and without extension)
+          imageStore[name] = dataUrl;
+          var nameNoExt = name.replace(/\.[^.]+$/, '');
+          imageStore[nameNoExt] = dataUrl;
+
+          // Build the LaTeX snippet
+          snippets.push({ name: name, cmd: '\\includegraphics[width=0.8\\textwidth]{' + name + '}' });
+
+          pending--;
+          if (pending <= 0) finishInsert();
+        };
+        reader.onerror = function () {
+          pending--;
+          if (pending <= 0) finishInsert();
+        };
+        reader.readAsDataURL(file);
+      });
+
+      // Reset input immediately so the same file can be re-selected.
+      // The fileList snapshot keeps the File objects alive.
+      imageUploadInput.value = '';
+
+      function finishInsert() {
+        if (!snippets.length) return;
+
+        var snippet;
+        if (snippets.length === 1) {
+          var caption = snippets[0].name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+          snippet = '\\begin{figure}[h]\n  \\centering\n  ' + snippets[0].cmd + '\n  \\caption{' + caption + '}\n\\end{figure}';
+        } else {
+          snippet = snippets.map(function (s) {
+            var caption = s.name.replace(/\.[^.]+$/, '').replace(/[-_]/g, ' ');
+            return '\\begin{figure}[h]\n  \\centering\n  ' + s.cmd + '\n  \\caption{' + caption + '}\n\\end{figure}';
+          }).join('\n\n');
+        }
+
+        var start = input.selectionStart;
+        var end = input.selectionEnd;
+        var text = input.value;
+        input.value = text.substring(0, start) + snippet + text.substring(end);
+        input.selectionStart = input.selectionEnd = start + snippet.length;
+        input.focus();
+
+        clearTimeout(renderTimer);
+        renderTimer = setTimeout(renderPreview, 100);
+
+        EditIt.showToast(snippets.length + ' image' + (snippets.length > 1 ? 's' : '') + ' inserted!', 'success');
+      }
+    });
+  }
+
+  // Export to PDF
+  document.getElementById('latex-export-pdf').addEventListener('click', async function () {
+    var btn = this;
+    EditIt.setButtonLoading(btn, true);
+
+    try {
+      // Ensure MathJax has finished rendering
+      if (window.MathJax && MathJax.typesetPromise) {
+        await MathJax.typesetPromise([preview]);
+      }
+
+      // Create a clean offscreen container for rendering
+      var container = document.createElement('div');
+      container.style.cssText = 'position:absolute;left:-9999px;top:0;width:595px;padding:40px;box-sizing:border-box;font-family:Georgia,serif;font-size:12pt;line-height:1.6;color:#000;background:#fff;';
+      // Clone preview content including rendered MathJax SVGs and images
+      container.innerHTML = preview.innerHTML;
+      document.body.appendChild(container);
+
+      // Wait for all images inside the container to fully load
+      var containerImages = container.querySelectorAll('img');
+      if (containerImages.length > 0) {
+        await Promise.all(Array.from(containerImages).map(function (img) {
+          if (img.complete) return Promise.resolve();
+          return new Promise(function (resolve) {
+            img.onload = resolve;
+            img.onerror = resolve;
+          });
+        }));
+      }
+
+      // Wait for layout
+      await new Promise(function (resolve) { setTimeout(resolve, 200); });
+
+      // Build SVG foreignObject with inline styles
+      var width = 595;
+      var height = Math.max(842, container.scrollHeight + 80);
+
+      // Collect all computed styles and inline them for SVG rendering
+      var clone = container.cloneNode(true);
+
+      // Convert all MathJax SVGs to data URIs to avoid CORS issues
+      var mjxSvgs = clone.querySelectorAll('mjx-container svg');
+      mjxSvgs.forEach(function (svg) {
+        svg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+      });
+
+      // Serialize HTML for foreignObject - need to ensure valid XHTML
+      var serializer = new XMLSerializer();
+      var xhtmlContent = serializer.serializeToString(clone);
+
+      var svgData = '<svg xmlns="http://www.w3.org/2000/svg" width="' + width + '" height="' + height + '">' +
+        '<foreignObject width="100%" height="100%">' +
+        xhtmlContent +
+        '</foreignObject></svg>';
+
+      var svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+      var svgUrl = URL.createObjectURL(svgBlob);
+
+      var pdfGenerated = false;
+
+      // Set a timeout so we always fall back if SVG rendering hangs
+      var fallbackTimer = setTimeout(function () {
+        if (!pdfGenerated) {
+          pdfGenerated = true;
+          URL.revokeObjectURL(svgUrl);
+          try { document.body.removeChild(container); } catch (e) {}
+          fallbackPDF(btn);
+        }
+      }, 5000);
+
+      var img = new Image();
+      img.onload = async function () {
+        if (pdfGenerated) return;
+        pdfGenerated = true;
+        clearTimeout(fallbackTimer);
+
+        try {
+          var canvas = document.createElement('canvas');
+          var scale = 2;
+          canvas.width = width * scale;
+          canvas.height = height * scale;
+          var ctx = canvas.getContext('2d');
+          ctx.fillStyle = '#fff';
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+          ctx.scale(scale, scale);
+          ctx.drawImage(img, 0, 0, width, height);
+          URL.revokeObjectURL(svgUrl);
+          document.body.removeChild(container);
+
+          // Check if canvas is tainted (security restriction)
+          try {
+            canvas.toDataURL();
+          } catch (taintErr) {
+            console.warn('Canvas tainted, using fallback PDF:', taintErr);
+            fallbackPDF(btn);
+            return;
+          }
+
+          // Create PDF from canvas using pdf-lib
+          var PDFDocument = PDFLib.PDFDocument;
+          var pdfDoc = await PDFDocument.create();
+          var pageHeight = 842;
+          var pageWidth = 595;
+          var totalPages = Math.ceil(height / pageHeight);
+
+          for (var p = 0; p < totalPages; p++) {
+            var srcY = p * pageHeight;
+            var drawH = Math.min(pageHeight, height - srcY);
+
+            // Create a per-page canvas cropping the right section
+            var pageCanvas = document.createElement('canvas');
+            pageCanvas.width = pageWidth * scale;
+            pageCanvas.height = drawH * scale;
+            var pCtx = pageCanvas.getContext('2d');
+            pCtx.drawImage(canvas, 0, srcY * scale, pageWidth * scale, drawH * scale, 0, 0, pageWidth * scale, drawH * scale);
+
+            var imgDataUrl = pageCanvas.toDataURL('image/png');
+            var imgBytes = Uint8Array.from(atob(imgDataUrl.split(',')[1]), function (c) { return c.charCodeAt(0); });
+            var pdfImage = await pdfDoc.embedPng(imgBytes);
+
+            var page = pdfDoc.addPage([pageWidth, pageHeight]);
+            page.drawImage(pdfImage, {
+              x: 0,
+              y: pageHeight - drawH,
+              width: pageWidth,
+              height: drawH,
+            });
+          }
+
+          var pdfBytes = await pdfDoc.save();
+          var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+
+          var out = document.getElementById('latex-editor-output');
+          out.innerHTML = '<div class="output-card"><h3>\u2713 PDF Created!</h3><p>' + totalPages + ' page' + (totalPages > 1 ? 's' : '') + ' \u2022 ' + EditIt.formatFileSize(blob.size) + '</p><div class="output-filename"><label>File name:</label><input type="text" class="input output-dl-name" value="latex_document.pdf"></div><button class="btn btn-success output-dl-btn">Download PDF</button></div>';
+          out.querySelector('.output-dl-btn').addEventListener('click', function () {
+            EditIt.downloadBlob(blob, out.querySelector('.output-dl-name').value.trim() || 'latex_document.pdf');
+          });
+          EditIt.showToast('LaTeX exported to PDF!', 'success');
+        } catch (err) {
+          console.error('PDF canvas error:', err);
+          fallbackPDF(btn);
+          return;
+        }
+        EditIt.setButtonLoading(btn, false);
+      };
+
+      img.onerror = function () {
+        if (pdfGenerated) return;
+        pdfGenerated = true;
+        clearTimeout(fallbackTimer);
+        try { document.body.removeChild(container); } catch (e) {}
+        URL.revokeObjectURL(svgUrl);
+        fallbackPDF(btn);
+      };
+
+      img.src = svgUrl;
+
+    } catch (err) {
+      console.error(err);
+      fallbackPDF(btn);
+    }
+  });
+
+  // Fallback PDF generation using pdf-lib (text-only, no SVG rendering)
+  async function fallbackPDF(btn) {
+    try {
+      var PDFDocument = PDFLib.PDFDocument;
+      var StandardFonts = PDFLib.StandardFonts;
+      var rgb = PDFLib.rgb;
+
+      var pdfDoc = await PDFDocument.create();
+      var font = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+      var boldFont = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+      var italicFont = await pdfDoc.embedFont(StandardFonts.TimesRomanItalic);
+
+      var src = input.value;
+      var bodyMatch = src.match(/\\begin\{document\}([\s\S]*?)\\end\{document\}/);
+      var body = bodyMatch ? bodyMatch[1] : src;
+
+      // Collect images to embed in the fallback PDF
+      var fallbackImages = [];
+      var bodyForImages = body;
+      var imgPattern = /\\includegraphics(\[[^\]]*\])?\{([^}]+)\}/g;
+      var imgMatch;
+      while ((imgMatch = imgPattern.exec(bodyForImages)) !== null) {
+        var imgName = imgMatch[2].trim();
+        var imgData = imageStore[imgName] || imageStore[imgName.replace(/\.[^.]+$/, '')] || null;
+        if (imgData) {
+          fallbackImages.push({ name: imgName, dataUrl: imgData, placeholder: '=IMG=' + imgName + '=ENDIMG=' });
+        }
+      }
+
+      // Strip LaTeX commands to plain text lines
+      var plain = body
+        .replace(/\\title\{([^}]*)\}/g, '=TITLE=$1=ENDTITLE=')
+        .replace(/\\section\*?\{([^}]*)\}/g, '\n=SECTION=$1=ENDSECTION=\n')
+        .replace(/\\subsection\*?\{([^}]*)\}/g, '\n=SUBSECTION=$1=ENDSUBSECTION=\n')
+        .replace(/\\caption\{([^}]*)\}/g, '$1')
+        .replace(/\\includegraphics(\[[^\]]*\])?\{([^}]+)\}/g, function (m, opts, name) {
+          var n = name.trim();
+          var data = imageStore[n] || imageStore[n.replace(/\.[^.]+$/, '')] || null;
+          if (data) return '=IMG=' + n + '=ENDIMG=';
+          return '[Image: ' + n + ']';
+        })
+        .replace(/\\textbf\{([^}]*)\}/g, '$1')
+        .replace(/\\textit\{([^}]*)\}/g, '$1')
+        .replace(/\\emph\{([^}]*)\}/g, '$1')
+        .replace(/\\texttt\{([^}]*)\}/g, '$1')
+        .replace(/\\item\s*/g, '  • ')
+        .replace(/\\begin\{(?:itemize|enumerate|document|center|quote|figure)\}(\[[^\]]*\])?/g, '')
+        .replace(/\\end\{(?:itemize|enumerate|document|center|quote|figure)\}/g, '')
+        .replace(/\$\$([^$]+)\$\$/g, '  [$1]')
+        .replace(/\$([^$]+)\$/g, '[$1]')
+        .replace(/\\(?:begin|end)\{(?:equation|align|gather)\*?\}/g, '')
+        .replace(/\\(?:maketitle|noindent|newpage|clearpage|centering)/g, '')
+        .replace(/\\(?:documentclass|usepackage|setlength|pagestyle)(\[[^\]]*\])?\{[^}]*\}/g, '')
+        .replace(/\\vspace\{[^}]*\}/g, '')
+        .replace(/\\hspace\{[^}]*\}/g, '  ')
+        .replace(/\\label\{[^}]*\}/g, '')
+        .replace(/\\\\/g, '\n')
+        .replace(/\\newline/g, '\n')
+        .replace(/\\&/g, '&')
+        .replace(/\\%/g, '%')
+        .replace(/\\#/g, '#')
+        .replace(/\\\$/g, '$')
+        .replace(/\\ldots|\\dots/g, '...')
+        .replace(/\\LaTeX/g, 'LaTeX')
+        .replace(/\\TeX/g, 'TeX')
+        .replace(/\\[a-zA-Z]+\{?/g, '')
+        .replace(/[{}]/g, '')
+        .trim();
+
+      var lines = plain.split('\n');
+      var page = pdfDoc.addPage([595, 842]);
+      var y = 790;
+      var pageW = 595;
+
+      for (var li = 0; li < lines.length; li++) {
+        if (y < 50) {
+          page = pdfDoc.addPage([595, 842]);
+          y = 790;
+        }
+
+        var line = lines[li].trim();
+        if (!line) { y -= 8; continue; }
+
+        var titleMatch = line.match(/=TITLE=(.*?)=ENDTITLE=/);
+        var sectionMatch = line.match(/=SECTION=(.*?)=ENDSECTION=/);
+        var subsectionMatch = line.match(/=SUBSECTION=(.*?)=ENDSUBSECTION=/);
+        var imgMarker = line.match(/=IMG=(.*?)=ENDIMG=/);
+
+        if (titleMatch) {
+          page.drawText(titleMatch[1], { x: 50, y: y, size: 22, font: boldFont, color: rgb(0.1, 0.1, 0.1) });
+          y -= 32;
+        } else if (sectionMatch) {
+          y -= 8;
+          page.drawText(sectionMatch[1], { x: 50, y: y, size: 16, font: boldFont, color: rgb(0.15, 0.15, 0.15) });
+          y -= 24;
+        } else if (subsectionMatch) {
+          page.drawText(subsectionMatch[1], { x: 50, y: y, size: 13, font: boldFont, color: rgb(0.2, 0.2, 0.2) });
+          y -= 20;
+        } else if (imgMarker) {
+          // Embed image in fallback PDF
+          var imgName = imgMarker[1];
+          var imgDataUrl = imageStore[imgName] || imageStore[imgName.replace(/\.[^.]+$/, '')] || null;
+          if (imgDataUrl) {
+            try {
+              var imgBytesStr = atob(imgDataUrl.split(',')[1]);
+              var imgBytesArr = new Uint8Array(imgBytesStr.length);
+              for (var bi = 0; bi < imgBytesStr.length; bi++) imgBytesArr[bi] = imgBytesStr.charCodeAt(bi);
+
+              var pdfImage;
+              if (imgDataUrl.match(/^data:image\/png/)) {
+                pdfImage = await pdfDoc.embedPng(imgBytesArr);
+              } else {
+                pdfImage = await pdfDoc.embedJpg(imgBytesArr);
+              }
+
+              // Scale image to fit page width (max 495px) maintaining aspect ratio
+              var maxImgW = pageW - 100;
+              var imgAspect = pdfImage.width / pdfImage.height;
+              var drawW = Math.min(maxImgW, pdfImage.width);
+              var drawImgH = drawW / imgAspect;
+
+              // If image is taller than remaining space, start a new page
+              if (y - drawImgH < 50) {
+                page = pdfDoc.addPage([595, 842]);
+                y = 790;
+              }
+
+              page.drawImage(pdfImage, {
+                x: (pageW - drawW) / 2,
+                y: y - drawImgH,
+                width: drawW,
+                height: drawImgH,
+              });
+              y -= drawImgH + 16;
+            } catch (imgErr) {
+              console.warn('Could not embed image in PDF:', imgErr);
+              page.drawText('[Image: ' + imgName + ']', { x: 50, y: y, size: 11, font: font, color: rgb(0.5, 0.5, 0.5) });
+              y -= 16;
+            }
+          } else {
+            page.drawText('[Image: ' + imgName + ']', { x: 50, y: y, size: 11, font: font, color: rgb(0.5, 0.5, 0.5) });
+            y -= 16;
+          }
+        } else {
+          // Word-wrap long lines
+          var words = line.split(' ');
+          var currentLine = '';
+          var fontSize = 11;
+          var maxWidth = pageW - 100;
+
+          words.forEach(function (word) {
+            var testLine = currentLine ? currentLine + ' ' + word : word;
+            var width = font.widthOfTextAtSize(testLine, fontSize);
+            if (width > maxWidth && currentLine) {
+              page.drawText(currentLine, { x: 50, y: y, size: fontSize, font: font, color: rgb(0.1, 0.1, 0.1) });
+              y -= 16;
+              if (y < 50) { page = pdfDoc.addPage([595, 842]); y = 790; }
+              currentLine = word;
+            } else {
+              currentLine = testLine;
+            }
+          });
+          if (currentLine) {
+            page.drawText(currentLine, { x: 50, y: y, size: fontSize, font: font, color: rgb(0.1, 0.1, 0.1) });
+            y -= 16;
+          }
+        }
+      }
+
+      var pdfBytes = await pdfDoc.save();
+      var blob = new Blob([pdfBytes], { type: 'application/pdf' });
+
+      var out = document.getElementById('latex-editor-output');
+      out.innerHTML = '<div class="output-card"><h3>\u2713 PDF Created!</h3><p>' + pdfDoc.getPageCount() + ' page(s) \u2022 ' + EditIt.formatFileSize(blob.size) + '</p><div class="output-filename"><label>File name:</label><input type="text" class="input output-dl-name" value="latex_document.pdf"></div><button class="btn btn-success output-dl-btn">Download PDF</button></div>';
+      out.querySelector('.output-dl-btn').addEventListener('click', function () {
+        EditIt.downloadBlob(blob, out.querySelector('.output-dl-name').value.trim() || 'latex_document.pdf');
+      });
+      EditIt.showToast('LaTeX exported to PDF!', 'success');
+    } catch (err) {
+      EditIt.showToast('Error: ' + err.message, 'error');
+    }
+    EditIt.setButtonLoading(btn, false);
+  }
+
+  // --- EXPORT AS DOCX ---
+  document.getElementById('latex-export-docx').addEventListener('click', async function () {
+    var btn = this;
+    EditIt.setButtonLoading(btn, true);
+    try {
+      // Ensure MathJax has rendered
+      if (window.MathJax && MathJax.typesetPromise) {
+        await MathJax.typesetPromise([preview]);
+      }
+
+      // Build a complete HTML document for the DOCX
+      var htmlContent = '<!DOCTYPE html><html><head><meta charset="UTF-8"><style>' +
+        'body{font-family:Cambria,Georgia,serif;font-size:12pt;line-height:1.6;color:#000;margin:40px}' +
+        'h1{font-size:22pt;text-align:center;margin-bottom:4px}' +
+        'h2{font-size:16pt;margin-top:24px;border-bottom:1px solid #ccc;padding-bottom:4px}' +
+        'h3{font-size:13pt;margin-top:16px}' +
+        'ul,ol{margin:8px 0 8px 24px}' +
+        'blockquote{border-left:3px solid #666;padding-left:12px;color:#555;font-style:italic}' +
+        'pre{background:#f5f5f5;padding:10px;font-family:Consolas,monospace;font-size:10pt}' +
+        'code{background:#f0f0f0;padding:1px 3px;font-family:Consolas,monospace;font-size:0.9em}' +
+        '</style></head><body>' + preview.innerHTML + '</body></html>';
+
+      // Create DOCX using the HTML-in-DOCX approach (Word can open HTML saved as .doc/.docx)
+      // For true DOCX we wrap it in the MHTML format that Word understands
+      var mhtml = 'MIME-Version: 1.0\r\n' +
+        'Content-Type: multipart/related; boundary="----=_NextPart"\r\n\r\n' +
+        '------=_NextPart\r\n' +
+        'Content-Type: text/html; charset="utf-8"\r\n' +
+        'Content-Transfer-Encoding: quoted-printable\r\n\r\n' +
+        htmlContent + '\r\n\r\n' +
+        '------=_NextPart--';
+
+      var blob = new Blob([mhtml], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+
+      var out = document.getElementById('latex-editor-output');
+      out.innerHTML = '<div class="output-card"><h3>\u2713 DOCX Created!</h3><p>' + EditIt.formatFileSize(blob.size) + '</p>' +
+        '<div class="output-filename"><label>File name:</label><input type="text" class="input output-dl-name" value="latex_document.docx"></div>' +
+        '<button class="btn btn-success output-dl-btn">Download DOCX</button></div>';
+      out.querySelector('.output-dl-btn').addEventListener('click', function () {
+        EditIt.downloadBlob(blob, out.querySelector('.output-dl-name').value.trim() || 'latex_document.docx');
+      });
+      EditIt.showToast('DOCX exported! Opens in Word, Google Docs, LibreOffice.', 'success');
+    } catch (err) { EditIt.showToast('Error: ' + err.message, 'error'); }
+    EditIt.setButtonLoading(btn, false);
+  });
+
+  // --- EXPORT AS HTML ---
+  document.getElementById('latex-export-html').addEventListener('click', async function () {
+    try {
+      if (window.MathJax && MathJax.typesetPromise) {
+        await MathJax.typesetPromise([preview]);
+      }
+
+      var htmlContent = '<!DOCTYPE html>\n<html lang="en">\n<head>\n<meta charset="UTF-8">\n<meta name="viewport" content="width=device-width, initial-scale=1.0">\n<title>LaTeX Document</title>\n' +
+        '<script>MathJax={tex:{inlineMath:[[\'$\',\'$\'],[\'\\\\(\',\'\\\\)\']],displayMath:[[\'$$\',\'$$\'],[\'\\\\[\',\'\\\\]\']]}};' + '<\/script>\n' +
+        '<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" async><\/script>\n' +
+        '<style>\n' +
+        'body{font-family:Georgia,serif;max-width:800px;margin:40px auto;padding:0 20px;line-height:1.7;color:#1a1a2e;font-size:12pt}\n' +
+        'h1{text-align:center;font-size:1.8rem;margin-bottom:4px}\n' +
+        'h2{font-size:1.3rem;border-bottom:1px solid #ddd;padding-bottom:4px;margin-top:24px}\n' +
+        'h3{font-size:1.1rem;margin-top:16px}\n' +
+        'blockquote{border-left:3px solid #6366f1;padding-left:16px;color:#555;font-style:italic}\n' +
+        'pre{background:#f5f5f5;padding:12px;border-radius:4px;font-family:monospace;overflow-x:auto}\n' +
+        'code{background:#f0f0f0;padding:1px 4px;border-radius:3px;font-family:monospace}\n' +
+        '</style>\n</head>\n<body>\n' + latexToHTML(input.value) + '\n</body>\n</html>';
+
+      var blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+
+      var out = document.getElementById('latex-editor-output');
+      out.innerHTML = '<div class="output-card"><h3>\u2713 HTML Created!</h3><p>' + EditIt.formatFileSize(blob.size) + ' \u2022 Includes MathJax for math rendering</p>' +
+        '<div class="output-filename"><label>File name:</label><input type="text" class="input output-dl-name" value="latex_document.html"></div>' +
+        '<button class="btn btn-success output-dl-btn">Download HTML</button></div>';
+      out.querySelector('.output-dl-btn').addEventListener('click', function () {
+        EditIt.downloadBlob(blob, out.querySelector('.output-dl-name').value.trim() || 'latex_document.html');
+      });
+      EditIt.showToast('HTML exported with MathJax support!', 'success');
+    } catch (err) { EditIt.showToast('Error: ' + err.message, 'error'); }
+  });
+
+  // --- EXPORT AS PLAIN TEXT ---
+  document.getElementById('latex-export-txt').addEventListener('click', function () {
+    var src = input.value;
+    var bodyMatch = src.match(/\\begin\{document\}([\s\S]*?)\\end\{document\}/);
+    var body = bodyMatch ? bodyMatch[1] : src;
+
+    var plain = body
+      .replace(/\\title\{([^}]*)\}/g, '$1\n' + '='.repeat(40) + '\n')
+      .replace(/\\author\{([^}]*)\}/g, 'Author: $1\n')
+      .replace(/\\date\{([^}]*)\}/g, 'Date: $1\n')
+      .replace(/\\section\*?\{([^}]*)\}/g, '\n$1\n' + '-'.repeat(30) + '\n')
+      .replace(/\\subsection\*?\{([^}]*)\}/g, '\n$1\n')
+      .replace(/\\subsubsection\*?\{([^}]*)\}/g, '\n$1\n')
+      .replace(/\\textbf\{([^}]*)\}/g, '*$1*')
+      .replace(/\\textit\{([^}]*)\}/g, '_$1_')
+      .replace(/\\emph\{([^}]*)\}/g, '_$1_')
+      .replace(/\\texttt\{([^}]*)\}/g, '`$1`')
+      .replace(/\\underline\{([^}]*)\}/g, '$1')
+      .replace(/\\item\s*/g, '  - ')
+      .replace(/\\begin\{(?:itemize|enumerate|document|center|quote|verbatim|equation|align|gather)\*?\}/g, '')
+      .replace(/\\end\{(?:itemize|enumerate|document|center|quote|verbatim|equation|align|gather)\*?\}/g, '')
+      .replace(/\$\$([^$]+)\$\$/g, '\n  $1\n')
+      .replace(/\$([^$]+)\$/g, '$1')
+      .replace(/\\(?:maketitle|noindent|newpage|clearpage|centering|hrule|hline)/g, '')
+      .replace(/\\(?:documentclass|usepackage|setlength|pagestyle)(\[[^\]]*\])?\{[^}]*\}/g, '')
+      .replace(/\\vspace\{[^}]*\}/g, '\n')
+      .replace(/\\hspace\{[^}]*\}/g, '  ')
+      .replace(/\\\\/g, '\n')
+      .replace(/\\newline/g, '\n')
+      .replace(/\\&/g, '&')
+      .replace(/\\%/g, '%')
+      .replace(/\\#/g, '#')
+      .replace(/\\\$/g, '$')
+      .replace(/\\ldots|\\dots/g, '...')
+      .replace(/\\LaTeX/g, 'LaTeX')
+      .replace(/\\TeX/g, 'TeX')
+      .replace(/\\frac\{([^}]*)\}\{([^}]*)\}/g, '($1/$2)')
+      .replace(/\\sqrt\{([^}]*)\}/g, 'sqrt($1)')
+      .replace(/\\(?:alpha|beta|gamma|delta|epsilon|theta|lambda|mu|pi|sigma|omega)/g, function (m) {
+        var map = {'\\alpha':'α','\\beta':'β','\\gamma':'γ','\\delta':'δ','\\epsilon':'ε','\\theta':'θ','\\lambda':'λ','\\mu':'μ','\\pi':'π','\\sigma':'σ','\\omega':'ω'};
+        return map[m] || m;
+      })
+      .replace(/\\[a-zA-Z]+\{?/g, '')
+      .replace(/[{}]/g, '')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim();
+
+    var blob = new Blob([plain], { type: 'text/plain;charset=utf-8' });
+
+    var out = document.getElementById('latex-editor-output');
+    out.innerHTML = '<div class="output-card"><h3>\u2713 Plain Text Created!</h3><p>' + EditIt.formatFileSize(blob.size) + '</p>' +
+      '<div class="output-filename"><label>File name:</label><input type="text" class="input output-dl-name" value="latex_document.txt"></div>' +
+      '<button class="btn btn-success output-dl-btn">Download TXT</button></div>';
+    out.querySelector('.output-dl-btn').addEventListener('click', function () {
+      EditIt.downloadBlob(blob, out.querySelector('.output-dl-name').value.trim() || 'latex_document.txt');
+    });
+    EditIt.showToast('Plain text exported!', 'success');
+  });
+
+  // Initial render - wait for MathJax to be ready
+  function initialRender() {
+    if (input.value) {
+      renderPreview();
+    }
+  }
+
+  // Try to render when MathJax is ready, or after a delay
+  if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+    MathJax.startup.promise.then(initialRender).catch(function () {
+      setTimeout(initialRender, 500);
+    });
+  } else {
+    // MathJax not loaded yet, wait and try again
+    setTimeout(function () {
+      if (window.MathJax && MathJax.startup && MathJax.startup.promise) {
+        MathJax.startup.promise.then(initialRender);
+      } else {
+        initialRender();
+      }
+    }, 1500);
+  }
+
+})();
