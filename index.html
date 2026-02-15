@@ -353,6 +353,8 @@
           <a href="#emoji-search" class="tool-card" data-color="amber"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="10"/><path d="M8 14s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg></div><h3>Emoji Search</h3><p>Search, browse and copy emojis</p></a>
           <a href="#html-to-md" class="tool-card" data-color="pink"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M7 8l-4 4 4 4M17 8l4 4-4 4"/><path d="M14 4l-4 16"/></svg></div><h3>HTML → Markdown</h3><p>Convert HTML back to Markdown</p></a>
           <a href="#text-to-handwriting" class="tool-card" data-color="indigo"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 3a2.83 2.83 0 114 4L7.5 20.5 2 22l1.5-5.5z"/></svg></div><h3>Handwriting</h3><p>Convert typed text to handwriting style</p></a>
+          <a href="#string-to-json" class="tool-card" data-color="teal"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h2a2 2 0 012 2v1a2 2 0 01-2 2H5a2 2 0 00-2 2v1a2 2 0 002 2h2"/><path d="M20 6h-2a2 2 0 00-2 2v1a2 2 0 002 2h1a2 2 0 012 2v1a2 2 0 01-2 2h-2"/><path d="M15 4l2 2-2 2"/></svg></div><h3>String → JSON</h3><p>Parse an escaped JSON string into formatted JSON</p></a>
+          <a href="#json-to-string" class="tool-card" data-color="cyan"><div class="tool-card-icon"><svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h2a2 2 0 012 2v1a2 2 0 01-2 2H5a2 2 0 00-2 2v1a2 2 0 002 2h2"/><path d="M20 6h-2a2 2 0 00-2 2v1a2 2 0 002 2h1a2 2 0 012 2v1a2 2 0 01-2 2h-2"/><path d="M9 4l-2 2 2 2"/></svg></div><h3>JSON → String</h3><p>Stringify a JSON object into an escaped string</p></a>
         </div>
 
         <!-- Utilities -->
@@ -1184,9 +1186,43 @@
 
     <section id="word-counter-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Word Counter</h1><p>Count words, characters, sentences, and paragraphs in real-time.</p></div><div class="text-tool-wrap"><textarea id="wc-input" class="input" rows="10" placeholder="Paste or type your text here..."></textarea><div class="text-tool-stats" id="wc-output"><div class="stat-grid"><div class="stat-card"><div class="stat-num">0</div><div class="stat-label">Words</div></div><div class="stat-card"><div class="stat-num">0</div><div class="stat-label">Characters</div></div><div class="stat-card"><div class="stat-num">0</div><div class="stat-label">Sentences</div></div><div class="stat-card"><div class="stat-num">0</div><div class="stat-label">Paragraphs</div></div></div></div></div></div></section>
 
-    <section id="json-formatter-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>JSON Formatter</h1><p>Format, validate, and minify JSON data.</p></div><div class="text-tool-wrap"><textarea id="jf-input" class="input" rows="10" placeholder="Paste JSON here..."></textarea><div style="display:flex;gap:8px;margin:12px 0"><button class="btn btn-primary" id="jf-format">Format</button><button class="btn btn-outline" id="jf-minify">Minify</button><button class="btn btn-outline" id="jf-validate">Validate</button></div><div class="output-area" id="json-formatter-output"></div></div></div></section>
+    <section id="json-formatter-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>JSON Formatter</h1><p>Format, validate, minify, and prettify JSON with live syntax highlighting.</p></div><div class="text-tool-wrap">
+      <div class="json-editor-bar">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="btn btn-outline btn-sm" id="jf-prettify">Prettify</button><button class="btn btn-outline btn-sm" id="jf-minify">Minify</button></div>
+        <span class="json-editor-bar-label"><span class="jf-status-dot" id="jf-status-dot"></span><span id="jf-status-text">Paste or type JSON</span></span>
+        <div class="json-editor-bar-actions"><button class="json-bar-btn" id="jf-bar-copy" title="Copy">Copy</button><button class="json-bar-btn" id="jf-bar-clear" title="Clear">Clear</button></div>
+      </div>
+      <div class="json-editor" id="jf-editor">
+        <div style="position:relative">
+          <div class="json-editor-error-line" id="jf-error-line"></div>
+          <div class="json-editor-gutter" id="jf-gutter">1</div>
+          <pre class="json-editor-highlight" aria-hidden="true"><code id="jf-highlight"></code></pre>
+          <textarea class="json-editor-textarea" id="jf-input" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder='Paste JSON here...&#10;&#10;e.g. {"name": "John", "age": 30, "active": true}'></textarea>
+        </div>
+      </div>
+      <div class="output-area" id="json-formatter-output"></div>
+    </div></div></section>
 
-    <section id="csv-json-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>CSV ↔ JSON</h1><p>Convert between CSV and JSON formats.</p></div><div class="text-tool-wrap"><div class="option-group"><label>Direction:</label><div style="display:flex;gap:8px"><button class="btn btn-sm btn-outline active" id="csv-to-json-btn">CSV → JSON</button><button class="btn btn-sm btn-outline" id="json-to-csv-btn">JSON → CSV</button></div></div><textarea id="csvjson-input" class="input" rows="10" placeholder="Paste CSV or JSON here..."></textarea><div class="tool-actions"><button class="btn btn-primary" id="csv-json-action">Convert</button></div><div class="output-area" id="csv-json-output"></div></div></div></section>
+    <section id="csv-json-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>CSV ↔ JSON</h1><p>Convert between CSV and JSON formats.</p></div><div class="text-tool-wrap">
+      <div class="option-group"><label>Direction:</label><div style="display:flex;gap:8px"><button class="btn btn-sm btn-outline active" id="csv-to-json-btn">CSV → JSON</button><button class="btn btn-sm btn-outline" id="json-to-csv-btn">JSON → CSV</button></div></div>
+      <div class="json-editor json-editor-compact" id="cj-in-editor">
+        <div style="position:relative">
+          <div class="json-editor-error-line" id="cj-in-error-line"></div>
+          <div class="json-editor-gutter" id="cj-in-gutter">1</div>
+          <pre class="json-editor-highlight" aria-hidden="true"><code id="cj-in-highlight"></code></pre>
+          <textarea class="json-editor-textarea" id="cj-in-input" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder='Paste CSV or JSON here...'></textarea>
+        </div>
+      </div>
+      <div class="tool-actions"><button class="btn btn-primary" id="csv-json-action">Convert</button></div>
+      <div class="json-editor json-editor-compact json-editor-readonly" id="cj-out-editor">
+        <div style="position:relative">
+          <div class="json-editor-gutter" id="cj-out-gutter">1</div>
+          <pre class="json-editor-highlight" aria-hidden="true"><code id="cj-out-highlight"></code></pre>
+          <textarea class="json-editor-textarea" id="cj-out-input" spellcheck="false" readonly placeholder="Result will appear here..."></textarea>
+        </div>
+      </div>
+      <div style="margin-top:8px"><button class="btn btn-outline btn-sm" id="csvjson-copy">Copy Output</button></div>
+    </div></div></section>
 
     <section id="markdown-editor-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Markdown Editor</h1><p>Write Markdown and see a live HTML preview.</p></div><div class="text-tool-wrap"><div class="option-row"><div class="option-group"><label>Markdown:</label><textarea id="md-editor-input" class="input" rows="16" placeholder="# Hello World\n\nType **markdown** here..."></textarea></div><div class="option-group"><label>Preview:</label><div id="md-editor-preview" class="md-preview"></div></div></div></div></div></section>
 
@@ -1447,7 +1483,19 @@
         <div class="output-area" id="cron-parser-output"></div></div></div></section>
 
     <!-- ==================== JSON TO TYPESCRIPT ==================== -->
-    <section id="json-to-ts-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>JSON → TypeScript</h1><p>Generate TypeScript interfaces from JSON data.</p></div><div class="text-tool-wrap"><div class="option-group"><label>Interface name:</label><input type="text" id="jts-name" class="input" value="Root" placeholder="InterfaceName"></div><textarea id="jts-input" class="input" rows="10" placeholder='{"name": "John", "age": 30, "address": {"city": "NYC"}}'></textarea><div class="tool-actions"><button class="btn btn-primary" id="json-to-ts-btn">Generate Interface</button></div><div class="output-area" id="json-to-ts-output"></div></div></div></section>
+    <section id="json-to-ts-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>JSON → TypeScript</h1><p>Generate TypeScript interfaces from JSON data.</p></div><div class="text-tool-wrap">
+      <div class="option-group"><label>Interface name:</label><input type="text" id="jts-name" class="input" value="Root" placeholder="InterfaceName"></div>
+      <div class="json-editor json-editor-compact" id="jts-editor">
+        <div style="position:relative">
+          <div class="json-editor-error-line" id="jts-error-line"></div>
+          <div class="json-editor-gutter" id="jts-gutter">1</div>
+          <pre class="json-editor-highlight" aria-hidden="true"><code id="jts-highlight"></code></pre>
+          <textarea class="json-editor-textarea" id="jts-input" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder='{"name": "John", "age": 30, "address": {"city": "NYC"}}'></textarea>
+        </div>
+      </div>
+      <div class="tool-actions"><button class="btn btn-primary" id="json-to-ts-btn">Generate Interface</button></div>
+      <div class="output-area" id="json-to-ts-output"></div>
+    </div></div></section>
 
     <!-- ==================== MINIFY CODE ==================== -->
     <section id="minify-code-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Minify Code</h1><p>Minify HTML, CSS, or JavaScript by removing whitespace and comments.</p></div><div class="text-tool-wrap"><div class="option-group"><label>Type:</label><select id="minify-type" class="select"><option value="html">HTML</option><option value="css">CSS</option><option value="js">JavaScript</option></select></div><textarea id="minify-input" class="input" rows="10" placeholder="Paste your code here..."></textarea><div class="tool-actions"><button class="btn btn-primary" id="minify-btn">Minify</button></div><div class="output-area" id="minify-code-output"></div></div></div></section>
@@ -1555,6 +1603,62 @@
 
     <!-- ==================== TEXT TO HANDWRITING ==================== -->
     <section id="text-to-handwriting-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Text to Handwriting</h1><p>Render typed text in a handwritten style on paper.</p></div><div class="text-tool-wrap"><textarea id="hw-input" class="input" rows="6" placeholder="Type your text here..."></textarea><div class="option-row"><div class="option-group"><label>Ink color:</label><input type="color" id="hw-color" value="#1a237e" style="width:100%;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer"></div><div class="option-group"><label>Font size:</label><input type="number" id="hw-size" class="input" value="22" min="12" max="48"></div></div><div class="tool-actions"><button class="btn btn-primary" id="hw-go">Generate</button></div><div class="output-area" id="text-to-handwriting-output"></div></div></div></section>
+
+    <!-- ==================== STRING TO JSON ==================== -->
+    <section id="string-to-json-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>String → JSON</h1><p>Parse an escaped JSON string into a formatted, readable JSON object.</p></div><div class="text-tool-wrap">
+      <div class="json-editor-bar">
+        <span class="json-editor-bar-label"><span class="jf-status-dot" id="s2j-status-dot"></span><span id="s2j-status-text">Paste an escaped JSON string</span></span>
+        <div class="json-editor-bar-actions"><button class="json-bar-btn" id="s2j-bar-copy" title="Copy input">Copy</button><button class="json-bar-btn" id="s2j-bar-clear" title="Clear">Clear</button></div>
+      </div>
+      <div class="json-editor json-editor-compact" id="s2j-in-editor">
+        <div style="position:relative">
+          <div class="json-editor-error-line" id="s2j-in-error-line"></div>
+          <div class="json-editor-gutter" id="s2j-in-gutter">1</div>
+          <pre class="json-editor-highlight" aria-hidden="true"><code id="s2j-in-highlight"></code></pre>
+          <textarea class="json-editor-textarea" id="s2j-in-input" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder='Paste an escaped JSON string here...&#10;&#10;e.g. "{\"name\":\"John\",\"age\":30}"&#10;or:  {"name":"John","age":30}'></textarea>
+        </div>
+      </div>
+      <div class="tool-actions"><button class="btn btn-primary" id="s2j-action">Parse to JSON</button></div>
+      <div class="json-editor-bar" style="margin-top:4px">
+        <span class="json-editor-bar-label">Output</span>
+        <div class="json-editor-bar-actions"><button class="json-bar-btn" id="s2j-out-copy" title="Copy output">Copy</button></div>
+      </div>
+      <div class="json-editor json-editor-compact json-editor-readonly" id="s2j-out-editor">
+        <div style="position:relative">
+          <div class="json-editor-gutter" id="s2j-out-gutter">1</div>
+          <pre class="json-editor-highlight" aria-hidden="true"><code id="s2j-out-highlight"></code></pre>
+          <textarea class="json-editor-textarea" id="s2j-out-input" spellcheck="false" readonly placeholder="Parsed JSON will appear here..."></textarea>
+        </div>
+      </div>
+    </div></div></section>
+
+    <!-- ==================== JSON TO STRING ==================== -->
+    <section id="json-to-string-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>JSON → String</h1><p>Stringify a JSON object into an escaped string representation.</p></div><div class="text-tool-wrap">
+      <div class="json-editor-bar">
+        <span class="json-editor-bar-label"><span class="jf-status-dot" id="j2s-status-dot"></span><span id="j2s-status-text">Paste or type JSON</span></span>
+        <div class="json-editor-bar-actions"><button class="json-bar-btn" id="j2s-bar-copy" title="Copy input">Copy</button><button class="json-bar-btn" id="j2s-bar-clear" title="Clear">Clear</button></div>
+      </div>
+      <div class="json-editor json-editor-compact" id="j2s-in-editor">
+        <div style="position:relative">
+          <div class="json-editor-error-line" id="j2s-in-error-line"></div>
+          <div class="json-editor-gutter" id="j2s-in-gutter">1</div>
+          <pre class="json-editor-highlight" aria-hidden="true"><code id="j2s-in-highlight"></code></pre>
+          <textarea class="json-editor-textarea" id="j2s-in-input" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" placeholder='Paste or type JSON here...&#10;&#10;e.g. {"name": "John", "age": 30, "active": true}'></textarea>
+        </div>
+      </div>
+      <div class="tool-actions"><button class="btn btn-primary" id="j2s-action">Stringify</button></div>
+      <div class="json-editor-bar" style="margin-top:4px">
+        <span class="json-editor-bar-label">Output</span>
+        <div class="json-editor-bar-actions"><button class="json-bar-btn" id="j2s-out-copy" title="Copy output">Copy</button></div>
+      </div>
+      <div class="json-editor json-editor-compact json-editor-readonly" id="j2s-out-editor">
+        <div style="position:relative">
+          <div class="json-editor-gutter" id="j2s-out-gutter">1</div>
+          <pre class="json-editor-highlight" aria-hidden="true"><code id="j2s-out-highlight"></code></pre>
+          <textarea class="json-editor-textarea" id="j2s-out-input" spellcheck="false" readonly placeholder="Escaped string will appear here..."></textarea>
+        </div>
+      </div>
+    </div></div></section>
 
     <!-- ==================== INVOICE GENERATOR ==================== -->
     <section id="invoice-gen-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Invoice Generator</h1><p>Fill in details to create a professional PDF invoice.</p></div><div class="text-tool-wrap"><div class="option-row"><div class="option-group"><label>From (Your name/company):</label><input type="text" id="inv-from" class="input" placeholder="Your Company"></div><div class="option-group"><label>To (Client):</label><input type="text" id="inv-to" class="input" placeholder="Client Name"></div></div><div class="option-row"><div class="option-group"><label>Invoice #:</label><input type="text" id="inv-num" class="input" placeholder="INV-001"></div><div class="option-group"><label>Date:</label><input type="date" id="inv-date" class="input"></div></div><div class="option-group"><label>Items (one per line: description, quantity, price):</label><textarea id="inv-items" class="input" rows="5" placeholder="Web Design, 1, 500&#10;Hosting, 12, 10&#10;Domain, 1, 15"></textarea></div><div class="option-group"><label>Notes:</label><input type="text" id="inv-notes" class="input" placeholder="Payment due within 30 days"></div><div class="tool-actions"><button class="btn btn-primary" id="inv-go">Generate Invoice PDF</button></div><div class="output-area" id="invoice-gen-output"></div></div></div></section>

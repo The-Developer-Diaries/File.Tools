@@ -5143,40 +5143,522 @@
     if (cards.length >= 4) { cards[0].textContent = words; cards[1].textContent = chars; cards[2].textContent = sentences; cards[3].textContent = paras; }
   });
 
-  // JSON FORMATTER
-  document.getElementById('jf-format').addEventListener('click', function () {
-    try { var j = JSON.parse(document.getElementById('jf-input').value); document.getElementById('jf-input').value = JSON.stringify(j, null, 2); document.getElementById('json-formatter-output').innerHTML = '<p style="color:var(--success);font-weight:600">\u2713 Valid JSON — formatted!</p>'; } catch (e) { document.getElementById('json-formatter-output').innerHTML = '<p style="color:var(--danger);font-weight:600">\u2717 ' + e.message + '</p>'; }
-  });
+  // ===== SHARED: JSON syntax highlighter & reusable editor setup =====
+  // Syntax-highlight a raw text string into HTML (single-pass to avoid class-name collisions)
+  function syntaxHighlightJson(text) {
+    var escaped = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return escaped.replace(
+      /("(?:\\[\s\S]|[^"\\])*")(\s*:)?|\b(true|false)\b|\b(null)\b|(-?\b\d+(?:\.\d+)?(?:[eE][+-]?\d+)?\b)|([{}[\]])|([,])/g,
+      function (match, str, colon, bool, nul, num, bracket, comma) {
+        if (str) {
+          if (colon) return '<span class="json-key">' + str + '</span><span class="json-punctuation">:</span>';
+          return '<span class="json-string">' + str + '</span>';
+        }
+        if (bool) return '<span class="json-boolean">' + match + '</span>';
+        if (nul) return '<span class="json-null">null</span>';
+        if (num) return '<span class="json-number">' + match + '</span>';
+        if (bracket) return '<span class="json-bracket">' + match + '</span>';
+        if (comma) return '<span class="json-punctuation">,</span>';
+        return match;
+      }
+    );
+  }
+
+  // Extract error line number from a JSON.parse error
+  function getJsonErrorLine(text, error) {
+    var msg = error.message || '';
+    var posMatch = msg.match(/at position (\d+)/i);
+    if (posMatch) {
+      var pos = parseInt(posMatch[1], 10);
+      return text.substring(0, pos).split('\n').length;
+    }
+    var lineMatch = msg.match(/at line (\d+)/i);
+    if (lineMatch) return parseInt(lineMatch[1], 10);
+    var posMatch2 = msg.match(/position\s*(\d+)/i);
+    if (posMatch2) {
+      var pos2 = parseInt(posMatch2[1], 10);
+      return text.substring(0, pos2).split('\n').length;
+    }
+    return -1;
+  }
+
+  /**
+   * setupJsonEditor — create a syntax-highlighted JSON editor from a container.
+   * Expects the container to have this structure:
+   *   <div class="json-editor [json-editor-compact] [json-editor-readonly]" id="PREFIX-editor">
+   *     <div style="position:relative">
+   *       <div class="json-editor-error-line" id="PREFIX-error-line"></div>
+   *       <div class="json-editor-gutter" id="PREFIX-gutter">1</div>
+   *       <pre class="json-editor-highlight" aria-hidden="true"><code id="PREFIX-highlight"></code></pre>
+   *       <textarea class="json-editor-textarea" id="PREFIX-input" ...></textarea>
+   *     </div>
+   *   </div>
+   *
+   * Returns an object with: { update(), getValue(), setValue(v), textarea }
+   */
+  function setupJsonEditor(prefix, opts) {
+    opts = opts || {};
+    var textarea = document.getElementById(prefix + '-input');
+    var highlight = document.getElementById(prefix + '-highlight');
+    var gutter = document.getElementById(prefix + '-gutter');
+    var errorLine = document.getElementById(prefix + '-error-line');
+    if (!textarea || !highlight) return null;
+
+    function updateHighlight() {
+      var val = textarea.value;
+      highlight.innerHTML = val ? syntaxHighlightJson(val) + '\n' : '';
+      var lines = val ? val.split('\n') : [''];
+      var errorLineNum = -1;
+
+      // Validate JSON if validation is enabled
+      if (opts.validate !== false && val.trim()) {
+        try {
+          JSON.parse(val);
+        } catch (e) {
+          errorLineNum = getJsonErrorLine(val, e);
+        }
+      }
+
+      // Build gutter
+      if (gutter) {
+        var nums = [];
+        for (var i = 1; i <= lines.length; i++) {
+          if (i === errorLineNum) {
+            nums.push('<span class="gutter-error">' + i + '</span>');
+          } else {
+            nums.push(i);
+          }
+        }
+        gutter.innerHTML = nums.join('\n');
+      }
+
+      // Error line highlight
+      if (errorLine) {
+        if (errorLineNum > 0) {
+          errorLine.style.top = (16 + (errorLineNum - 1) * 22) + 'px';
+          errorLine.style.display = 'block';
+        } else {
+          errorLine.style.display = 'none';
+        }
+      }
+
+      if (opts.onUpdate) opts.onUpdate(val, errorLineNum);
+    }
+
+    function syncScroll() {
+      var st = textarea.scrollTop;
+      var sl = textarea.scrollLeft;
+      highlight.parentNode.scrollTop = st;
+      highlight.parentNode.scrollLeft = sl;
+      if (gutter) gutter.style.marginTop = (-st) + 'px';
+      if (errorLine) errorLine.style.marginTop = (-st) + 'px';
+    }
+
+    textarea.addEventListener('scroll', syncScroll);
+    textarea.addEventListener('input', updateHighlight);
+
+    // Auto-prettify JSON on paste
+    if (opts.autoPrettifyOnPaste !== false) {
+      textarea.addEventListener('paste', function () {
+        setTimeout(function () {
+          var val = textarea.value.trim();
+          if (val) {
+            try {
+              var parsed = JSON.parse(val);
+              textarea.value = JSON.stringify(parsed, null, 2);
+            } catch (e) { /* leave as-is */ }
+          }
+          updateHighlight();
+        }, 0);
+      });
+    }
+
+    // Tab inserts 2 spaces
+    if (!opts.readonly) {
+      textarea.addEventListener('keydown', function (e) {
+        if (e.key === 'Tab') {
+          e.preventDefault();
+          var start = this.selectionStart;
+          var end = this.selectionEnd;
+          this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
+          this.selectionStart = this.selectionEnd = start + 2;
+          updateHighlight();
+        }
+      });
+    }
+
+    // Initial render
+    updateHighlight();
+
+    return {
+      update: updateHighlight,
+      getValue: function () { return textarea.value; },
+      setValue: function (v) { textarea.value = v; updateHighlight(); },
+      textarea: textarea
+    };
+  }
+
+  // JSON FORMATTER — live syntax-highlighted editor
+  (function () {
+    var jfInput = document.getElementById('jf-input');
+    var jfHighlight = document.getElementById('jf-highlight');
+    var jfGutter = document.getElementById('jf-gutter');
+    var jfErrorLine = document.getElementById('jf-error-line');
+    var jfStatusDot = document.getElementById('jf-status-dot');
+    var jfStatusText = document.getElementById('jf-status-text');
+    var jfOutput = document.getElementById('json-formatter-output');
+    if (!jfInput || !jfHighlight) return;
+
+    // Extract error line number from a JSON.parse error (local alias)
+    var getErrorLine = getJsonErrorLine;
+
+    // Show/hide the error line highlight bar
+    function showErrorLine(lineNum) {
+      if (lineNum < 1) {
+        jfErrorLine.style.display = 'none';
+        return;
+      }
+      // padding-top is 16px, each line is 22px
+      jfErrorLine.style.top = (16 + (lineNum - 1) * 22) + 'px';
+      jfErrorLine.style.display = 'block';
+    }
+
+    function hideErrorLine() {
+      jfErrorLine.style.display = 'none';
+    }
+
+    // Update the highlight overlay and gutter to match the textarea
+    function updateHighlight() {
+      var val = jfInput.value;
+      // Highlight + trailing newline so the <pre> height matches
+      jfHighlight.innerHTML = val ? syntaxHighlightJson(val) + '\n' : '';
+      // Update line numbers
+      var lines = val ? val.split('\n') : [''];
+      var errorLineNum = -1;
+
+      // Validate and update status dot
+      if (!val.trim()) {
+        jfStatusDot.className = 'jf-status-dot';
+        jfStatusText.textContent = 'Paste or type JSON';
+        hideErrorLine();
+      } else {
+        try {
+          JSON.parse(val);
+          jfStatusDot.className = 'jf-status-dot valid';
+          var lineCount = lines.length;
+          var charCount = val.length;
+          jfStatusText.textContent = 'Valid JSON \u00b7 ' + lineCount + ' lines \u00b7 ' + charCount + ' chars';
+          hideErrorLine();
+        } catch (e) {
+          errorLineNum = getErrorLine(val, e);
+          jfStatusDot.className = 'jf-status-dot invalid';
+          // Clean up the error message: strip browser noise like "at position N (line X column Y)"
+          var errMsg = e.message.replace(/^JSON\.parse:\s*/, '');
+          errMsg = errMsg.replace(/\s+in JSON at position \d+.*$/, '');
+          errMsg = errMsg.replace(/\s+at position \d+.*$/, '');
+          errMsg = errMsg.replace(/\s+at line \d+ column \d+.*$/, '');
+          if (errorLineNum > 0) {
+            jfStatusText.textContent = 'Error on line ' + errorLineNum + ': ' + errMsg;
+            showErrorLine(errorLineNum);
+          } else {
+            jfStatusText.textContent = 'Invalid: ' + errMsg;
+            hideErrorLine();
+          }
+        }
+      }
+
+      // Build gutter with error line highlighted
+      var nums = [];
+      for (var i = 1; i <= lines.length; i++) {
+        if (i === errorLineNum) {
+          nums.push('<span class="gutter-error">' + i + '</span>');
+        } else {
+          nums.push(i);
+        }
+      }
+      jfGutter.innerHTML = nums.join('\n');
+    }
+
+    // Sync scroll between textarea → highlight, gutter, and error line
+    function syncScroll() {
+      var st = jfInput.scrollTop;
+      var sl = jfInput.scrollLeft;
+      jfHighlight.parentNode.scrollTop = st;
+      jfHighlight.parentNode.scrollLeft = sl;
+      jfGutter.style.marginTop = (-st) + 'px';
+      jfErrorLine.style.marginTop = (-st) + 'px';
+    }
+    jfInput.addEventListener('scroll', syncScroll);
+
+    // Live update on every keystroke
+    jfInput.addEventListener('input', updateHighlight);
+
+    // Auto-prettify on paste
+    jfInput.addEventListener('paste', function () {
+      setTimeout(function () {
+        var val = jfInput.value.trim();
+        if (val) {
+          try {
+            var parsed = JSON.parse(val);
+            var formatted = JSON.stringify(parsed, null, 2);
+            jfInput.value = formatted;
+          } catch (e) { /* leave as-is if not valid JSON */ }
+        }
+        updateHighlight();
+      }, 0);
+    });
+
+    // Tab key inserts 2 spaces instead of leaving the textarea
+    jfInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        var start = this.selectionStart;
+        var end = this.selectionEnd;
+        this.value = this.value.substring(0, start) + '  ' + this.value.substring(end);
+        this.selectionStart = this.selectionEnd = start + 2;
+        updateHighlight();
+      }
+    });
+
+    // Prettify button — format + highlight
+    document.getElementById('jf-prettify').addEventListener('click', function () {
+      try {
+        var parsed = JSON.parse(jfInput.value);
+        var formatted = JSON.stringify(parsed, null, 2);
+        jfInput.value = formatted;
+        updateHighlight();
+        jfOutput.innerHTML = '<p style="color:var(--success);font-weight:600">\u2713 Prettified!</p>';
+      } catch (e) {
+        jfOutput.innerHTML = '<p style="color:var(--danger);font-weight:600">\u2717 ' + e.message + '</p>';
+      }
+    });
+
+    // Minify button
   document.getElementById('jf-minify').addEventListener('click', function () {
-    try { var j = JSON.parse(document.getElementById('jf-input').value); document.getElementById('jf-input').value = JSON.stringify(j); document.getElementById('json-formatter-output').innerHTML = '<p style="color:var(--success);font-weight:600">\u2713 Minified!</p>'; } catch (e) { document.getElementById('json-formatter-output').innerHTML = '<p style="color:var(--danger);font-weight:600">\u2717 ' + e.message + '</p>'; }
-  });
-  document.getElementById('jf-validate').addEventListener('click', function () {
-    try { JSON.parse(document.getElementById('jf-input').value); document.getElementById('json-formatter-output').innerHTML = '<p style="color:var(--success);font-weight:600">\u2713 Valid JSON!</p>'; } catch (e) { document.getElementById('json-formatter-output').innerHTML = '<p style="color:var(--danger);font-weight:600">\u2717 Invalid: ' + e.message + '</p>'; }
-  });
+      try {
+        var parsed = JSON.parse(jfInput.value);
+        jfInput.value = JSON.stringify(parsed);
+        updateHighlight();
+        jfOutput.innerHTML = '<p style="color:var(--success);font-weight:600">\u2713 Minified!</p>';
+      } catch (e) {
+        jfOutput.innerHTML = '<p style="color:var(--danger);font-weight:600">\u2717 ' + e.message + '</p>';
+      }
+    });
+
+    // Copy button in the editor bar
+    document.getElementById('jf-bar-copy').addEventListener('click', function () {
+      var text = jfInput.value;
+      if (!text.trim()) return;
+      navigator.clipboard.writeText(text).then(function () {
+        var btn = document.getElementById('jf-bar-copy');
+        btn.textContent = 'Copied!';
+        setTimeout(function () { btn.textContent = 'Copy'; }, 1500);
+        if (typeof EditIt !== 'undefined' && EditIt.showToast) EditIt.showToast('Copied!', 'success');
+      });
+    });
+
+    // Clear button in the editor bar
+    document.getElementById('jf-bar-clear').addEventListener('click', function () {
+      jfInput.value = '';
+      updateHighlight();
+      jfOutput.innerHTML = '';
+      jfInput.focus();
+    });
+  })();
 
   // CSV <-> JSON
   (function () {
     var dir = 'csv2json';
+    var cjIn = setupJsonEditor('cj-in', { validate: false, autoPrettifyOnPaste: false });
+    var cjOut = setupJsonEditor('cj-out', { validate: false, readonly: true, autoPrettifyOnPaste: false });
+    if (!cjIn || !cjOut) return;
+
     document.getElementById('csv-to-json-btn').addEventListener('click', function () { dir = 'csv2json'; this.classList.add('active'); document.getElementById('json-to-csv-btn').classList.remove('active'); });
     document.getElementById('json-to-csv-btn').addEventListener('click', function () { dir = 'json2csv'; this.classList.add('active'); document.getElementById('csv-to-json-btn').classList.remove('active'); });
+
     document.getElementById('csv-json-action').addEventListener('click', function () {
-      var input = document.getElementById('csvjson-input').value; var out = document.getElementById('csv-json-output');
+      var input = cjIn.getValue();
       try {
         if (dir === 'csv2json') {
           var lines = input.trim().split('\n'); var headers = lines[0].split(',').map(function (h) { return h.trim().replace(/^"|"$/g, ''); });
           var json = lines.slice(1).map(function (line) { var vals = line.split(','); var obj = {}; headers.forEach(function (h, i) { obj[h] = (vals[i] || '').trim().replace(/^"|"$/g, ''); }); return obj; });
-          out.innerHTML = '<div class="ocr-text-output">' + JSON.stringify(json, null, 2).replace(/</g, '&lt;') + '</div><button class="btn btn-success" style="margin-top:8px" id="csvjson-copy">Copy</button>';
+          cjOut.setValue(JSON.stringify(json, null, 2));
         } else {
           var data = JSON.parse(input); if (!Array.isArray(data)) data = [data];
           var keys = Object.keys(data[0] || {});
           var csv = keys.join(',') + '\n' + data.map(function (row) { return keys.map(function (k) { return '"' + String(row[k] || '').replace(/"/g, '""') + '"'; }).join(','); }).join('\n');
-          out.innerHTML = '<div class="ocr-text-output">' + csv.replace(/</g, '&lt;') + '</div><button class="btn btn-success" style="margin-top:8px" id="csvjson-copy">Copy</button>';
+          cjOut.setValue(csv);
         }
-        document.getElementById('csvjson-copy').addEventListener('click', function () {
-          var text = out.querySelector('.ocr-text-output').textContent;
-          navigator.clipboard.writeText(text).then(function () { EditIt.showToast('Copied!', 'success'); });
-        });
-      } catch (e) { out.innerHTML = '<p style="color:var(--danger)">\u2717 Error: ' + e.message + '</p>'; }
+        EditIt.showToast('Converted!', 'success');
+      } catch (e) {
+        cjOut.setValue('');
+        EditIt.showToast('Error: ' + e.message, 'error');
+      }
+    });
+
+    document.getElementById('csvjson-copy').addEventListener('click', function () {
+      var text = cjOut.getValue();
+      if (!text) { EditIt.showToast('Nothing to copy', 'error'); return; }
+      navigator.clipboard.writeText(text).then(function () { EditIt.showToast('Copied!', 'success'); });
+    });
+  })();
+
+  // =============================================
+  // STRING → JSON
+  // =============================================
+  (function () {
+    var statusDot = document.getElementById('s2j-status-dot');
+    var statusText = document.getElementById('s2j-status-text');
+    var actionBtn = document.getElementById('s2j-action');
+    if (!actionBtn) return;
+
+    // Try to parse a string input — handles double-encoded, escaped, or plain JSON
+    function tryParseStringInput(raw) {
+      var trimmed = raw.trim();
+      var parsed;
+      // First attempt: direct JSON.parse
+      try {
+        parsed = JSON.parse(trimmed);
+      } catch (e1) {
+        // Second attempt: wrap as a JSON string and parse twice (un-escape)
+        try {
+          parsed = JSON.parse('"' + trimmed.replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"');
+          parsed = JSON.parse(parsed);
+        } catch (e2) {
+          throw e1;
+        }
+      }
+      // If result is still a string, try one more parse (double-encoded)
+      if (typeof parsed === 'string') {
+        try { parsed = JSON.parse(parsed); } catch (e) { /* keep as-is */ }
+      }
+      return parsed;
+    }
+
+    // Live validation on input
+    function validateInput(val) {
+      if (!val.trim()) {
+        statusDot.className = 'jf-status-dot';
+        statusText.textContent = 'Paste an escaped JSON string';
+        return;
+      }
+      try {
+        tryParseStringInput(val);
+        var lines = val.split('\n').length;
+        var chars = val.length;
+        statusDot.className = 'jf-status-dot valid';
+        statusText.textContent = 'Valid \u00b7 ' + lines + ' lines \u00b7 ' + chars + ' chars';
+      } catch (e) {
+        statusDot.className = 'jf-status-dot invalid';
+        var errMsg = e.message.replace(/^JSON\.parse:\s*/, '').replace(/\s+at position \d+.*$/, '').replace(/\s+in JSON at position \d+.*$/, '');
+        statusText.textContent = 'Invalid: ' + errMsg;
+      }
+    }
+
+    var s2jIn = setupJsonEditor('s2j-in', {
+      validate: false,
+      autoPrettifyOnPaste: false,
+      onUpdate: function (val) { validateInput(val); }
+    });
+    var s2jOut = setupJsonEditor('s2j-out', { validate: false, readonly: true, autoPrettifyOnPaste: false });
+    if (!s2jIn || !s2jOut) return;
+
+    actionBtn.addEventListener('click', function () {
+      var raw = s2jIn.getValue();
+      if (!raw.trim()) { EditIt.showToast('Please enter some input', 'error'); return; }
+      try {
+        var parsed = tryParseStringInput(raw);
+        s2jOut.setValue(typeof parsed === 'string' ? parsed : JSON.stringify(parsed, null, 2));
+        EditIt.showToast('String parsed to JSON!', 'success');
+      } catch (e) {
+        s2jOut.setValue('');
+        EditIt.showToast('Invalid input: ' + e.message, 'error');
+      }
+    });
+
+    // Copy buttons
+    document.getElementById('s2j-bar-copy').addEventListener('click', function () {
+      var t = s2jIn.getValue();
+      if (!t.trim()) return;
+      navigator.clipboard.writeText(t).then(function () { EditIt.showToast('Copied!', 'success'); });
+    });
+    document.getElementById('s2j-bar-clear').addEventListener('click', function () {
+      s2jIn.setValue('');
+      s2jOut.setValue('');
+      s2jIn.textarea.focus();
+    });
+    document.getElementById('s2j-out-copy').addEventListener('click', function () {
+      var t = s2jOut.getValue();
+      if (!t) { EditIt.showToast('Nothing to copy', 'error'); return; }
+      navigator.clipboard.writeText(t).then(function () { EditIt.showToast('Copied!', 'success'); });
+    });
+  })();
+
+  // =============================================
+  // JSON → STRING
+  // =============================================
+  (function () {
+    var statusDot = document.getElementById('j2s-status-dot');
+    var statusText = document.getElementById('j2s-status-text');
+    var actionBtn = document.getElementById('j2s-action');
+    if (!actionBtn) return;
+
+    // Live JSON validation on input
+    function validateInput(val) {
+      if (!val.trim()) {
+        statusDot.className = 'jf-status-dot';
+        statusText.textContent = 'Paste or type JSON';
+        return;
+      }
+      try {
+        JSON.parse(val);
+        var lines = val.split('\n').length;
+        var chars = val.length;
+        statusDot.className = 'jf-status-dot valid';
+        statusText.textContent = 'Valid JSON \u00b7 ' + lines + ' lines \u00b7 ' + chars + ' chars';
+      } catch (e) {
+        statusDot.className = 'jf-status-dot invalid';
+        var errMsg = e.message.replace(/^JSON\.parse:\s*/, '').replace(/\s+at position \d+.*$/, '').replace(/\s+in JSON at position \d+.*$/, '');
+        statusText.textContent = 'Invalid: ' + errMsg;
+      }
+    }
+
+    var j2sIn = setupJsonEditor('j2s-in', {
+      validate: true,
+      onUpdate: function (val) { validateInput(val); }
+    });
+    var j2sOut = setupJsonEditor('j2s-out', { validate: false, readonly: true, autoPrettifyOnPaste: false });
+    if (!j2sIn || !j2sOut) return;
+
+    actionBtn.addEventListener('click', function () {
+      var raw = j2sIn.getValue();
+      if (!raw.trim()) { EditIt.showToast('Please enter some input', 'error'); return; }
+      try {
+        var obj = JSON.parse(raw.trim());
+        var stringified = JSON.stringify(JSON.stringify(obj));
+        j2sOut.setValue(stringified);
+        EditIt.showToast('JSON converted to string!', 'success');
+      } catch (e) {
+        j2sOut.setValue('');
+        EditIt.showToast('Invalid JSON: ' + e.message, 'error');
+      }
+    });
+
+    // Copy buttons
+    document.getElementById('j2s-bar-copy').addEventListener('click', function () {
+      var t = j2sIn.getValue();
+      if (!t.trim()) return;
+      navigator.clipboard.writeText(t).then(function () { EditIt.showToast('Copied!', 'success'); });
+    });
+    document.getElementById('j2s-bar-clear').addEventListener('click', function () {
+      j2sIn.setValue('');
+      j2sOut.setValue('');
+      j2sIn.textarea.focus();
+    });
+    document.getElementById('j2s-out-copy').addEventListener('click', function () {
+      var t = j2sOut.getValue();
+      if (!t) { EditIt.showToast('Nothing to copy', 'error'); return; }
+      navigator.clipboard.writeText(t).then(function () { EditIt.showToast('Copied!', 'success'); });
     });
   })();
 
@@ -6476,6 +6958,7 @@
   (function () {
     var btn = document.getElementById('json-to-ts-btn');
     if (!btn) return;
+    var jtsEditor = setupJsonEditor('jts', { validate: true });
     function jsonToTs(obj, name) {
       var lines = ['interface ' + name + ' {'];
       Object.keys(obj).forEach(function (key) {
@@ -6506,7 +6989,7 @@
       return lines.join('\n');
     }
     btn.addEventListener('click', function () {
-      var input = document.getElementById('jts-input').value.trim();
+      var input = (jtsEditor ? jtsEditor.getValue() : document.getElementById('jts-input').value).trim();
       var name = document.getElementById('jts-name').value.trim() || 'Root';
       var out = document.getElementById('json-to-ts-output');
       try {

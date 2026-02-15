@@ -1272,7 +1272,7 @@ input[type="range"]::-moz-range-thumb {
   color: var(--text-secondary);
 }
 
-/* ===== RESPONSIVE ===== */
+/* ===== RESPONSIVE — SMALL SCREENS ===== */
 @media (max-width: 768px) {
   .hero {
     padding: 48px 0 32px;
@@ -1327,6 +1327,314 @@ input[type="range"]::-moz-range-thumb {
 
   .rotation-btns {
     flex-wrap: wrap;
+  }
+}
+
+/* ===== RESPONSIVE — LARGE DESKTOP (≥1200px) ===== */
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1200px;
+  }
+
+  .tools-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+
+  .tool-card {
+    padding: 28px;
+  }
+
+  .pages-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+
+  .output-images {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+
+  .stat-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+  }
+
+  .tool-split {
+    grid-template-columns: 1fr 380px;
+    gap: 28px;
+  }
+
+  .latex-editor-wrap {
+    min-height: 560px;
+  }
+
+  .kb-board {
+    gap: 16px;
+  }
+
+  .sn-grid {
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
+
+/* ===== RESPONSIVE — WIDE SCREEN (≥1440px) ===== */
+@media (min-width: 1440px) {
+  .container {
+    max-width: 1400px;
+    padding: 0 40px;
+  }
+
+  /* Home view tools container gets extra width */
+  #home-view .container {
+    max-width: 1400px;
+  }
+
+  .tools-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 22px;
+  }
+
+  .tool-card {
+    padding: 30px;
+  }
+
+  .tool-card-icon {
+    width: 52px;
+    height: 52px;
+    margin-bottom: 18px;
+  }
+
+  .section-title {
+    font-size: 1.45rem;
+    margin: 56px 0 24px;
+  }
+
+  .hero {
+    padding: 80px 0 56px;
+  }
+
+  .tool-view .container {
+    max-width: 1400px;
+    padding-top: 48px;
+  }
+
+  .tool-split {
+    grid-template-columns: 1fr 400px;
+    gap: 32px;
+  }
+
+  .compare-panels {
+    gap: 24px;
+  }
+
+  .pages-grid {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  }
+
+  .output-images {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+
+  .latex-editor-wrap {
+    min-height: 600px;
+    gap: 24px;
+  }
+
+  .drop-zone {
+    padding: 56px 32px;
+  }
+
+  .tool-options {
+    padding: 28px;
+  }
+
+  .option-row {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .stat-grid {
+    grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  }
+
+  .sn-grid {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  }
+}
+
+/* ===== RESPONSIVE — ULTRA-WIDE (≥1920px) ===== */
+@media (min-width: 1920px) {
+  .container {
+    max-width: 1720px;
+    padding: 0 48px;
+  }
+
+  #home-view .container {
+    max-width: 1720px;
+  }
+
+  .tools-grid {
+    grid-template-columns: repeat(5, 1fr);
+    gap: 24px;
+  }
+
+  .tool-card {
+    padding: 32px;
+  }
+
+  .tool-card-icon {
+    width: 56px;
+    height: 56px;
+  }
+
+  .tool-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .section-title {
+    font-size: 1.55rem;
+    margin: 64px 0 28px;
+  }
+
+  .hero {
+    padding: 96px 0 64px;
+  }
+
+  .hero h1 {
+    font-size: 3.5rem;
+  }
+
+  .hero-sub {
+    font-size: 1.2rem;
+    max-width: 620px;
+  }
+
+  .search-wrap {
+    max-width: 600px;
+  }
+
+  .tool-view .container {
+    max-width: 1720px;
+    padding-top: 56px;
+  }
+
+  .tool-header h1 {
+    font-size: 2.25rem;
+  }
+
+  .tool-split {
+    grid-template-columns: 1fr 440px;
+    gap: 40px;
+  }
+
+  .pages-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 16px;
+  }
+
+  .output-images {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 24px;
+  }
+
+  .compare-panels {
+    gap: 28px;
+  }
+
+  .latex-editor-wrap {
+    min-height: 650px;
+    gap: 28px;
+  }
+
+  .latex-textarea {
+    min-height: 500px;
+  }
+
+  .latex-preview {
+    min-height: 500px;
+  }
+
+  .kb-board {
+    gap: 20px;
+  }
+
+  .drop-zone {
+    padding: 64px 40px;
+  }
+
+  .tool-options {
+    padding: 32px;
+  }
+
+  .option-row {
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 24px;
+  }
+
+  .stat-grid {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+  }
+
+  .sn-grid {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 16px;
+  }
+
+  .text-tool-wrap {
+    padding: 32px;
+  }
+
+  .preview-compare {
+    gap: 24px;
+  }
+
+  #preview-modal .preview-modal-inner {
+    max-width: 1200px;
+  }
+}
+
+/* ===== RESPONSIVE — SUPER ULTRA-WIDE (≥2560px) ===== */
+@media (min-width: 2560px) {
+  .container {
+    max-width: 2200px;
+    padding: 0 64px;
+  }
+
+  #home-view .container {
+    max-width: 2200px;
+  }
+
+  .tools-grid {
+    grid-template-columns: repeat(6, 1fr);
+    gap: 28px;
+  }
+
+  .tool-view .container {
+    max-width: 2200px;
+  }
+
+  .tool-split {
+    grid-template-columns: 1fr 500px;
+    gap: 48px;
+  }
+
+  .kb-board {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+  }
+
+  .latex-editor-wrap {
+    min-height: 700px;
+    gap: 32px;
+  }
+
+  .compare-panels {
+    gap: 32px;
+  }
+
+  #preview-modal .preview-modal-inner {
+    max-width: 1500px;
   }
 }
 
@@ -2202,6 +2510,282 @@ input[type="range"]::-moz-range-thumb {
   line-height: 1.6;
   margin-top: 16px;
   color: var(--text);
+}
+
+/* ===== JSON CODE EDITOR (syntax-highlighted textarea) ===== */
+.json-editor {
+  position: relative;
+  border-radius: var(--radius);
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: #fafbfc;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.json-editor:focus-within {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+[data-theme="dark"] .json-editor {
+  background: #0f111a;
+  border-color: rgba(255,255,255,0.06);
+}
+
+[data-theme="dark"] .json-editor:focus-within {
+  border-color: rgba(130,170,255,0.35);
+  box-shadow: 0 0 0 3px rgba(130,170,255,0.08);
+}
+
+/* Shared properties — MUST be identical for perfect overlay alignment */
+.json-editor-textarea,
+.json-editor-highlight {
+  font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 13px;
+  line-height: 22px;
+  padding: 16px 16px 16px 54px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  tab-size: 2;
+  margin: 0;
+  border: none;
+  width: 100%;
+  min-height: 640px;
+  letter-spacing: 0.3px;
+  box-sizing: border-box;
+}
+
+/* The highlighted <pre> sits behind */
+.json-editor-highlight {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  overflow: hidden;
+  color: #8b949e;
+  z-index: 0;
+}
+
+[data-theme="dark"] .json-editor-highlight {
+  color: #636d83;
+}
+
+.json-editor-highlight code {
+  display: block;
+  font: inherit;
+  letter-spacing: inherit;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* The textarea on top — transparent text, visible caret */
+.json-editor-textarea {
+  position: relative;
+  z-index: 1;
+  color: transparent;
+  caret-color: #24292f;
+  background: transparent;
+  outline: none;
+  resize: vertical;
+  -webkit-text-fill-color: transparent;
+}
+
+[data-theme="dark"] .json-editor-textarea {
+  caret-color: #ffffffcc;
+}
+
+.json-editor-textarea::placeholder {
+  -webkit-text-fill-color: #a0a8b7;
+  color: #a0a8b7;
+}
+
+[data-theme="dark"] .json-editor-textarea::placeholder {
+  -webkit-text-fill-color: #454d61;
+  color: #454d61;
+}
+
+/* Line numbers gutter — MUST match code font metrics exactly */
+.json-editor-gutter {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 42px;
+  padding: 16px 10px 16px 0;
+  text-align: right;
+  font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', 'JetBrains Mono', Menlo, Consolas, 'Liberation Mono', monospace;
+  font-size: 13px;
+  line-height: 22px;
+  letter-spacing: 0.3px;
+  white-space: pre;
+  color: #bcc3ce;
+  user-select: none;
+  pointer-events: none;
+  z-index: 2;
+  border-right: 1px solid #e8ebef;
+  background: #f3f5f7;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+[data-theme="dark"] .json-editor-gutter {
+  color: #2a3040;
+  background: rgba(0,0,0,0.2);
+  border-right-color: rgba(255,255,255,0.04);
+}
+
+/* Toolbar bar above editor */
+.json-editor-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 0;
+  margin-bottom: 10px;
+  flex-wrap: wrap;
+}
+
+.json-editor-bar-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.json-editor-bar-label .jf-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  transition: background 0.2s ease;
+}
+
+.json-editor-bar-label .jf-status-dot.valid {
+  background: var(--success);
+  box-shadow: 0 0 6px rgba(16,185,129,0.35);
+}
+
+.json-editor-bar-label .jf-status-dot.invalid {
+  background: var(--danger);
+  box-shadow: 0 0 6px rgba(239,68,68,0.35);
+}
+
+.json-editor-bar-actions {
+  display: flex;
+  gap: 6px;
+}
+
+.json-editor-bar .json-bar-btn {
+  padding: 4px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: var(--font);
+}
+
+.json-editor-bar .json-bar-btn:hover {
+  background: var(--primary-light);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+/* Error line highlight bar */
+.json-editor-error-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 22px;
+  background: rgba(239,68,68,0.12);
+  border-left: 3px solid var(--danger);
+  pointer-events: none;
+  z-index: 0;
+  display: none;
+  transition: top 0.1s ease;
+}
+
+[data-theme="dark"] .json-editor-error-line {
+  background: rgba(255,83,112,0.1);
+  border-left-color: #ff5370;
+}
+
+/* Error state gutter number */
+.json-editor-gutter .gutter-error {
+  color: var(--danger);
+  font-weight: 700;
+}
+
+[data-theme="dark"] .json-editor-gutter .gutter-error {
+  color: #ff5370;
+}
+
+/* Syntax tokens — Light mode (GitHub-inspired) */
+.json-key { color: #0550ae; }
+.json-string { color: #0a3069; }
+.json-number { color: #0550ae; }
+.json-boolean { color: #cf222e; }
+.json-null { color: #cf222e; }
+.json-bracket { color: #24292f; font-weight: 600; }
+.json-punctuation { color: #6e7781; }
+
+/* Syntax tokens — Dark mode (Material Palenight) */
+[data-theme="dark"] .json-key { color: #82aaff; }
+[data-theme="dark"] .json-string { color: #c3e88d; }
+[data-theme="dark"] .json-number { color: #f78c6c; }
+[data-theme="dark"] .json-boolean { color: #c792ea; }
+[data-theme="dark"] .json-null { color: #ff5370; }
+[data-theme="dark"] .json-bracket { color: #89ddff; font-weight: 600; }
+[data-theme="dark"] .json-punctuation { color: #89ddff; }
+
+/* Custom scrollbar */
+.json-editor-textarea::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.json-editor-textarea::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.json-editor-textarea::-webkit-scrollbar-thumb {
+  background: rgba(0,0,0,0.1);
+  border-radius: 4px;
+}
+
+.json-editor-textarea::-webkit-scrollbar-thumb:hover {
+  background: rgba(0,0,0,0.18);
+}
+
+[data-theme="dark"] .json-editor-textarea::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.08);
+}
+
+[data-theme="dark"] .json-editor-textarea::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.15);
+}
+
+/* Compact variant for smaller JSON editors (used in tools like CSV↔JSON, String↔JSON, JSON→TS) */
+.json-editor-compact .json-editor-textarea,
+.json-editor-compact .json-editor-highlight {
+  min-height: 260px;
+}
+
+/* Read-only overlay styling — dimmer caret since it's not editable */
+.json-editor-readonly .json-editor-textarea {
+  cursor: default;
+}
+.json-editor-readonly .json-editor-textarea:focus {
+  caret-color: transparent;
 }
 
 /* ===== NEW TOOLS STYLES ===== */
