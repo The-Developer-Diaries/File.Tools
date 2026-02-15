@@ -7,7 +7,7 @@
   <meta name="description" content="Free online tools to edit, merge, convert PDFs and images. No uploads. Everything happens in your browser.">
   <link rel="icon" type="image/svg+xml" href="favicon.svg">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <script>
     // Apply theme immediately to prevent flash of wrong theme
@@ -1602,8 +1602,7 @@
     <section id="html-to-md-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>HTML → Markdown</h1><p>Convert HTML code to Markdown format.</p></div><div class="text-tool-wrap"><textarea id="h2m-input" class="input" rows="10" placeholder="Paste HTML here..."></textarea><div class="tool-actions"><button class="btn btn-primary" id="h2m-go">Convert</button></div><div class="output-area" id="html-to-md-output"></div></div></div></section>
 
     <!-- ==================== TEXT TO HANDWRITING ==================== -->
-    <section id="text-to-handwriting-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Text to Handwriting</h1><p>Render typed text in a handwritten style on paper.</p></div><div class="text-tool-wrap"><textarea id="hw-input" class="input" rows="6" placeholder="Type your text here..."></textarea><div class="option-row"><div class="option-group"><label>Ink color:</label><input type="color" id="hw-color" value="#1a237e" style="width:100%;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border);cursor:pointer"></div><div class="option-group"><label>Font size:</label><input type="number" id="hw-size" class="input" value="22" min="12" max="48"></div></div><div class="tool-actions"><button class="btn btn-primary" id="hw-go">Generate</button></div><div class="output-area" id="text-to-handwriting-output"></div></div></div></section>
-
+    <section id="text-to-handwriting-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>Text to Handwriting</h1><p>Render typed text in a handwritten style on lined paper.</p></div><div class="text-tool-wrap"><textarea id="hw-input" class="input" rows="6" placeholder="Type your text here…"></textarea><div class="option-row"><div class="option-group"><label>Ink color:</label><input type="color" id="hw-color" value="#1a237e" style="width:100%;height:36px;border-radius:var( - radius-sm);border:1px solid var( - border);cursor:pointer"></div><div class="option-group"><label>Font size:</label><input type="number" id="hw-size" class="input" value="24" min="14" max="48"></div><div class="option-group"><label>Style:</label><select id="hw-font" class="select"><option value="Caveat">Caveat (casual)</option><option value="cursive">System cursive</option></select></div></div><div class="tool-actions"><button class="btn btn-primary" id="hw-go">Generate</button></div><div class="output-area" id="text-to-handwriting-output"></div></div></div></section>
     <!-- ==================== STRING TO JSON ==================== -->
     <section id="string-to-json-view" class="view tool-view"><div class="container"><div class="tool-header"><a href="#" class="back-btn">&larr; Back to tools</a><h1>String → JSON</h1><p>Parse an escaped JSON string into a formatted, readable JSON object.</p></div><div class="text-tool-wrap">
       <div class="json-editor-bar">

@@ -7935,37 +7935,83 @@
     var btn = document.getElementById('hw-go');
     if (!btn) return;
     btn.addEventListener('click', async function () {
-      var text = document.getElementById('hw-input').value;
-      if (!text.trim()) { EditIt.showToast('Enter text', 'error'); return; }
-      var color = document.getElementById('hw-color').value;
-      var size = parseInt(document.getElementById('hw-size').value) || 22;
-      var lineH = size * 1.8;
-      var lines = text.split('\n');
-      var c = document.createElement('canvas'); c.width = 800; c.height = Math.max(400, lines.length * lineH + 80);
-      var ctx = c.getContext('2d');
-      // Paper background
-      ctx.fillStyle = '#fef9ef'; ctx.fillRect(0, 0, c.width, c.height);
-      // Ruled lines
-      ctx.strokeStyle = '#d4c5a9'; ctx.lineWidth = 0.5;
-      for (var i = 0; i < c.height; i += lineH) { ctx.beginPath(); ctx.moveTo(40, 60 + i); ctx.lineTo(c.width - 40, 60 + i); ctx.stroke(); }
-      // Red margin line
-      ctx.strokeStyle = '#e8a0a0'; ctx.lineWidth = 1;
-      ctx.beginPath(); ctx.moveTo(70, 0); ctx.lineTo(70, c.height); ctx.stroke();
-      // Text
-      ctx.fillStyle = color;
-      ctx.font = size + 'px "Segoe Script", "Comic Sans MS", cursive';
-      lines.forEach(function (line, idx) {
+      try {
+        var text = document.getElementById('hw-input').value;
+        if (!text.trim()) { EditIt.showToast('Enter text', 'error'); return; }
+        var color = document.getElementById('hw-color').value;
+        var size = parseInt(document.getElementById('hw-size').value) || 24;
+        var fontChoice = (document.getElementById('hw-font') || {}).value || 'Caveat';
+        // Build the font string - use Caveat web font as primary, with fallbacks
+        var fontFamily;
+        if (fontChoice === 'Caveat') {
+        fontFamily = '"Caveat", "Segoe Script", "Comic Sans MS", cursive';
+        } else {
+        fontFamily = '"Segoe Script", "Comic Sans MS", "Apple Chancery", cursive';
+        }
+        var fontStr = size + 'px ' + fontFamily;
+        // Ensure the web font is loaded before drawing to canvas
+        if (document.fonts && document.fonts.load) {
+        try { await document.fonts.load(fontStr); } catch (e) { /* proceed with fallback */ }
+        }
+        var lineH = size * 1.8;
+        // Word-wrap long lines to fit within canvas width
+        var canvasW = 800;
+        var maxTextW = canvasW - 120; // 80px left margin + 40px right margin
+        var tempC = document.createElement('canvas');
+        var tempCtx = tempC.getContext('2d');
+        tempCtx.font = fontStr;
+        var wrappedLines = [];
+        text.split('\n').forEach(function (rawLine) {
+        if (!rawLine) { wrappedLines.push(''); return; }
+        var words = rawLine.split(' ');
+        var current = '';
+        for (var w = 0; w < words.length; w++) {
+        var test = current ? current + ' ' + words[w] : words[w];
+        if (tempCtx.measureText(test).width > maxTextW && current) {
+        wrappedLines.push(current);
+        current = words[w];
+        } else {
+        current = test;
+        }
+        }
+        if (current) wrappedLines.push(current);
+        });
+        var c = document.createElement('canvas');
+        c.width = canvasW;
+        c.height = Math.max(400, wrappedLines.length * lineH + 100);
+        var ctx = c.getContext('2d');
+        // Paper background
+        ctx.fillStyle = '#fef9ef';
+        ctx.fillRect(0, 0, c.width, c.height);
+        // Ruled lines
+        ctx.strokeStyle = '#d4c5a9'; ctx.lineWidth = 0.5;
+        for (var i = 0; i < c.height; i += lineH) {
+        ctx.beginPath(); ctx.moveTo(40, 60 + i); ctx.lineTo(c.width - 40, 60 + i); ctx.stroke();
+        }
+        // Red margin line
+        ctx.strokeStyle = '#e8a0a0'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.moveTo(70, 0); ctx.lineTo(70, c.height); ctx.stroke();
+        // Draw text character-by-character with jitter for handwritten feel
+        ctx.fillStyle = color;
+        ctx.font = fontStr;
+        wrappedLines.forEach(function (line, idx) {
         var x = 80;
         for (var j = 0; j < line.length; j++) {
-          var jitter = (Math.random() - 0.5) * 2;
-          ctx.fillText(line[j], x, 56 + idx * lineH + jitter);
-          x += ctx.measureText(line[j]).width + (Math.random() - 0.5) * 1;
+        var jitterY = (Math.random() - 0.5) * 2;
+        var jitterX = (Math.random() - 0.5) * 0.8;
+        ctx.fillText(line[j], x + jitterX, 56 + idx * lineH + jitterY);
+        x += ctx.measureText(line[j]).width + (Math.random() - 0.5) * 1;
         }
-      });
-      var blob = await new Promise(function (r) { c.toBlob(r, 'image/png'); });
-      var out = document.getElementById('text-to-handwriting-output');
-      dlCard(out, 'Handwriting Generated!', EditIt.formatFileSize(blob.size), blob, 'handwriting.png', '<img src="' + URL.createObjectURL(blob) + '" style="max-width:100%;border:1px solid var(--border);border-radius:8px;margin:12px 0">');
-      EditIt.showToast('Handwriting generated!', 'success');
+        });
+        var blob = await new Promise(function (r) { c.toBlob(r, 'image/png'); });
+        if (!blob) { EditIt.showToast('Failed to generate image', 'error'); return; }
+        var out = document.getElementById('text-to-handwriting-output');
+        dlCard(out, 'Handwriting Generated!', EditIt.formatFileSize(blob.size), blob, 'handwriting.png', '<img src="' + URL.createObjectURL(blob) + '" style="max-width:100%;border:1px solid var( - border);border-radius:8px;margin:12px 0">');
+        EditIt.showToast('Handwriting generated!', 'success');
+        } catch (err) {
+        console.error('Handwriting error:', err);
+        EditIt.showToast('Error: ' + err.message, 'error');
+        }
     });
   })();
 

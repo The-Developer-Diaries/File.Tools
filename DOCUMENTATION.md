@@ -11,10 +11,11 @@ Welcome to the comprehensive documentation for **ZeroUpload**. This guide provid
 5. [Text Tools](#text-tools)
 6. [Conversion Tools](#conversion-tools)
 7. [Utility Tools](#utility-tools)
-8. [Advanced Features](#advanced-features)
-9. [Troubleshooting](#troubleshooting)
-10. [FAQ](#faq)
-11. [Tips & Tricks](#tips--tricks)
+8. [Document & Creative Tools](#document--creative-tools)
+9. [Advanced Features](#advanced-features)
+10. [Troubleshooting](#troubleshooting)
+11. [FAQ](#faq)
+12. [Tips & Tricks](#tips--tricks)
 
 ---
 
@@ -57,8 +58,9 @@ Welcome to the comprehensive documentation for **ZeroUpload**. This guide provid
 | **Text** | 20+ | Format, convert, and process text documents |
 | **Conversion** | 25+ | Convert between various file and data formats |
 | **Utilities** | 20+ | QR codes, hashing, color tools, and more |
+| **Document & Creative** | 5+ | LaTeX editing, advanced document creation |
 
-### Total Tools Available: 130+
+### Total Tools Available: 135+
 
 ---
 
@@ -980,6 +982,291 @@ Calculated based on connection speed:
 - Factor in overhead for uploads
 - Compare against storage quotas
 - Plan for backup storage needs
+
+---
+
+## Document & Creative Tools
+
+### 1. LaTeX Editor
+
+**Purpose:** Create and preview professional LaTeX documents with live rendering and export capabilities
+
+#### How to Use
+1. Open LaTeX Editor
+2. Type or paste LaTeX code into the editor
+3. Preview renders in real-time on the right side
+4. Use snippets for quick insertion of common LaTeX commands
+5. Upload images for inclusion in your document
+6. Export to PDF, DOCX, HTML, or plain text
+7. Download your processed document
+
+#### Features
+- **Live Preview** — Real-time rendering as you type
+- **Syntax Highlighting** — Built-in code highlighting for LaTeX
+- **Snippet Library** — Quick-insert buttons for common LaTeX structures
+- **Image Support** — Upload and embed images in your documents
+- **MathJax Integration** — Full mathematical equation rendering
+- **Multiple Export Formats** — PDF, DOCX, HTML, and text
+- **Responsive Design** — Works on desktop and tablet
+
+#### LaTeX Commands Supported
+
+**Document Structure:**
+- `\documentclass{article}` — Document type definition
+- `\begin{document}...\end{document}` — Document body
+- `\title{...}` — Document title
+- `\author{...}` — Author name
+- `\date{...}` — Document date
+- `\maketitle` — Render title, author, date
+
+**Sectioning:**
+- `\section{...}` — Main section heading
+- `\subsection{...}` — Subsection heading
+- `\subsubsection{...}` — Subsubsection heading
+- `\section*{...}` — Unnumbered section
+
+**Text Formatting:**
+- `\textbf{...}` — Bold text
+- `\textit{...}` — Italic text
+- `\underline{...}` — Underlined text
+- `\texttt{...}` — Monospace/typewriter text
+- `\emph{...}` — Emphasized text
+
+**Lists & Environments:**
+- `\begin{itemize}...\end{itemize}` — Bulleted list
+- `\begin{enumerate}...\end{enumerate}` — Numbered list
+- `\item` — List item
+- `\begin{quote}...\end{quote}` — Quote block
+- `\begin{center}...\end{center}` — Centered content
+- `\begin{verbatim}...\end{verbatim}` — Code block
+
+**Mathematics:**
+- `$...$` — Inline math mode
+- `$$...$$` — Display math mode
+- `\frac{num}{den}` — Fractions
+- `\sqrt{...}` — Square root
+- Greek letters: `\alpha`, `\beta`, `\gamma`, `\theta`, `\pi`, etc.
+
+**Figures & Graphics:**
+- `\begin{figure}...\end{figure}` — Figure environment
+- `\includegraphics[width=...]{filename}` — Include image
+- `\caption{...}` — Figure caption
+
+**Other Commands:**
+- `\\` — Line break
+- `\newline` — New line
+- `\newpage` — Page break
+- `\hrule`, `\hline` — Horizontal line
+- `\vspace{...}` — Vertical spacing
+- `\hspace{...}` — Horizontal spacing
+
+#### Quick LaTeX Example
+```latex
+\documentclass{article}
+
+\title{My First LaTeX Document}
+\author{Your Name}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introduction}
+
+This is a simple LaTeX document with \textbf{bold text} and \textit{italic text}.
+
+\begin{itemize}
+  \item First item
+  \item Second item
+  \item Third item
+\end{itemize}
+
+\section{Mathematics}
+
+Inline math: $a^2 + b^2 = c^2$
+
+Display math: $$E = mc^2$$
+
+\end{document}
+```
+
+#### Using Snippets
+
+**Available Quick Snippets:**
+- Basic Article — Minimal article template
+- Article with Sections — Full structured article
+- Report Template — Multi-page report format
+- List Examples — Itemize and enumerate examples
+- Math Example — Mathematical equations and symbols
+- Figure Example — Image inclusion with captions
+
+**How to Use Snippets:**
+1. Click snippet button in toolbar
+2. Code inserts at cursor position
+3. Edit and customize for your needs
+4. Preview updates automatically
+
+#### Uploading Images
+
+**Steps:**
+1. Click "Upload Images" button
+2. Select one or more image files (PNG, JPG, WebP, etc.)
+3. Images are stored in memory for embedding
+4. Use `\includegraphics{filename}` to reference
+
+**Image Syntax:**
+```latex
+% Basic image inclusion
+\includegraphics{myimage.png}
+
+% With width specification
+\includegraphics[width=0.8\textwidth]{myimage.png}
+
+% In a figure environment with caption
+\begin{figure}[h]
+  \centering
+  \includegraphics[width=0.8\textwidth]{myimage.png}
+  \caption{This is my figure caption}
+\end{figure}
+```
+
+**Image Width Options:**
+- `width=0.5\textwidth` — 50% of page width
+- `width=10cm` — Fixed width
+- `width=300px` — Pixel width
+- `scale=0.75` — Scale factor
+
+#### Export Formats
+
+**PDF Export:**
+- Best for: Print-ready documents, professional use
+- Features: Renders MathJax equations, embeds images
+- Quality: High fidelity, maintains formatting
+- Size: Typically 50-500 KB depending on images
+
+**DOCX Export:**
+- Best for: Microsoft Word, Google Docs
+- Features: Editable, maintains structure
+- Compatibility: Opens in Word, Google Docs, LibreOffice
+- Images: Embedded in DOCX for full portability
+
+**HTML Export:**
+- Best for: Web publishing, online documents
+- Features: Includes MathJax CDN link for equation rendering
+- Compatibility: Works in any modern browser
+- Interactive: Can be further edited in web tools
+
+**Plain Text Export:**
+- Best for: Backup, archival, simple sharing
+- Features: Converts LaTeX structure to readable text
+- Size: Smallest file size
+- Usage: Can be re-edited in text editors
+
+#### Export Examples
+
+**PDF Workflow:**
+```
+1. Create LaTeX document
+2. Add images via upload button
+3. Click "Export → PDF"
+4. Configure filename
+5. Download PDF
+6. Open in PDF reader or print
+```
+
+**Web Publishing Workflow:**
+```
+1. Write LaTeX document
+2. Click "Export → HTML"
+3. Download HTML file
+4. Upload to web server
+5. Share link with others
+```
+
+#### Tips & Best Practices
+
+**Writing & Editing:**
+- Start with a template to understand structure
+- Use consistent indentation for readability
+- Test complex equations in preview before finalizing
+- Save frequently (copy text to backup location)
+- Use comments with `%` for documentation
+
+**Images:**
+- Keep image sizes reasonable (< 10 MB each)
+- Use PNG for diagrams and charts
+- Use JPG for photographs
+- Test image display before exporting
+- Provide descriptive captions for figures
+
+**Math Mode:**
+- Use `$...$` for inline equations
+- Use `$$...$$` for display equations
+- Remember to escape special characters with backslash
+- Use Greek letters: `\alpha`, `\beta`, etc.
+
+**Export & Sharing:**
+- PDF for professional/print purposes
+- DOCX for collaborative editing
+- HTML for web viewing
+- Text for archival and backup
+- Test exported documents before sharing
+
+**Common Issues & Solutions:**
+
+| Issue | Solution |
+|-------|----------|
+| Image not showing | Verify filename matches exactly, with extension |
+| Math not rendering | Check for unclosed `$` delimiters |
+| Line breaks appearing incorrectly | Use `\\` for line breaks, not regular line breaks |
+| Fonts looking wrong | Use standard LaTeX fonts (Cambria, Georgia) |
+| Export file too large | Remove images or compress them first |
+
+#### Keyboard Shortcuts in Editor
+
+| Shortcut | Action |
+|----------|--------|
+| Tab | Insert spacing |
+| Ctrl/Cmd + A | Select all |
+| Ctrl/Cmd + C | Copy |
+| Ctrl/Cmd + V | Paste |
+| Ctrl/Cmd + Z | Undo |
+| Ctrl/Cmd + Shift + Z | Redo |
+
+#### Use Cases
+
+**Academic:**
+- Research papers
+- Thesis documents
+- Lab reports
+- Thesis proposals
+
+**Professional:**
+- Reports and technical docs
+- Presentations
+- Books and long documents
+- Documentation
+
+**Personal:**
+- Resumes (formatted beautifully)
+- Letters
+- Recipes and cookbooks
+- Personal journals
+
+#### Learning Resources
+
+**Getting Started:**
+- Use provided snippets for quick learning
+- Try built-in templates first
+- View preview to understand output
+- Export to different formats to see results
+
+**Practice:**
+- Create simple documents first
+- Add sections and formatting gradually
+- Include images for practice
+- Try exporting to see final results
 
 ---
 
