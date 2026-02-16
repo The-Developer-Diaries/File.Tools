@@ -2827,10 +2827,6 @@ input[type="range"]::-moz-range-thumb {
 
 /* ===== BATCH 3 STYLES ===== */
 
-/* Whiteboard */
-.wb-canvas-wrap { border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; cursor: crosshair; }
-.wb-canvas-wrap canvas { display: block; width: 100%; max-width: 800px; background: #fff; }
-
 /* Color Contrast Preview */
 .contrast-preview { padding: 24px; border-radius: var(--radius); margin: 16px 0; text-align: center; border: 1px solid var(--border); }
 
